@@ -1,4 +1,20 @@
-# MAEJOK-TOOLS CHANGE LOG
+# MAEJ3RKED-TOOLS CHANGE LOG
+
+# **_v2.21.1_**
+
+_Release: 11-04-2024_
+
+### Notes
+
+- Maejok-tools is being depecrated. Small updated here with local storage variable that will be checked from maejok-tools so they aren't both loaded concurrently.
+
+### Bug Fixes
+
+- N/A
+
+### Features Added / Changed
+
+- Add maej3rked-installed local storage key value to prevent maejok-tools and maej3rked-tools from both loading
 
 # **_v2.21.0_**
 

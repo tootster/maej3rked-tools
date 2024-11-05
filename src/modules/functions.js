@@ -1094,7 +1094,24 @@ export const toast = (
   document.dispatchEvent(toast);
 };
 
+const storeMaej3rkedPresence = () => {
+  // Used so both maejok-tools and maej3rked-tools won't be loaded concurrently
+  const pluginObj = {
+    name: "MAEJ3RKED-TOOLS-INSTALLATION",
+    storageKey: "maej3rked-installed",
+  };
+
+  try {
+    localStorage.setItem(pluginObj.storageKey, true);
+  } catch {
+    console.error("Error while saving localstorage");
+  } finally {
+    return storedSettings;
+  }
+};
+
 export const startMaejokTools = async () => {
+  storeMaej3rkedPresence();
   config.load();
   const cfg = config.get();
   const isPopoutChat = state.get("isPopoutChat");
