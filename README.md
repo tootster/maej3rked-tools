@@ -2,6 +2,10 @@
 
 ### Be sure to watch Fishtank Season One and Season Two Episodes, and watch Season 3 at https://www.fishtank.live/
 
+This is a fork of maejok-tools, which is now deprecated.
+
+https://github.com/maejok-xx/maejok-tools
+
 ---
 
 Features:
@@ -66,7 +70,7 @@ Features:
    npm run build
    ```
 
-**Note**: _Build output will be located at `./dist/maejok-tools.user.js`_
+**Note**: _Build output will be located at `./dist/maej3rked-tools.user.js`_
 
 ---
 
@@ -112,7 +116,7 @@ When you're all done, be sure to [create a pull request](https://github.com/f3rk
 
 ### Links
 
-#### Want to contribute to maejok-tools? [Create a Pull Request](https://github.com/f3rked/maej3rked-tools/pulls)!
+#### Want to contribute to maej3rked-tools? [Create a Pull Request](https://github.com/f3rked/maej3rked-tools/pulls)!
 
 #### Find this script on [Greasyfork](https://greasyfork.org/en/scripts/501824-maej3rked-tools-for-fishtank-live)
 
