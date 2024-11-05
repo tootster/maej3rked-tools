@@ -1,12 +1,12 @@
-## MAEJOK-TOOLS for Fishtank.live
+## MAEJ3RKED-TOOLS for Fishtank.live
 
-### Be sure to watch Fishtank Season One Episodes and Season Two clips, and get ready for Season 2.5 at https://www.fishtank.live/
+### Be sure to watch Fishtank Season One and Season Two Episodes, and watch Season 3 at https://www.fishtank.live/
 
 ---
 
 Features:
 
-- Now working with Season 2.5! (thanks to [f3rked](https://github.com/f3rked))
+- Now working with Season 3!
 - Customizable Keybinds (thanks to [deerfarce](https://github.com/deerfarce))
 - Mentions log
 - Ability to Hide: Chat Timestamps/Avatars/Clans/XP/Roll/Emotes/Consumables/System Messages, & Screen Takeovers
@@ -52,7 +52,7 @@ Features:
 1. Start by cloning the repository into your project directory
 
    ```bash
-   git clone https://github.com/maejok-xx/maejok-tools.git .
+   git clone https://github.com/f3rked/maej3rked-tools.git .
    ```
 
 2. install the dev dependencies (listed at the bottom of this readme)
@@ -76,13 +76,13 @@ Create a new Userscript using your browser extension of choice (eg: Tampermonkey
 
 ```js
 // ==UserScript==
-// @name         MAEJOK-TOOLS [DEV MODE]
-// @description  Development Version of MAEJOK-TOOLS
+// @name         MAEJ3RKED-TOOLS [DEV MODE]
+// @description  Development Version of MAEJ3RKED-TOOLS
 // @version      0.0.0
-// @icon         https://raw.githubusercontent.com/maejok-xx/maejok-tools/master/public/images/icon.png
+// @icon         https://raw.githubusercontent.com/f3rked/maej3rked-tools/master/public/images/icon.png
 // @match        *://*.fishtank.live/*
 // @run-at       document-idle
-// @require      file:\\\PATH_TO_PROJECT_DIR\dist\maejok-tools.dev.user.js
+// @require      file:\\\PATH_TO_PROJECT_DIR\dist\maej3rked-tools.dev.user.js
 // ==/UserScript==
 ```
 
@@ -93,7 +93,7 @@ Then navigate to your project root
 eg:
 
 ```bash
-cd C:\Users\BigHeadedLoser\Desktop\maejok-tools
+cd C:\Users\BigHeadedLoser\Desktop\maej3rked-tools
 ```
 
 And Run
@@ -104,19 +104,19 @@ npm run dev
 
 Now any time you update and save a `.scss` or `.js` file, Webpack will automatically rebuild the plugin. You must refresh Fishtank.live to see your changes.
 
-**Note**: _Build output will be located at `./dist/maejok-tools.user.js`_
+**Note**: _Build output will be located at `./dist/maej3rked-tools.user.js`_
 
-When you're all done, be sure to [create a pull request](https://github.com/maejok-xx/maejok-tools/pulls) with your updates! 😊
+When you're all done, be sure to [create a pull request](https://github.com/f3rked/maej3rked-tools/pulls) with your updates! 😊
 
 ---
 
 ### Links
 
-#### Want to contribute to maejok-tools? [Create a Pull Request](https://github.com/maejok-xx/maejok-tools/pulls)!
+#### Want to contribute to maejok-tools? [Create a Pull Request](https://github.com/f3rked/maej3rked-tools/pulls)!
 
-#### Find this script on [Greasyfork](https://greasyfork.org/en/scripts/465416-maejok-tools-for-fishtank-live)
+#### Find this script on [Greasyfork](https://greasyfork.org/en/scripts/501824-maej3rked-tools-for-fishtank-live)
 
-#### Feel free to [create an issue](https://github.com/maejok-xx/maejok-tools/issues) if you come across any bugs or have any new feature suggestions
+#### Feel free to [create an issue](https://github.com/f3rked/maej3rked-tools/issues) if you come across any bugs or have any new feature suggestions
 
 ---
 
