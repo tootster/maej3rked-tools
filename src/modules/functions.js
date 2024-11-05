@@ -1105,8 +1105,6 @@ const storeMaej3rkedPresence = () => {
     localStorage.setItem(pluginObj.storageKey, true);
   } catch {
     console.error("Error while saving localstorage");
-  } finally {
-    return storedSettings;
   }
 };
 
