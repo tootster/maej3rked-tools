@@ -1,5 +1,21 @@
 # MAEJ3RKED-TOOLS CHANGE LOG
 
+# **_v2.21.2_**
+
+_Release: 11-04-2024_
+
+### Notes
+
+- Screwed up the last update :)
+
+### Bug Fixes
+
+- Fix ensure block fallback that referenced non existent variable that screwed up plugin load
+  
+### Features Added / Changed
+
+- N/A
+
 # **_v2.21.1_**
 
 _Release: 11-04-2024_
