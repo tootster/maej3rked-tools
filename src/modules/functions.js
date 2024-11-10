@@ -323,6 +323,29 @@ export const displayUserNameOverlay = () => {
   playerHeaderTarget.insertAdjacentElement("beforebegin", userOverlayContainer);
 };
 
+export const toggleHiddenItems = (toggle) => {
+
+  const styleId = "polygon-fill-style";
+  let styleElement = document.getElementById(styleId);
+
+  if (toggle) {
+    if (!styleElement) {
+      styleElement = document.createElement("style");
+      styleElement.id = styleId;
+      styleElement.textContent = `
+        .clickable-zones_clickable-zones__OgYjT polygon[class=""] {
+          fill: rgba(0, 255, 0, 0.5) !important;
+        }
+      `;
+      document.head.appendChild(styleElement);
+    }
+  } else {
+    if (styleElement) {
+      styleElement.remove();
+    }
+  }
+};
+
 export const toggleBigScreen = (mode = null, muted = false) => {
   if (config.get("enableBigScreen")) {
     if (!muted) {
@@ -1171,7 +1194,7 @@ export const stopMaejokTools = () => {
   stopRecentChatters();
   stopUpdater();
   toggleScanLines(false);
-
+  showHiddenItems(false);
   clearInterval(state.get("updateCheckInterval"));
   clearInterval(state.get("timestampInterval"));
   clearInterval(state.get("daysLeftInterval"));
