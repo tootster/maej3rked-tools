@@ -9,6 +9,7 @@ const Config = () => {
     enablePlugin: true,
     enableDimMode: false,
 
+    showHiddenItems: false,
     popoutChatWindow: false,
     enableBigScreen: true,
     enableDragModal: false,
@@ -334,6 +335,18 @@ const Config = () => {
               help: {
                 label: "?",
                 text: `<p>Enabling this option will hide the <strong>Stream Navigation Overlay</strong> that displays semi-transparent polygons over the livestream on hover.</p>`,
+              },
+            },
+            // showHiddenItems
+            {
+              name: "showHiddenItems",
+              label: "Show hidden items",
+              type: "toggle",
+              value: cfg.showHiddenItems,
+              group: "site-options",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option will show all hidden items with a green highlight you spoil sport</p>`,
               },
             },
             // hideToastMessages
