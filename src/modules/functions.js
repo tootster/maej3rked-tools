@@ -1134,6 +1134,10 @@ export const startMaejokTools = async () => {
     observers.modal.start();
   }
 
+  if (config.get("enableEventsLog") || config.get("hideGiftedPassMessage")) {
+    observers.modal.start();
+  }
+
   const user = state.get("user");
 
   if (cfg.autoClanChat && user.clan !== null && !isPopoutChat) {

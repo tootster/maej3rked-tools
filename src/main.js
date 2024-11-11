@@ -53,7 +53,8 @@ import "./styles/styles.scss";
   if (
     config.get("hideGlobalMissions") ||
     config.get("enableDragModal") ||
-    config.get("enableTTSFilterWarning")
+    config.get("enableTTSFilterWarning") ||
+    config.get("enableEventsLog")
   ) {
     observers.modal.start();
   }
