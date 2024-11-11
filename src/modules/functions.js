@@ -818,6 +818,9 @@ export const disableSoundEffects = (disable) => {
 
   HTMLAudioElement.prototype.play = function () {
     this.muted = !!disable;
+    if (config.get("hideGiftedPassMessage") && this.src?.includes("twinkle")) {
+      this.muted = true;
+    }
     return audioElement.apply(this, arguments);
   };
 };
@@ -937,10 +940,27 @@ export const checkTTSFilteredWords = (addedNode) => {
 };
 
 export const hideToastMessage = (toast) => {
-  //const body = toast.querySelector(ELEMENTS.toast.message.selector);
   // Way to distinguish other types of system messages
   const containsHeader = toast.querySelector("h3");
+
   if (containsHeader) {
+    const content = containsHeader.textContent;
+    if (content?.toLowerCase().includes("tts message")) {
+      return;
+    }
+    toast.classList.add("maejok-hide");
+  }
+};
+
+export const hideGiftMessage = (toast) => {
+  // Way to distinguish other types of system messages
+  const containsHeader = toast.querySelector("h3");
+
+  if (containsHeader) {
+    const content = containsHeader.textContent;
+    if (!content?.toLowerCase().includes("gifted")) {
+      return;
+    }
     toast.classList.add("maejok-hide");
   }
 };
@@ -982,6 +1002,7 @@ export const createEventLogEntry = (toast) => {
   message.classList.add(ELEMENTS.settings.events.toastFix.class);
 
   body.parentNode.style.width = "100%";
+  body.parentNode.style.minWidth = "";
   body.append(timestamp);
 
   state.set("events", [

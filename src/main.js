@@ -50,11 +50,13 @@ import "./styles/styles.scss";
     observers.body.start();
   }
 
+  // Refactor to use Map of observer -> config option
   if (
     config.get("hideGlobalMissions") ||
     config.get("enableDragModal") ||
     config.get("enableTTSFilterWarning") ||
-    config.get("enableEventsLog")
+    config.get("enableEventsLog") ||
+    config.get("hideGiftedPassMessage")
   ) {
     observers.modal.start();
   }

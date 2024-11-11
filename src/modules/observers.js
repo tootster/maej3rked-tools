@@ -10,6 +10,7 @@ import {
   toggleControlOverlay,
   createEventLogEntry,
   hideToastMessage,
+  hideGiftMessage,
 } from "./functions";
 import ELEMENTS from "../data/elements";
 import { makeDraggable } from "./events";
@@ -94,7 +95,7 @@ const observers = {
 
       const nextElement = document.getElementById("__next");
 
-      const bodyObserver = new MutationObserver(async (mutations) => {
+      const modalObserver = new MutationObserver(async (mutations) => {
         mutations.forEach((mutation) => {
           if (
             mutation.type !== "childList" ||
@@ -143,15 +144,22 @@ const observers = {
             ) {
               hideToastMessage(addedNode);
             }
+
+            if (
+              config.get("hideGiftedPassMessage") &&
+              addedNode.className.includes("toast")
+            ) {
+              hideGiftMessage(addedNode);
+            }
           });
         });
       });
 
-      bodyObserver.observe(nextElement, { childList: true });
+      modalObserver.observe(nextElement, { childList: true });
 
       state.set("observers", {
         ...state.get("observers"),
-        body: bodyObserver,
+        modal: modalObserver,
       });
     },
 
@@ -191,11 +199,15 @@ const observers = {
           const controlOverlayEnabled = config.get("enableControlOverlay");
           const timestampOverlayEnabled = config.get("enableTimestampOverlay");
           const userOverlayEnabled = config.get("enableUserOverlay");
+          const hideNavigationOverlayEnabled = config.get(
+            "hideNavigationOverlayEnabled"
+          );
 
           if (
             !controlOverlayEnabled &&
             !timestampOverlayEnabled &&
-            !userOverlayEnabled
+            !userOverlayEnabled &&
+            !hideNavigationOverlayEnabled
           ) {
             return;
           }
@@ -210,23 +222,21 @@ const observers = {
                 return;
               }
 
-              if (config.get("enableTimestampOverlay")) {
+              if (timestampOverlayEnabled) {
                 displayCurrentTankTime();
               }
 
-              if (config.get("enableUserOverlay")) {
+              if (userOverlayEnabled) {
                 displayUserNameOverlay();
               }
 
-              if (config.get("hideNavigationOverlay")) {
+              if (hideNavigationOverlayEnabled) {
                 toggleNavigationOverlay(true);
               }
             }
 
-            if (playerControlsAdded) {
-              if (config.get("enableControlOverlay")) {
-                toggleControlOverlay(state.get("controlOverlayDisabled"));
-              }
+            if (playerControlsAdded && controlOverlayEnabled) {
+              toggleControlOverlay(state.get("controlOverlayDisabled"));
             }
           });
         });
@@ -259,19 +269,21 @@ const observers = {
         mutations.forEach((mutation) => {
           if (
             mutation.type !== "childList" ||
-            mutation.addedNodes.length === 0 ||
-            !mutation.addedNodes[0].className ||
-            !mutation.addedNodes[0].className.includes(
-              "global-mission-modal_backdrop__oVezg"
-            )
+            mutation.addedNodes.length === 0
           ) {
             return;
           }
 
-          mutation.addedNodes[0].setAttribute(
-            "style",
-            "display: none !important"
-          );
+          if (
+            mutation.addedNodes[0]?.className.includes(
+              "global-mission-modal_backdrop__oVezg"
+            )
+          ) {
+            mutation.addedNodes[0].setAttribute(
+              "style",
+              "display: none !important"
+            );
+          }
         });
       });
 

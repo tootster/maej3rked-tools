@@ -48,6 +48,7 @@ export const saveSettings = async () => {
   const prevUpdateCheckFrequency = config.get("updateCheckFrequency");
   const prevChattersEnabled = config.get("enableRecentChatters");
   const prevHideGlobalMissions = config.get("hideGlobalMissions");
+  const prevHideGiftedMessage = config.get("hideGiftedPassMessage");
   const prevDragModal = config.get("enableDragModal");
   const prevEventLog = config.get("enableEventsLog");
   const prevTTSFilter = config.get("enableTTSFilterWarning");
@@ -133,6 +134,9 @@ export const saveSettings = async () => {
   const hideGlobalMissionsJustEnabled =
     config.get("hideGlobalMissions") &&
     prevHideGlobalMissions !== config.get("hideGlobalMissions");
+  const hideGiftedMessageJustEnabled =
+    config.get("hideGiftedPassMessage") &&
+    prevHideGiftedMessage !== config.get("hideGiftedPassMessage");
   const dragModalJustEnabled =
     config.get("enableDragModal") &&
     prevDragModal !== config.get("enableDragModal");
@@ -155,7 +159,6 @@ export const saveSettings = async () => {
   }
 
   if (eventLogJustEnabled || hideGiftedMessageJustEnabled) {
-    console.log("eventlog or gifted");
     observers.modal.start();
   }
 
