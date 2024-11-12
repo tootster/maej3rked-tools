@@ -25,6 +25,7 @@ import {
   pluginName,
   disableSoundEffects,
   toggleScanLines,
+  toggleHiddenItems,
   toggleScreenTakeovers,
   toggleTimestampOverlay,
   toggleNavigationOverlay,
@@ -78,6 +79,7 @@ export const saveSettings = async () => {
   disableSoundEffects(config.get("disableSoundEffects"));
   applySettingsToChat();
   toggleScanLines();
+  toggleHiddenItems(config.get("showHiddenItems"));
   toggleDimMode(config.get("enableDimMode"));
   toggleTimestampOverlay(config.get("enableTimestampOverlay"));
   toggleNavigationOverlay(config.get("hideNavigationOverlay"));
