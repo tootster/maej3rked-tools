@@ -9,6 +9,7 @@ const Config = () => {
     enablePlugin: true,
     enableDimMode: false,
 
+    convertTokenValues: false,
     showHiddenItems: false,
     popoutChatWindow: false,
     enableBigScreen: true,
@@ -349,6 +350,30 @@ const Config = () => {
                 text: `<p>Enabling this option will show all hidden items with a green highlight you spoil sport</p>`,
               },
             },
+            // popoutChatWindow
+            {
+              name: "popoutChatWindow",
+              label: "Enable Popout Chat window",
+              type: "toggle",
+              value: cfg.popoutChatWindow,
+              group: "site-options",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option will show all hidden items with a green highlight you spoil sport</p>`,
+              },
+            },
+            // convertTokenValues
+            {
+              name: "convertTokenValues",
+              label: "Convert Tokens to $ Value",
+              type: "toggle",
+              value: cfg.convertTokenValues,
+              group: "site-options",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option will show all token values as $ values</p>`,
+              },
+            },
             // hideToastMessages
             {
               name: "hideToastMessages",
@@ -378,18 +403,7 @@ const Config = () => {
         },
       },
 
-      // popoutChatWindow
-      {
-        name: "popoutChatWindow",
-        label: "Enable Popout Chat window",
-        type: "toggle",
-        value: cfg.popoutChatWindow,
-        group: "site-options",
-        help: {
-          label: "?",
-          text: `<p>Enabling this option will show all hidden items with a green highlight you spoil sport</p>`,
-        },
-      },
+
 
 
       // --- CHAT

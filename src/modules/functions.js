@@ -323,6 +323,77 @@ export const displayUserNameOverlay = () => {
   playerHeaderTarget.insertAdjacentElement("beforebegin", userOverlayContainer);
 };
 
+export const toggleTokenConversion = (toggle) => {
+  const conversionRate = 0.0828; // Conversion rate from tokens to USD
+
+  const convertTokensToUSD = (element) => {
+    const tokenValue = element.textContent.match(/\d+/)?.[0];
+    if (tokenValue) {
+      const usdValue = (tokenValue * conversionRate).toFixed(2);
+      element.setAttribute("data-original", element.innerHTML); // Store original HTML content
+      element.innerHTML = `<span>$</span>${usdValue}`; // Display USD value
+    }
+  };
+
+  const revertToOriginalTokens = (element) => {
+    const originalContent = element.getAttribute("data-original");
+    if (originalContent) {
+      element.innerHTML = originalContent; // Restore original content exactly
+      element.removeAttribute("data-original"); // Clean up to avoid reprocessing
+    }
+  };
+
+  const processElements = () => {
+    const selectors = [
+      ".top-bar-user_tokens__vAwEj",
+      ".tts-modal_tokens__yZ5jv",
+      ".sfx-modal_tokens__i1DhV",
+      ".get-fishtoys-modal_cost__e3dHa",
+      ".get-tokens-modal_tokens__LX5HO"
+    ];
+
+    selectors.forEach((selector) => {
+      document.querySelectorAll(selector).forEach((element) => {
+        // Skip elements with excluded classes
+        if (element.closest('.get-fishtoys-modal_fishtoy__XFh5h.get-fishtoys-modal_bigtoy__LOwwY')) return;
+
+        if (toggle) {
+          if (!element.hasAttribute("data-original")) {
+            convertTokensToUSD(element);
+          }
+        } else {
+          if (element.hasAttribute("data-original")) {
+            revertToOriginalTokens(element);
+          }
+        }
+      });
+    });
+  };
+
+  // MutationObserver to process newly added elements
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          // Check for matching selectors and exclude specific classes
+          if ((node.matches(".tts-modal_tokens__yZ5jv, .sfx-modal_tokens__i1DhV, .get-fishtoys-modal_cost__e3dHa, .get-tokens-modal_tokens__LX5HO") || 
+               node.querySelector(".tts-modal_tokens__yZ5jv, .sfx-modal_tokens__i1DhV, .get-fishtoys-modal_cost__e3dHa, .get-tokens-modal_tokens__LX5HO")) &&
+              !node.closest('.get-fishtoys-modal_fishtoy__XFh5h.get-fishtoys-modal_bigtoy__LOwwY')) {
+            processElements();
+          }
+        }
+      });
+    });
+  });
+
+  // Start observing the document for added elements
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  // Initial processing
+  processElements();
+};
+
+
 export const toggleHiddenItems = (toggle) => {
 
   const styleId = "polygon-fill-style";
@@ -345,6 +416,7 @@ export const toggleHiddenItems = (toggle) => {
     }
   }
 };
+
 
 let chatWindow = null;
 let chatContainer;  // Initialize chatContainer as null
