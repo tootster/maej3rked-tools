@@ -87,7 +87,6 @@ export const DARK_MODE_STYLES = `
 .live-stream-fullscreen_right___UCNg,
 .episode-fullscreen_left__bNbXb,
 .episode-fullscreen_right__HuAn9,
-.top-bar_top-bar___Z0QX,
 .stats_stats__SIg_t,
 .tts-history_tts-history__8_9eB,
 .secondary-panel_secondary-panel__vUc65,
@@ -103,6 +102,12 @@ export const DARK_MODE_STYLES = `
 .clan-info_clan-info___2J6Z,
 #contestants {
   filter: brightness(0.5) !important;
+}
+
+.top-bar_top-bar___Z0QX{
+  filter: brightness(0.5) !important;
+  position: relative;
+  z-index: 100;
 }
 
 .episode_episode__oA49f {
