@@ -346,6 +346,173 @@ export const toggleHiddenItems = (toggle) => {
   }
 };
 
+let chatWindow = null;
+let chatContainer;  // Initialize chatContainer as null
+let observer = null;
+
+export const togglePopOutChat = (toggle) => {
+  // Only select chatContainer if it's not already set
+  if (!chatContainer) {
+    chatContainer = document.querySelector(".chat_chat__2rdNg"); // Update selector as needed
+  }
+
+  if (!chatContainer) {
+    console.log('Chat container not found');
+    return;
+  }
+
+  if (toggle) {
+    // Open the pop-out window if it's not already open
+    if (!chatWindow || chatWindow.closed) {
+      chatWindow = window.open('', 'ChatPopOut', 'width=400,height=600');
+      if (!chatWindow) {
+        console.log('Failed to open pop-out window');
+        return;
+      }
+
+      // Set up the HTML structure in the new window with scaling and auto-scroll CSS
+      chatWindow.document.write(`
+        <html>
+          <head>
+            <title>Chat Pop-Out</title>
+            <style>
+              body, html {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                overflow: hidden;
+                font-family: Arial, sans-serif;
+              }
+              #popOutChatContainer {
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+                width: 100%;
+                padding: 0;
+                box-sizing: border-box;
+                background-color: #191d21;
+                border: 1px solid #505050;
+              }
+              .chat_header__8kNPS {
+                flex: 0 0 auto;
+                display: flex;
+                align-items: center;
+                padding: 4px 4px 4px 8px;
+                background-color: #740700;
+                border-bottom: 1px solid #505050;
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
+                z-index: 2;
+              }
+              #chatMessagesContainer {
+                flex: 1 1 auto;
+                overflow-y: auto;
+                background-color: rgba(0,0,0,.5);
+              }
+              .chat-input_chat-input__GAgOF {
+                flex: 0 0 auto;
+                display: flex;
+                flex-direction: column;
+                position: relative;
+                border-top: 1px solid #505050;
+                font-family: JetBrains Mono,monospace;
+                font-size: 16px;
+                line-height: 16px;
+                color: #aaa;
+                text-shadow: 2px 2px 0 rgba(0,0,0,.75);
+                --mobile-bottom-panel-height: 40vh;
+                --mobile-bottom-nav-height: 48px;
+              }
+              .chat_title__CrfQP{
+                color: #fff;
+                font-weight: 600;
+              }
+              .chat_presence__90XuO{
+                color: #f8ec94;
+                display: flex;
+                margin-left: 8px;
+                text-transform: uppercase;
+                font-weight: 200;
+                font-size: 14px;
+              }
+              .maejok-chatters_presence-container{
+                text-align: center;
+                cursor: pointer;
+              
+              }
+            </style>
+          </head>
+          <body>
+            <div id="popOutChatContainer">
+              <div id="chatHeader"></div>
+              <div id="chatMessagesContainer"></div>
+              <div id="chatInput"></div>
+            </div>
+          </body>
+        </html>
+      `);
+      chatWindow.document.close();
+
+      // Clone the initial chat container content
+      const chatHeaderElem = chatContainer.querySelector('.chat_header__8kNPS').cloneNode(true);
+      const chatMessagesElem = chatContainer.querySelector('#chat-messages').cloneNode(true);
+      const chatInputElem = chatContainer.querySelector('.chat-input_chat-input__GAgOF').cloneNode(true);
+
+      const popOutChatContainer = chatWindow.document.getElementById('popOutChatContainer');
+      chatWindow.document.getElementById('chatHeader').appendChild(chatHeaderElem);
+      chatWindow.document.getElementById('chatMessagesContainer').appendChild(chatMessagesElem);
+      chatWindow.document.getElementById('chatInput').appendChild(chatInputElem);
+
+      // Copy stylesheets and inline styles from the main document to the pop-out window
+      const styles = document.head.querySelectorAll('link[rel="stylesheet"], style');
+      styles.forEach(style => {
+        chatWindow.document.head.appendChild(style.cloneNode(true));
+      });
+
+      // Hide the chat container on the main page (optional)
+      //chatContainer.style.display = 'none';
+
+      // Set up a MutationObserver to keep the pop-out chat in sync and auto-scroll
+      const chatMessagesContainer = chatWindow.document.getElementById('chatMessagesContainer');
+      const chatMessagesSource = chatContainer.querySelector('#chat-messages');
+
+      observer = new MutationObserver(() => {
+        // Update chat messages
+        const newChatMessages = chatMessagesSource.cloneNode(true);
+        chatMessagesContainer.replaceChild(newChatMessages, chatMessagesContainer.firstChild);
+
+        // Scroll to the bottom for auto-scrolling
+        chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+      });
+
+      // Start observing changes in the original chat messages
+      observer.observe(chatMessagesSource, { childList: true, subtree: true, characterData: true });
+
+      // Initial scroll to bottom
+      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+
+      console.log('Chat has been popped out');
+    }
+  } else {
+    // Close the pop-out window if it's open
+    if (chatWindow && !chatWindow.closed) {
+      chatWindow.close();
+      chatWindow = null;
+    }
+
+    // Show the chat container on the main page again
+    //chatContainer.style.display = 'block';
+
+    // Disconnect the observer if it exists
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
+
+    console.log('Chat pop-out closed');
+  }
+};
+
 export const toggleBigScreen = (mode = null, muted = false) => {
   if (config.get("enableBigScreen")) {
     if (!muted) {

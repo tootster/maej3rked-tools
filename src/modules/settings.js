@@ -28,6 +28,7 @@ import {
   toggleHiddenItems,
   toggleScreenTakeovers,
   toggleTimestampOverlay,
+  togglePopOutChat,
   toggleNavigationOverlay,
   toggleUserOverlay,
   keyEventToString,
@@ -81,6 +82,7 @@ export const saveSettings = async () => {
   toggleScanLines();
   toggleHiddenItems(config.get("showHiddenItems"));
   toggleDimMode(config.get("enableDimMode"));
+  togglePopOutChat(config.get("popoutChatWindow"));
   toggleTimestampOverlay(config.get("enableTimestampOverlay"));
   toggleNavigationOverlay(config.get("hideNavigationOverlay"));
   toggleUserOverlay(config.get("enableUserOverlay"));

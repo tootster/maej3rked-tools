@@ -10,6 +10,7 @@ const Config = () => {
     enableDimMode: false,
 
     showHiddenItems: false,
+    popoutChatWindow: false,
     enableBigScreen: true,
     enableDragModal: false,
     enableTTSFilterWarning: false,
@@ -363,6 +364,20 @@ const Config = () => {
           ],
         },
       },
+
+      // popoutChatWindow
+      {
+        name: "popoutChatWindow",
+        label: "Enable Popout Chat window",
+        type: "toggle",
+        value: cfg.popoutChatWindow,
+        group: "site-options",
+        help: {
+          label: "?",
+          text: `<p>Enabling this option will show all hidden items with a green highlight you spoil sport</p>`,
+        },
+      },
+
 
       // --- CHAT
       {
