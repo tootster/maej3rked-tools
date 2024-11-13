@@ -326,21 +326,84 @@ export const displayUserNameOverlay = () => {
 export const toggleTokenConversion = (toggle) => {
   const tokenToUsdRate = 0.0828; // Conversion rate from tokens to USD
   const cfg = config.get();
-  const convertTokensToLocalCurrency = (element) => {
-    const tokenValue = element.textContent.match(/\d+/)?.[0];
-    if (tokenValue) {
-      // Use cfg.usdExchangeRate to convert from USD to local currency
-      const localCurrencyValue = (tokenValue * tokenToUsdRate * cfg.usdExchangeRate).toFixed(2);
+
+const convertTokensToLocalCurrency = (element) => {
+    if (!element.hasAttribute("data-original")) {
       element.setAttribute("data-original", element.innerHTML); // Store original HTML content
-      element.innerHTML = `<span>$</span>${localCurrencyValue}`; // Display local currency value
+    }
+
+    // Detect if the element has multiple prices (e.g., one in <span> and one as text)
+    const hasMultiplePrices = element.querySelector("span") && [...element.childNodes].some(node => node.nodeType === Node.TEXT_NODE && node.textContent.includes("₣"));
+
+    if (hasMultiplePrices) {
+      // Convert each <span> that contains a token value
+      element.querySelectorAll("span").forEach((span) => {
+        const tokenText = span.textContent.trim();
+        if (tokenText.startsWith("₣")) {
+          const tokenValue = parseFloat(tokenText.slice(1));
+          if (!isNaN(tokenValue)) {
+            const localCurrencyValue = (tokenValue * tokenToUsdRate * cfg.usdExchangeRate).toFixed(2);
+            span.innerHTML = `<span style="text-decoration: line-through;">$${localCurrencyValue}</span>`;
+          }
+        }
+      });
+
+      // Handle cases where the token symbol and value are split across nodes
+      element.childNodes.forEach((node, index, nodeList) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          let text = node.textContent.trim();
+          if (text === "₣" && nodeList[index + 1] && nodeList[index + 1].nodeType === Node.TEXT_NODE) {
+            // Detect next node containing the actual number
+            const nextText = nodeList[index + 1].textContent.trim();
+            if (!isNaN(parseFloat(nextText))) {
+              const combinedText = text + nextText; // Combine "₣" with the numeric value
+              const tokenValue = parseFloat(combinedText.slice(1));
+              if (!isNaN(tokenValue)) {
+                const localCurrencyValue = (tokenValue * tokenToUsdRate * cfg.usdExchangeRate).toFixed(2);
+                node.textContent = `$${localCurrencyValue}`; // Replace "₣" node content with the converted value
+                nodeList[index + 1].textContent = ''; // Clear the next node that held the number
+              }
+            }
+          } else if (text.startsWith("₣")) {
+            // For cases where ₣ and the number are already in the same node
+            const tokenValue = parseFloat(text.slice(1));
+            if (!isNaN(tokenValue)) {
+              const localCurrencyValue = (tokenValue * tokenToUsdRate * cfg.usdExchangeRate).toFixed(2);
+              node.textContent = `$${localCurrencyValue}`;
+            }
+          }
+        }
+      });
+    } else {
+      // Standard handling for elements with a single token value
+      const originalText = element.textContent.trim();
+      const tokenMatch = originalText.match(/₣(\d+(\.\d+)?)/); // Match ₣ followed by a number
+
+      if (tokenMatch) {
+        const tokenValue = parseFloat(tokenMatch[1]); // Extract the numeric portion
+        if (!isNaN(tokenValue)) {
+          const localCurrencyValue = (tokenValue * tokenToUsdRate * cfg.usdExchangeRate).toFixed(2);
+          element.innerHTML = originalText.replace(tokenMatch[0], `$${localCurrencyValue}`);
+        }
+      }
+    }
+
+    // Fix width on SFX and Token Modal
+    if (element.classList.contains("tts-modal_tokens__yZ5jv") || element.classList.contains("sfx-modal_tokens__i1DhV")) {
+      element.style.width = "135px";
     }
   };
+
 
   const revertToOriginalTokens = (element) => {
     const originalContent = element.getAttribute("data-original");
     if (originalContent) {
-      element.innerHTML = originalContent; // Restore original content exactly
+      element.innerHTML = originalContent; // Restore original content
       element.removeAttribute("data-original"); // Clean up to avoid reprocessing
+    }
+    // Fix width on SFX and Token Modal
+    if (element.classList.contains("tts-modal_tokens__yZ5jv") || element.classList.contains("sfx-modal_tokens__i1DhV")) {
+      element.style.width = "96px";
     }
   };
 
@@ -350,33 +413,29 @@ export const toggleTokenConversion = (toggle) => {
       ".tts-modal_tokens__yZ5jv",
       ".sfx-modal_tokens__i1DhV",
       ".get-fishtoys-modal_cost__e3dHa",
-      ".get-tokens-modal_tokens__LX5HO"
+      ".get-tokens-modal_tokens__LX5HO",
+      ".confirm-modal_body__LQQc6 span" // Target modal's span elements for token conversion
     ];
 
     selectors.forEach((selector) => {
       document.querySelectorAll(selector).forEach((element) => {
-        // Skip elements with excluded classes
         if (element.closest('.get-fishtoys-modal_fishtoy__XFh5h.get-fishtoys-modal_bigtoy__LOwwY')) return;
         if (toggle) {
-          if (!element.hasAttribute("data-original")) {
-            convertTokensToLocalCurrency(element);
-          }
+          convertTokensToLocalCurrency(element);
         } else {
-          if (element.hasAttribute("data-original")) {
-            revertToOriginalTokens(element);
-          }
+          revertToOriginalTokens(element);
         }
       });
     });
   };
 
-  // MutationObserver to process newly added elements
+  // MutationObserver to process newly added elements, including tokens in dynamically created modals
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
         if (node.nodeType === Node.ELEMENT_NODE) {
-          if ((node.matches(".tts-modal_tokens__yZ5jv, .sfx-modal_tokens__i1DhV, .get-fishtoys-modal_cost__e3dHa, .get-tokens-modal_tokens__LX5HO") || 
-               node.querySelector(".tts-modal_tokens__yZ5jv, .sfx-modal_tokens__i1DhV, .get-fishtoys-modal_cost__e3dHa, .get-tokens-modal_tokens__LX5HO")) &&
+          if ((node.matches(".top-bar-user_tokens__vAwEj, .tts-modal_tokens__yZ5jv, .sfx-modal_tokens__i1DhV, .get-fishtoys-modal_cost__e3dHa, .get-tokens-modal_tokens__LX5HO, .confirm-modal_body__LQQc6 span") || 
+               node.querySelector(".top-bar-user_tokens__vAwEj, .tts-modal_tokens__yZ5jv, .sfx-modal_tokens__i1DhV, .get-fishtoys-modal_cost__e3dHa, .get-tokens-modal_tokens__LX5HO, .confirm-modal_body__LQQc6 span")) &&
               !node.closest('.get-fishtoys-modal_fishtoy__XFh5h.get-fishtoys-modal_bigtoy__LOwwY')) {
             processElements();
           }
@@ -391,6 +450,8 @@ export const toggleTokenConversion = (toggle) => {
   // Initial processing
   processElements();
 };
+
+
 
 
 export const toggleHiddenItems = (toggle) => {
