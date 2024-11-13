@@ -323,6 +323,328 @@ export const displayUserNameOverlay = () => {
   playerHeaderTarget.insertAdjacentElement("beforebegin", userOverlayContainer);
 };
 
+export const toggleTokenConversion = (toggle) => {
+  const tokenToUsdRate = 0.0828; // Conversion rate from tokens to USD
+  const cfg = config.get();
+
+const convertTokensToLocalCurrency = (element) => {
+    if (!element.hasAttribute("data-original")) {
+      element.setAttribute("data-original", element.innerHTML); // Store original HTML content
+    }
+
+    // Detect if the element has multiple prices (e.g., one in <span> and one as text)
+    const hasMultiplePrices = element.querySelector("span") && [...element.childNodes].some(node => node.nodeType === Node.TEXT_NODE && node.textContent.includes("₣"));
+
+    if (hasMultiplePrices) {
+      // Convert each <span> that contains a token value
+      element.querySelectorAll("span").forEach((span) => {
+        const tokenText = span.textContent.trim();
+        if (tokenText.startsWith("₣")) {
+          const tokenValue = parseFloat(tokenText.slice(1));
+          if (!isNaN(tokenValue)) {
+            const localCurrencyValue = (tokenValue * tokenToUsdRate * cfg.usdExchangeRate).toFixed(2);
+            span.innerHTML = `<span style="text-decoration: line-through;">$${localCurrencyValue}</span>`;
+          }
+        }
+      });
+
+      // Handle cases where the token symbol and value are split across nodes
+      element.childNodes.forEach((node, index, nodeList) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          let text = node.textContent.trim();
+          if (text === "₣" && nodeList[index + 1] && nodeList[index + 1].nodeType === Node.TEXT_NODE) {
+            // Detect next node containing the actual number
+            const nextText = nodeList[index + 1].textContent.trim();
+            if (!isNaN(parseFloat(nextText))) {
+              const combinedText = text + nextText; // Combine "₣" with the numeric value
+              const tokenValue = parseFloat(combinedText.slice(1));
+              if (!isNaN(tokenValue)) {
+                const localCurrencyValue = (tokenValue * tokenToUsdRate * cfg.usdExchangeRate).toFixed(2);
+                node.textContent = `$${localCurrencyValue}`; // Replace "₣" node content with the converted value
+                nodeList[index + 1].textContent = ''; // Clear the next node that held the number
+              }
+            }
+          } else if (text.startsWith("₣")) {
+            // For cases where ₣ and the number are already in the same node
+            const tokenValue = parseFloat(text.slice(1));
+            if (!isNaN(tokenValue)) {
+              const localCurrencyValue = (tokenValue * tokenToUsdRate * cfg.usdExchangeRate).toFixed(2);
+              node.textContent = `$${localCurrencyValue}`;
+            }
+          }
+        }
+      });
+    } else {
+      // Standard handling for elements with a single token value
+      const originalText = element.textContent.trim();
+      const tokenMatch = originalText.match(/₣(\d+(\.\d+)?)/); // Match ₣ followed by a number
+
+      if (tokenMatch) {
+        const tokenValue = parseFloat(tokenMatch[1]); // Extract the numeric portion
+        if (!isNaN(tokenValue)) {
+          const localCurrencyValue = (tokenValue * tokenToUsdRate * cfg.usdExchangeRate).toFixed(2);
+          element.innerHTML = originalText.replace(tokenMatch[0], `$${localCurrencyValue}`);
+        }
+      }
+    }
+
+    // Fix width on SFX and Token Modal
+    if (element.classList.contains("tts-modal_tokens__yZ5jv") || element.classList.contains("sfx-modal_tokens__i1DhV")) {
+      element.style.width = "135px";
+    }
+  };
+
+
+  const revertToOriginalTokens = (element) => {
+    const originalContent = element.getAttribute("data-original");
+    if (originalContent) {
+      element.innerHTML = originalContent; // Restore original content
+      element.removeAttribute("data-original"); // Clean up to avoid reprocessing
+    }
+    // Fix width on SFX and Token Modal
+    if (element.classList.contains("tts-modal_tokens__yZ5jv") || element.classList.contains("sfx-modal_tokens__i1DhV")) {
+      element.style.width = "96px";
+    }
+  };
+
+  const processElements = () => {
+    const selectors = [
+      ".top-bar-user_tokens__vAwEj",
+      ".tts-modal_tokens__yZ5jv",
+      ".sfx-modal_tokens__i1DhV",
+      ".get-fishtoys-modal_cost__e3dHa",
+      ".get-tokens-modal_tokens__LX5HO",
+      ".confirm-modal_body__LQQc6 span" // Target modal's span elements for token conversion
+    ];
+
+    selectors.forEach((selector) => {
+      document.querySelectorAll(selector).forEach((element) => {
+        if (element.closest('.get-fishtoys-modal_fishtoy__XFh5h.get-fishtoys-modal_bigtoy__LOwwY')) return;
+        if (toggle) {
+          convertTokensToLocalCurrency(element);
+        } else {
+          revertToOriginalTokens(element);
+        }
+      });
+    });
+  };
+
+  // MutationObserver to process newly added elements, including tokens in dynamically created modals
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          if ((node.matches(".top-bar-user_tokens__vAwEj, .tts-modal_tokens__yZ5jv, .sfx-modal_tokens__i1DhV, .get-fishtoys-modal_cost__e3dHa, .get-tokens-modal_tokens__LX5HO, .confirm-modal_body__LQQc6 span") || 
+               node.querySelector(".top-bar-user_tokens__vAwEj, .tts-modal_tokens__yZ5jv, .sfx-modal_tokens__i1DhV, .get-fishtoys-modal_cost__e3dHa, .get-tokens-modal_tokens__LX5HO, .confirm-modal_body__LQQc6 span")) &&
+              !node.closest('.get-fishtoys-modal_fishtoy__XFh5h.get-fishtoys-modal_bigtoy__LOwwY')) {
+            processElements();
+          }
+        }
+      });
+    });
+  });
+
+  // Start observing the document for added elements
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  // Initial processing
+  processElements();
+};
+
+
+
+
+export const toggleHiddenItems = (toggle) => {
+
+  const styleId = "polygon-fill-style";
+  let styleElement = document.getElementById(styleId);
+
+  if (toggle) {
+    if (!styleElement) {
+      styleElement = document.createElement("style");
+      styleElement.id = styleId;
+      styleElement.textContent = `
+        .clickable-zones_clickable-zones__OgYjT polygon[class=""] {
+          fill: rgba(0, 255, 0, 0.5) !important;
+        }
+      `;
+      document.head.appendChild(styleElement);
+    }
+  } else {
+    if (styleElement) {
+      styleElement.remove();
+    }
+  }
+};
+
+
+let chatWindow = null;
+let chatContainer;  // Initialize chatContainer as null
+let observer = null;
+
+export const togglePopOutChat = (toggle) => {
+  // Only select chatContainer if it's not already set
+  if (!chatContainer) {
+    chatContainer = document.querySelector(".chat_chat__2rdNg"); // Update selector as needed
+  }
+
+  if (!chatContainer) {
+    
+    return;
+  }
+
+  if (toggle) {
+    // Open the pop-out window if it's not already open
+    if (!chatWindow || chatWindow.closed) {
+      chatWindow = window.open('', 'ChatPopOut', 'width=400,height=600');
+      if (!chatWindow) {
+        
+        return;
+      }
+
+      // Set up the HTML structure in the new window with scaling and auto-scroll CSS
+      chatWindow.document.write(`
+        <html>
+          <head>
+            <title>Chat Pop-Out</title>
+            <style>
+              body, html {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                overflow: hidden;
+                font-family: Arial, sans-serif;
+              }
+              #popOutChatContainer {
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+                width: 100%;
+                padding: 0;
+                box-sizing: border-box;
+                background-color: #191d21;
+                border: 1px solid #505050;
+              }
+              .chat_header__8kNPS {
+                flex: 0 0 auto;
+                display: flex;
+                align-items: center;
+                padding: 4px 4px 4px 8px;
+                background-color: #740700;
+                border-bottom: 1px solid #505050;
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
+                z-index: 2;
+              }
+              #chatMessagesContainer {
+                flex: 1 1 auto;
+                overflow-y: auto;
+                background-color: rgba(0,0,0,.5);
+              }
+              .chat-input_chat-input__GAgOF {
+                flex: 0 0 auto;
+                display: flex;
+                flex-direction: column;
+                position: relative;
+                border-top: 1px solid #505050;
+                font-family: JetBrains Mono,monospace;
+                font-size: 16px;
+                line-height: 16px;
+                color: #aaa;
+                text-shadow: 2px 2px 0 rgba(0,0,0,.75);
+                --mobile-bottom-panel-height: 40vh;
+                --mobile-bottom-nav-height: 48px;
+              }
+              .chat_title__CrfQP{
+                color: #fff;
+                font-weight: 600;
+              }
+              .chat_presence__90XuO{
+                color: #f8ec94;
+                display: flex;
+                margin-left: 8px;
+                text-transform: uppercase;
+                font-weight: 200;
+                font-size: 14px;
+              }
+              .maejok-chatters_presence-container{
+                text-align: center;
+                cursor: pointer;
+              
+              }
+            </style>
+          </head>
+          <body>
+            <div id="popOutChatContainer">
+              <div id="chatHeader"></div>
+              <div id="chatMessagesContainer"></div>
+              <div id="chatInput"></div>
+            </div>
+          </body>
+        </html>
+      `);
+      chatWindow.document.close();
+
+      // Clone the initial chat container content
+      const chatHeaderElem = chatContainer.querySelector('.chat_header__8kNPS').cloneNode(true);
+      const chatMessagesElem = chatContainer.querySelector('#chat-messages').cloneNode(true);
+      const chatInputElem = chatContainer.querySelector('.chat-input_chat-input__GAgOF').cloneNode(true);
+
+      const popOutChatContainer = chatWindow.document.getElementById('popOutChatContainer');
+      chatWindow.document.getElementById('chatHeader').appendChild(chatHeaderElem);
+      chatWindow.document.getElementById('chatMessagesContainer').appendChild(chatMessagesElem);
+      chatWindow.document.getElementById('chatInput').appendChild(chatInputElem);
+
+      // Copy stylesheets and inline styles from the main document to the pop-out window
+      const styles = document.head.querySelectorAll('link[rel="stylesheet"], style');
+      styles.forEach(style => {
+        chatWindow.document.head.appendChild(style.cloneNode(true));
+      });
+
+      // Hide the chat container on the main page (optional)
+      //chatContainer.style.display = 'none';
+
+      // Set up a MutationObserver to keep the pop-out chat in sync and auto-scroll
+      const chatMessagesContainer = chatWindow.document.getElementById('chatMessagesContainer');
+      const chatMessagesSource = chatContainer.querySelector('#chat-messages');
+
+      observer = new MutationObserver(() => {
+        // Update chat messages
+        const newChatMessages = chatMessagesSource.cloneNode(true);
+        chatMessagesContainer.replaceChild(newChatMessages, chatMessagesContainer.firstChild);
+
+        // Scroll to the bottom for auto-scrolling
+        chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+      });
+
+      // Start observing changes in the original chat messages
+      observer.observe(chatMessagesSource, { childList: true, subtree: true, characterData: true });
+
+      // Initial scroll to bottom
+      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+
+      
+    }
+  } else {
+    // Close the pop-out window if it's open
+    if (chatWindow && !chatWindow.closed) {
+      chatWindow.close();
+      chatWindow = null;
+    }
+
+    // Show the chat container on the main page again
+    //chatContainer.style.display = 'block';
+
+    // Disconnect the observer if it exists
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
+
+    
+  }
+};
+
 export const toggleBigScreen = (mode = null, muted = false) => {
   if (config.get("enableBigScreen")) {
     if (!muted) {
@@ -1196,7 +1518,7 @@ export const stopMaejokTools = () => {
   stopRecentChatters();
   stopUpdater();
   toggleScanLines(false);
-
+  showHiddenItems(false);
   clearInterval(state.get("updateCheckInterval"));
   clearInterval(state.get("timestampInterval"));
   clearInterval(state.get("daysLeftInterval"));

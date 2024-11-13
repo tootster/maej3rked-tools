@@ -9,6 +9,11 @@ const Config = () => {
     enablePlugin: true,
     enableDimMode: false,
 
+    convertTokenValues: false,
+    usdExchangeRate: 1.00,
+
+    showHiddenItems: false,
+    popoutChatWindow: false,
     enableBigScreen: true,
     enableDragModal: false,
     enableTTSFilterWarning: false,
@@ -126,7 +131,7 @@ const Config = () => {
                 options: [
                   {
                     type: "number",
-                    valid: "number",
+                    valid: "integer",
                     label: "Frequency",
                     name: "updateCheckFrequency",
                     help: {
@@ -335,6 +340,65 @@ const Config = () => {
                 text: `<p>Enabling this option will hide the <strong>Stream Navigation Overlay</strong> that displays semi-transparent polygons over the livestream on hover.</p>`,
               },
             },
+            // showHiddenItems
+            {
+              name: "showHiddenItems",
+              label: "Show hidden items",
+              type: "toggle",
+              value: cfg.showHiddenItems,
+              group: "site-options",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option will show all hidden items with a green highlight you spoil sport</p>`,
+              },
+            },
+            // popoutChatWindow
+            {
+              name: "popoutChatWindow",
+              label: "Enable Popout Chat window",
+              type: "toggle",
+              value: cfg.popoutChatWindow,
+              group: "site-options",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option will show all hidden items with a green highlight you spoil sport</p>`,
+              },
+            },
+            //convertTokenValues
+            {
+              name: "convertTokenValues",
+              label: "Convert Tokens to Dollars",
+              type: "toggle",
+              value: cfg.convertTokenValues,
+              group: "site-options",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option will show all token values as USD</p>`,
+              },
+              config: {
+                title: "Exchange Rate",
+                options: [
+                  {
+                    type: "number",
+                    valid: "number",
+                    label: "Rate",
+                    name: "usdExchangeRate",
+                    help: {
+                      label: "?",
+                      title: "Currency Exchange Rate",
+                      text: `<p>Set a custom exchange rate</p>
+                        <p><i>Default: 1 (USD)</i></p>`,
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              name: "usdExchangeRate",
+              type: "hidden",
+              value: cfg.usdExchangeRate,
+              group: "site-options",
+            },
             // hideToastMessages
             {
               name: "hideToastMessages",
@@ -363,6 +427,9 @@ const Config = () => {
           ],
         },
       },
+
+
+
 
       // --- CHAT
       {
@@ -577,6 +644,7 @@ const Config = () => {
                 ],
               },
             },
+            
             {
               name: "recentChattersThreshold",
               type: "hidden",
