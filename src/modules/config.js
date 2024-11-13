@@ -22,6 +22,7 @@ const Config = () => {
     hideGlobalMissions: false,
     hideScreenTakeovers: false,
     hideNavigationOverlay: false,
+    hideGiftedPassMessage: false,
 
     enableUpdateChecks: true,
     updateCheckFrequency: 10,
@@ -344,7 +345,19 @@ const Config = () => {
               help: {
                 label: "?",
                 text: `<p>Enabling this option will hide the <strong>Toast Messages</strong> that pop up for these like level up, gifted season pass, consumed item, etc.</p>
-                <p>This will not hide the admin messages that come from production.`,
+                <p>This will not hide the admin messages that come from production or TTS approvals or rejections.`,
+              },
+            },
+            // hideGiftedPassMessage
+            {
+              name: "hideGiftedPassMessage",
+              label: "Hide Gifted Pass Messages",
+              type: "toggle",
+              value: cfg.hideGiftedPassMessage,
+              group: "site-options",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option will hide the <strong>Gifted Season Pass Messages</strong> that pop up and disable the sound.</p>`,
               },
             },
           ],

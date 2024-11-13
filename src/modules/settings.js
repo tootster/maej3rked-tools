@@ -48,7 +48,9 @@ export const saveSettings = async () => {
   const prevUpdateCheckFrequency = config.get("updateCheckFrequency");
   const prevChattersEnabled = config.get("enableRecentChatters");
   const prevHideGlobalMissions = config.get("hideGlobalMissions");
+  const prevHideGiftedMessage = config.get("hideGiftedPassMessage");
   const prevDragModal = config.get("enableDragModal");
+  const prevEventLog = config.get("enableEventsLog");
   const prevTTSFilter = config.get("enableTTSFilterWarning");
   const prevControlOverlay = config.get("enableControlOverlay");
 
@@ -132,12 +134,18 @@ export const saveSettings = async () => {
   const hideGlobalMissionsJustEnabled =
     config.get("hideGlobalMissions") &&
     prevHideGlobalMissions !== config.get("hideGlobalMissions");
+  const hideGiftedMessageJustEnabled =
+    config.get("hideGiftedPassMessage") &&
+    prevHideGiftedMessage !== config.get("hideGiftedPassMessage");
   const dragModalJustEnabled =
     config.get("enableDragModal") &&
     prevDragModal !== config.get("enableDragModal");
   const ttsFilterJustEnabled =
     config.get("enableTTSFilterWarning") &&
     prevTTSFilter !== config.get("enableTTSFilterWarning");
+  const eventLogJustEnabled =
+    config.get("enableEventsLog") &&
+    prevEventLog !== config.get("enableEventsLog");
   const controlOverlayJustChanged =
     prevControlOverlay !== config.get("enableControlOverlay");
 
@@ -147,6 +155,10 @@ export const saveSettings = async () => {
     ttsFilterJustEnabled
   ) {
     observers.body.start();
+    observers.modal.start();
+  }
+
+  if (eventLogJustEnabled || hideGiftedMessageJustEnabled) {
     observers.modal.start();
   }
 
