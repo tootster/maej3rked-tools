@@ -11,6 +11,7 @@ _Release: 11-12-2024_
 ### Bug Fixes
 
 - fix event log not always working properly due to observer not being started [#26](https://github.com/f3rked/maej3rked-tools/pull/26)
+- fix navigation overlay reappearing when switching cams [#26](https://github.com/f3rked/maej3rked-tools/pull/26)
 - fix event log styling [#26](https://github.com/f3rked/maej3rked-tools/pull/26)
 - fix dim mode hiding modals hide non admin toast messages no longer hides tts approvals and rejections - thanks to [tootster](https://github.com/tootster) [#27](https://github.com/f3rked/maej3rked-tools/pull/27)
 
