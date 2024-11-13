@@ -8,6 +8,8 @@ import {
   startMaejokTools,
   toggleDimMode,
   runUserAgreement,
+  toggleHiddenItems,
+  toggleTokenConversion,
   toggleScanLines,
   getReactProps,
   setUserData,
@@ -27,8 +29,10 @@ import "./styles/styles.scss";
 
   const enableDimMode =
     config.get("enableDimMode") && config.get("enablePlugin");
-  toggleDimMode(enableDimMode);
 
+  toggleDimMode(enableDimMode);
+  toggleHiddenItems(config.get("showHiddenItems") && config.get("enablePlugin"));
+  toggleTokenConversion(config.get("convertTokenValues") && config.get("enablePlugin"));
   toggleScanLines(config.get("hideScanLines") && config.get("enablePlugin"));
 
   const address = window.location.href;

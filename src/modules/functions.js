@@ -324,14 +324,15 @@ export const displayUserNameOverlay = () => {
 };
 
 export const toggleTokenConversion = (toggle) => {
-  const conversionRate = 0.0828; // Conversion rate from tokens to USD
-
-  const convertTokensToUSD = (element) => {
+  const tokenToUsdRate = 0.0828; // Conversion rate from tokens to USD
+  const cfg = config.get();
+  const convertTokensToLocalCurrency = (element) => {
     const tokenValue = element.textContent.match(/\d+/)?.[0];
     if (tokenValue) {
-      const usdValue = (tokenValue * conversionRate).toFixed(2);
+      // Use cfg.usdExchangeRate to convert from USD to local currency
+      const localCurrencyValue = (tokenValue * tokenToUsdRate * cfg.usdExchangeRate).toFixed(2);
       element.setAttribute("data-original", element.innerHTML); // Store original HTML content
-      element.innerHTML = `<span>$</span>${usdValue}`; // Display USD value
+      element.innerHTML = `<span>$</span>${localCurrencyValue}`; // Display local currency value
     }
   };
 
@@ -356,10 +357,9 @@ export const toggleTokenConversion = (toggle) => {
       document.querySelectorAll(selector).forEach((element) => {
         // Skip elements with excluded classes
         if (element.closest('.get-fishtoys-modal_fishtoy__XFh5h.get-fishtoys-modal_bigtoy__LOwwY')) return;
-
         if (toggle) {
           if (!element.hasAttribute("data-original")) {
-            convertTokensToUSD(element);
+            convertTokensToLocalCurrency(element);
           }
         } else {
           if (element.hasAttribute("data-original")) {
@@ -375,7 +375,6 @@ export const toggleTokenConversion = (toggle) => {
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
         if (node.nodeType === Node.ELEMENT_NODE) {
-          // Check for matching selectors and exclude specific classes
           if ((node.matches(".tts-modal_tokens__yZ5jv, .sfx-modal_tokens__i1DhV, .get-fishtoys-modal_cost__e3dHa, .get-tokens-modal_tokens__LX5HO") || 
                node.querySelector(".tts-modal_tokens__yZ5jv, .sfx-modal_tokens__i1DhV, .get-fishtoys-modal_cost__e3dHa, .get-tokens-modal_tokens__LX5HO")) &&
               !node.closest('.get-fishtoys-modal_fishtoy__XFh5h.get-fishtoys-modal_bigtoy__LOwwY')) {
