@@ -53,6 +53,11 @@ Features:
 
 ### HOW TO: Build from source
 
+## Before contributing
+
+- please install esbenp.prettier-vscode or the javascript code formatter of your choice to keep style more consistent
+- do not include changes to the user script file (maej3rked-tools.user.js) or the package.json - I will update those when bumping the version and pushing out the new update
+
 1. Start by cloning the repository into your project directory
 
    ```bash

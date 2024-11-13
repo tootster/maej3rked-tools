@@ -1,5 +1,24 @@
 # MAEJ3RKED-TOOLS CHANGE LOG
 
+# **_v2.22.0_**
+
+_Release: 11-12-2024_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- fix event log not always working properly due to observer not being started [#26](https://github.com/f3rked/maej3rked-tools/pull/26)
+- fix event log styling [#26](https://github.com/f3rked/maej3rked-tools/pull/26)
+- fix dim mode hiding modals hide non admin toast messages no longer hides tts approvals and rejections - thanks to [tootster](https://github.com/tootster) [#27](https://github.com/f3rked/maej3rked-tools/pull/27)
+
+### Features Added / Changed
+
+- add hide gifted message option [#26](https://github.com/f3rked/maej3rked-tools/pull/26)
+- hide non admin toast messages no longer hides tts approvals and rejections [#26](https://github.com/f3rked/maej3rked-tools/pull/26)
+
 # **_v2.21.2_**
 
 _Release: 11-04-2024_
@@ -11,7 +30,7 @@ _Release: 11-04-2024_
 ### Bug Fixes
 
 - Fix ensure block fallback that referenced non existent variable that screwed up plugin load
-  
+
 ### Features Added / Changed
 
 - N/A
