@@ -364,28 +364,16 @@ const Config = () => {
                 text: `<p>Enabling this option will show all hidden items with a green highlight you spoil sport</p>`,
               },
             },
-            // convertTokenValues
-            //{
-            //  name: "convertTokenValues",
-            //  label: "Convert Tokens to $ Value",
-            //  type: "toggle",
-            //  value: cfg.convertTokenValues,
-            //  group: "site-options",
-            //  help: {
-            //    label: "?",
-            //   text: `<p>Enabling this option will show all token values as $ values</p>`,
-            //  },
-            //},
-            // enableUpdateChecks & updateCheckFrequency
+            //convertTokenValues
             {
               name: "convertTokenValues",
-              label: "Convert Tokens to $",
+              label: "Convert Tokens to Dollars",
               type: "toggle",
               value: cfg.convertTokenValues,
               group: "site-options",
               help: {
                 label: "?",
-                text: `<p>Enabling this option will show all token values as $</p>`,
+                text: `<p>Enabling this option will show all token values as USD</p>`,
               },
               config: {
                 title: "Exchange Rate",
@@ -398,8 +386,8 @@ const Config = () => {
                     help: {
                       label: "?",
                       title: "Currency Exchange Rate",
-                      text: `<p>Whats your exchange rate to USD?</p>
-                        <p><i>Minimum: 5</i></p>`,
+                      text: `<p>Set a custom exchange rate</p>
+                        <p><i>Default: 1 (USD)</i></p>`,
                     },
                   },
                 ],
