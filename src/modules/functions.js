@@ -428,7 +428,7 @@ export const togglePopOutChat = (toggle) => {
   }
 
   if (!chatContainer) {
-    console.log('Chat container not found');
+    
     return;
   }
 
@@ -437,7 +437,7 @@ export const togglePopOutChat = (toggle) => {
     if (!chatWindow || chatWindow.closed) {
       chatWindow = window.open('', 'ChatPopOut', 'width=400,height=600');
       if (!chatWindow) {
-        console.log('Failed to open pop-out window');
+        
         return;
       }
 
@@ -562,7 +562,7 @@ export const togglePopOutChat = (toggle) => {
       // Initial scroll to bottom
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
 
-      console.log('Chat has been popped out');
+      
     }
   } else {
     // Close the pop-out window if it's open
@@ -580,7 +580,7 @@ export const togglePopOutChat = (toggle) => {
       observer = null;
     }
 
-    console.log('Chat pop-out closed');
+    
   }
 };
 
