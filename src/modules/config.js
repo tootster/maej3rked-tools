@@ -10,6 +10,8 @@ const Config = () => {
     enableDimMode: false,
 
     convertTokenValues: false,
+    usdExchangeRate: 1.00,
+
     showHiddenItems: false,
     popoutChatWindow: false,
     enableBigScreen: true,
@@ -128,7 +130,7 @@ const Config = () => {
                 options: [
                   {
                     type: "number",
-                    valid: "number",
+                    valid: "integer",
                     label: "Frequency",
                     name: "updateCheckFrequency",
                     help: {
@@ -362,16 +364,51 @@ const Config = () => {
               },
             },
             // convertTokenValues
+            //{
+            //  name: "convertTokenValues",
+            //  label: "Convert Tokens to $ Value",
+            //  type: "toggle",
+            //  value: cfg.convertTokenValues,
+            //  group: "site-options",
+            //  help: {
+            //    label: "?",
+            //   text: `<p>Enabling this option will show all token values as $ values</p>`,
+            //  },
+            //},
+            // enableUpdateChecks & updateCheckFrequency
             {
               name: "convertTokenValues",
-              label: "Convert Tokens to $ Value",
+              label: "Convert Tokens to $",
               type: "toggle",
               value: cfg.convertTokenValues,
               group: "site-options",
               help: {
                 label: "?",
-                text: `<p>Enabling this option will show all token values as $ values</p>`,
+                text: `<p>Enabling this option will show all token values as $</p>`,
               },
+              config: {
+                title: "Exchange Rate",
+                options: [
+                  {
+                    type: "number",
+                    valid: "number",
+                    label: "Rate",
+                    name: "usdExchangeRate",
+                    help: {
+                      label: "?",
+                      title: "Currency Exchange Rate",
+                      text: `<p>Whats your exchange rate to USD?</p>
+                        <p><i>Minimum: 5</i></p>`,
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              name: "usdExchangeRate",
+              type: "hidden",
+              value: cfg.usdExchangeRate,
+              group: "site-options",
             },
             // hideToastMessages
             {
@@ -606,6 +643,7 @@ const Config = () => {
                 ],
               },
             },
+            
             {
               name: "recentChattersThreshold",
               type: "hidden",
