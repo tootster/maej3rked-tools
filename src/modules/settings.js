@@ -339,7 +339,7 @@ export function validateInput(accept, value) {
       return integerRegex.test(value);
 
     default:
-      return false;
+      break;
   }
 }
 
