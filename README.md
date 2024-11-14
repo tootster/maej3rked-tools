@@ -32,22 +32,22 @@ Features:
 
 ### Requires one of the following browser extensions to work:
 
-- [TamperMonkey](https://www.tampermonkey.net/): _(Recommended)_
+- [Violentmonkey](https://violentmonkey.github.io/): _(Recommended FOSS option)_
+  - [Chrome/Brave](https://chromewebstore.google.com/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag)
+  - [Firefox](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/)
+  - [Microsoft Edge](https://microsoftedge.microsoft.com/addons/detail/violentmonkey/eeagobfjdenkkddmbclomhiblgggliao)
+
+- [TamperMonkey](https://www.tampermonkey.net/): _(Most popular extension, but note that it is closed source)_
 
   - [Chrome/Brave](https://www.tampermonkey.net/index.php?browser=chrome)
   - [Firefox](https://www.tampermonkey.net/index.php?browser=firefox)
   - [Microsoft Edge](https://www.tampermonkey.net/index.php?browser=edge)
   - [Safari](https://www.tampermonkey.net/index.php?browser=safari)
   - [Opera](https://www.tampermonkey.net/index.php?browser=opera)
-
+ 
 - [GreaseMonkey](https://www.greasespot.net/):
 
   - [Firefox](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/)
-
-- [Violentmonkey](https://violentmonkey.github.io/):
-  - [Chrome/Brave](https://chromewebstore.google.com/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag)
-  - [Firefox](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/)
-  - [Microsoft Edge](https://microsoftedge.microsoft.com/addons/detail/violentmonkey/eeagobfjdenkkddmbclomhiblgggliao)
 
 ---
 
