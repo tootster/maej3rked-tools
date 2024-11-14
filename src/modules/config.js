@@ -11,9 +11,10 @@ const Config = () => {
 
     convertTokenValues: false,
     usdExchangeRate: 1.00,
+    tokenToUsdRate: 0.0828,
 
     showHiddenItems: false,
-    popoutChatWindow: false,
+    enablePopoutChatButton: false,
     enableBigScreen: true,
     enableDragModal: false,
     enableTTSFilterWarning: false,
@@ -352,18 +353,6 @@ const Config = () => {
                 text: `<p>Enabling this option will show all hidden items with a green highlight you spoil sport</p>`,
               },
             },
-            // popoutChatWindow
-            {
-              name: "popoutChatWindow",
-              label: "Enable Popout Chat window",
-              type: "toggle",
-              value: cfg.popoutChatWindow,
-              group: "site-options",
-              help: {
-                label: "?",
-                text: `<p>Enabling this option will show all hidden items with a green highlight you spoil sport</p>`,
-              },
-            },
             //convertTokenValues
             {
               name: "convertTokenValues",
@@ -373,21 +362,37 @@ const Config = () => {
               group: "site-options",
               help: {
                 label: "?",
-                text: `<p>Enabling this option will show all token values as USD</p>`,
+                text: `<p>Enabling this option will show all token values as USD</p>
+                <p>You will need to reenable the option after changing exchange rates</p>
+                `,
               },
               config: {
-                title: "Exchange Rate",
+                title: "Exchange Rates",
+                
                 options: [
                   {
                     type: "number",
                     valid: "number",
-                    label: "Rate",
+                    label: "USD -> Local",
                     name: "usdExchangeRate",
                     help: {
                       label: "?",
                       title: "Currency Exchange Rate",
-                      text: `<p>Set a custom exchange rate</p>
+                      text: `<p>Set a custom exchange rate with your local currency</p>
                         <p><i>Default: 1 (USD)</i></p>`,
+                    },
+                  },
+                  {
+                    type: "number",
+                    valid: "number",
+                    label: "Token -> USD",
+                    name: "tokenToUsdRate",
+                    help: {
+                      label: "?",
+                      title: "Token Exchange Rate",
+                      text: `<p>Set the token to USD rate, the default</p>
+                      <p>value is an average of all token price options</p>
+                        <p><i>Default: 0.0828 (USD)</i></p>`,
                     },
                   },
                 ],
@@ -397,6 +402,12 @@ const Config = () => {
               name: "usdExchangeRate",
               type: "hidden",
               value: cfg.usdExchangeRate,
+              group: "site-options",
+            },
+            {
+              name: "tokenToUsdRate",
+              type: "hidden",
+              value: cfg.tokenToUsdRate,
               group: "site-options",
             },
             // hideToastMessages
@@ -427,10 +438,6 @@ const Config = () => {
           ],
         },
       },
-
-
-
-
       // --- CHAT
       {
         name: "chat",
@@ -709,6 +716,18 @@ const Config = () => {
               help: {
                 label: "?",
                 text: `<p>Enabling this option makes Dark Display Names a little brighter and easier to read.<p>`,
+              },
+            },
+            // enablePopoutChatButton
+            {
+              name: "enablePopoutChatButton",
+              label: "Enable Popout Chat button",
+              type: "toggle",
+              value: cfg.enablePopoutChatButton,
+              group: "chat-misc",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option will add a button to open chat in a new window</p>`,
               },
             },
           ],

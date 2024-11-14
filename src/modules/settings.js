@@ -28,8 +28,8 @@ import {
   toggleHiddenItems,
   toggleScreenTakeovers,
   toggleTimestampOverlay,
-  togglePopOutChat,
   toggleTokenConversion,
+  togglePopoutChatButton,
   toggleNavigationOverlay,
   toggleUserOverlay,
   keyEventToString,
@@ -83,9 +83,9 @@ export const saveSettings = async () => {
   disableSoundEffects(config.get("disableSoundEffects"));
   applySettingsToChat();
   toggleScanLines();
+  togglePopoutChatButton(config.get("enablePopoutChatButton"));
   toggleHiddenItems(config.get("showHiddenItems"));
   toggleDimMode(config.get("enableDimMode"));
-  togglePopOutChat(config.get("popoutChatWindow"));
   toggleTokenConversion(config.get("convertTokenValues"));
   toggleTimestampOverlay(config.get("enableTimestampOverlay"));
   toggleNavigationOverlay(config.get("hideNavigationOverlay"));

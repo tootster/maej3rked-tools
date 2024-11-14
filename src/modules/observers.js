@@ -7,6 +7,7 @@ import {
   displayCurrentTankTime,
   displayUserNameOverlay,
   toggleNavigationOverlay,
+  toggleTokenConversion,
   toggleControlOverlay,
   createEventLogEntry,
   hideToastMessage,
@@ -298,6 +299,49 @@ const observers = {
     stop: () => {
       const observers = state.get("observers");
       observers.body?.disconnect();
+    },
+  },
+
+  tokens: {
+    start: () => {
+      if (state.get("observers").tokensActive) return; // Only start if tokens observer is inactive
+
+      state.get("observers").tokens?.disconnect();
+
+      const tokenObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              if (
+                (node.matches(
+                  `${ELEMENTS.token.topBarUserTokens.selector}, ${ELEMENTS.token.ttsModalTokens.selector}, ${ELEMENTS.token.sfxModalTokens.selector}, ${ELEMENTS.token.toysFishtoysTokens.selector}, ${ELEMENTS.token.buyTokensModal.selector}, ${ELEMENTS.token.voteModalTokens.selector} span`
+                ) || node.querySelector(
+                  `${ELEMENTS.token.topBarUserTokens.selector}, ${ELEMENTS.token.ttsModalTokens.selector}, ${ELEMENTS.token.sfxModalTokens.selector}, ${ELEMENTS.token.toysFishtoysTokens.selector}, ${ELEMENTS.token.buyTokensModal.selector}, ${ELEMENTS.token.voteModalTokens.selector} span`
+                )) &&
+                !node.closest(
+                  `.${ELEMENTS.token.toysBigToyPrice.classes[0]}.${ELEMENTS.token.toysBigToyPrice.classes[1]}`
+                )
+              ) {
+                toggleTokenConversion(config.get("convertTokenValues"));
+              }
+            }
+          });
+        });
+      });
+
+      tokenObserver.observe(document.body, { childList: true, subtree: true });
+
+      state.set("observers", {
+        ...state.get("observers"),
+        tokens: tokenObserver,
+        tokensActive: true,
+      });
+    },
+
+    stop: () => {
+      const observers = state.get("observers");
+      observers.tokens?.disconnect();
+      state.set("observers", { ...observers, tokensActive: false }); 
     },
   },
 };

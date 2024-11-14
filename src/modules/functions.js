@@ -324,102 +324,99 @@ export const displayUserNameOverlay = () => {
 };
 
 export const toggleTokenConversion = (toggle) => {
-  const tokenToUsdRate = 0.0828; // Conversion rate from tokens to USD
-  const cfg = config.get();
+  const tokenToUsdRate = config.get("tokenToUsdRate"); 
+  const usdExchangeRate = config.get("usdExchangeRate");
 
-const convertTokensToLocalCurrency = (element) => {
+  if (!state.get("observers").tokensActive && toggle) {
+    observers.tokens.start();
+  }else if (!toggle){
+    observers.tokens.stop();
+  }
+  
+  const convertTokensToLocalCurrency = (element) => {
     if (!element.hasAttribute("data-original")) {
       element.setAttribute("data-original", element.innerHTML); // Store original HTML content
     }
 
-    // Detect if the element has multiple prices (e.g., one in <span> and one as text)
     const hasMultiplePrices = element.querySelector("span") && [...element.childNodes].some(node => node.nodeType === Node.TEXT_NODE && node.textContent.includes("₣"));
 
     if (hasMultiplePrices) {
-      // Convert each <span> that contains a token value
       element.querySelectorAll("span").forEach((span) => {
         const tokenText = span.textContent.trim();
         if (tokenText.startsWith("₣")) {
           const tokenValue = parseFloat(tokenText.slice(1));
           if (!isNaN(tokenValue)) {
-            const localCurrencyValue = (tokenValue * tokenToUsdRate * cfg.usdExchangeRate).toFixed(2);
+            const localCurrencyValue = (tokenValue * tokenToUsdRate * usdExchangeRate).toFixed(2);
             span.innerHTML = `<span style="text-decoration: line-through;">$${localCurrencyValue}</span>`;
           }
         }
       });
 
-      // Handle cases where the token symbol and value are split across nodes
       element.childNodes.forEach((node, index, nodeList) => {
         if (node.nodeType === Node.TEXT_NODE) {
           let text = node.textContent.trim();
           if (text === "₣" && nodeList[index + 1] && nodeList[index + 1].nodeType === Node.TEXT_NODE) {
-            // Detect next node containing the actual number
             const nextText = nodeList[index + 1].textContent.trim();
             if (!isNaN(parseFloat(nextText))) {
-              const combinedText = text + nextText; // Combine "₣" with the numeric value
+              const combinedText = text + nextText;
               const tokenValue = parseFloat(combinedText.slice(1));
               if (!isNaN(tokenValue)) {
-                const localCurrencyValue = (tokenValue * tokenToUsdRate * cfg.usdExchangeRate).toFixed(2);
-                node.textContent = `$${localCurrencyValue}`; // Replace "₣" node content with the converted value
-                nodeList[index + 1].textContent = ''; // Clear the next node that held the number
+                const localCurrencyValue = (tokenValue * tokenToUsdRate * usdExchangeRate).toFixed(2);
+                node.textContent = `$${localCurrencyValue}`;
+                nodeList[index + 1].textContent = '';
               }
             }
           } else if (text.startsWith("₣")) {
-            // For cases where ₣ and the number are already in the same node
             const tokenValue = parseFloat(text.slice(1));
             if (!isNaN(tokenValue)) {
-              const localCurrencyValue = (tokenValue * tokenToUsdRate * cfg.usdExchangeRate).toFixed(2);
+              const localCurrencyValue = (tokenValue * tokenToUsdRate * usdExchangeRate).toFixed(2);
               node.textContent = `$${localCurrencyValue}`;
             }
           }
         }
       });
     } else {
-      // Standard handling for elements with a single token value
       const originalText = element.textContent.trim();
-      const tokenMatch = originalText.match(/₣(\d+(\.\d+)?)/); // Match ₣ followed by a number
+      const tokenMatch = originalText.match(/₣(\d+(\.\d+)?)/);
 
       if (tokenMatch) {
-        const tokenValue = parseFloat(tokenMatch[1]); // Extract the numeric portion
+        const tokenValue = parseFloat(tokenMatch[1]);
         if (!isNaN(tokenValue)) {
-          const localCurrencyValue = (tokenValue * tokenToUsdRate * cfg.usdExchangeRate).toFixed(2);
+          const localCurrencyValue = (tokenValue * tokenToUsdRate * usdExchangeRate).toFixed(2);
           element.innerHTML = originalText.replace(tokenMatch[0], `$${localCurrencyValue}`);
         }
       }
     }
 
-    // Fix width on SFX and Token Modal
-    if (element.classList.contains("tts-modal_tokens__yZ5jv") || element.classList.contains("sfx-modal_tokens__i1DhV")) {
+    if (element.classList.contains(ELEMENTS.token.ttsModalTokens.class) || element.classList.contains(ELEMENTS.token.sfxModalTokens.class)) {
       element.style.width = "135px";
     }
   };
 
-
   const revertToOriginalTokens = (element) => {
     const originalContent = element.getAttribute("data-original");
     if (originalContent) {
-      element.innerHTML = originalContent; // Restore original content
-      element.removeAttribute("data-original"); // Clean up to avoid reprocessing
+      element.innerHTML = originalContent;
+      element.removeAttribute("data-original");
     }
-    // Fix width on SFX and Token Modal
-    if (element.classList.contains("tts-modal_tokens__yZ5jv") || element.classList.contains("sfx-modal_tokens__i1DhV")) {
+    if (element.classList.contains(ELEMENTS.token.ttsModalTokens.class) || element.classList.contains(ELEMENTS.token.sfxModalTokens.class)) {
       element.style.width = "96px";
     }
   };
 
   const processElements = () => {
     const selectors = [
-      ".top-bar-user_tokens__vAwEj",
-      ".tts-modal_tokens__yZ5jv",
-      ".sfx-modal_tokens__i1DhV",
-      ".get-fishtoys-modal_cost__e3dHa",
-      ".get-tokens-modal_tokens__LX5HO",
-      ".confirm-modal_body__LQQc6 span" // Target modal's span elements for token conversion
+      ELEMENTS.token.topBarUserTokens.selector,
+      ELEMENTS.token.ttsModalTokens.selector,
+      ELEMENTS.token.sfxModalTokens.selector,
+      ELEMENTS.token.toysFishtoysTokens.selector,
+      ELEMENTS.token.buyTokensModal.selector,
+      ELEMENTS.token.voteModalTokens.selector + " span"
     ];
 
     selectors.forEach((selector) => {
       document.querySelectorAll(selector).forEach((element) => {
-        if (element.closest('.get-fishtoys-modal_fishtoy__XFh5h.get-fishtoys-modal_bigtoy__LOwwY')) return;
+        if (element.closest(ELEMENTS.token.toysBigToyPrice.selector)) return;
         if (toggle) {
           convertTokensToLocalCurrency(element);
         } else {
@@ -429,30 +426,65 @@ const convertTokensToLocalCurrency = (element) => {
     });
   };
 
-  // MutationObserver to process newly added elements, including tokens in dynamically created modals
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      mutation.addedNodes.forEach((node) => {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-          if ((node.matches(".top-bar-user_tokens__vAwEj, .tts-modal_tokens__yZ5jv, .sfx-modal_tokens__i1DhV, .get-fishtoys-modal_cost__e3dHa, .get-tokens-modal_tokens__LX5HO, .confirm-modal_body__LQQc6 span") || 
-               node.querySelector(".top-bar-user_tokens__vAwEj, .tts-modal_tokens__yZ5jv, .sfx-modal_tokens__i1DhV, .get-fishtoys-modal_cost__e3dHa, .get-tokens-modal_tokens__LX5HO, .confirm-modal_body__LQQc6 span")) &&
-              !node.closest('.get-fishtoys-modal_fishtoy__XFh5h.get-fishtoys-modal_bigtoy__LOwwY')) {
-            processElements();
-          }
-        }
-      });
-    });
-  });
-
-  // Start observing the document for added elements
-  observer.observe(document.body, { childList: true, subtree: true });
-
   // Initial processing
   processElements();
 };
 
+export const togglePopoutChatButton = (toggle) => {
+  const buttonId = "chat-link-button";
+  let existingButton = document.getElementById(buttonId);
 
+  if (toggle) {
+    if (!existingButton) {
+      // Create the button
+      const button = document.createElement("button");
+      button.id = buttonId;
+      button.style.background = "none";       // No background
+      button.style.border = "none";           // No border
+      button.style.cursor = "pointer";        // Pointer cursor
+      button.style.paddingRight = "10px";     // Right padding
+      button.style.paddingLeft = "10px";     // Right padding
+      button.style.color = "#ffffff";         // Default icon color (white)
 
+      // Add the SVG icon
+      button.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="17" height="17">
+          <path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l82.7 0L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3l0 82.7c0 17.7 14.3 32 32 32s32-14.3 32-32l0-160c0-17.7-14.3-32-32-32L320 0zM80 32C35.8 32 0 67.8 0 112L0 432c0 44.2 35.8 80 80 80l320 0c44.2 0 80-35.8 80-80l0-112c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 112c0 8.8-7.2 16-16 16L80 448c-8.8 0-16-7.2-16-16l0-320c0-8.8 7.2-16 16-16l112 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L80 32z" fill="currentColor"></path>
+        </svg>
+      `;
+
+      // Set up the link to open in a new tab
+      button.addEventListener("click", () => {
+        window.open(
+          "https://fishtank.live/chat",
+          "_blank",
+          "width=400,height=600,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes"
+        );
+      });
+
+      // Add hover effect to change color on mouse enter and leave
+      button.addEventListener("mouseenter", () => {
+        button.style.color = "#f8ec94"; // Change to hover color
+      });
+      button.addEventListener("mouseleave", () => {
+        button.style.color = "#ffffff"; // Revert to default color
+      });
+
+      // Insert the button at the end of the chat header
+      const chatHeader = document.querySelector(ELEMENTS.chat.header.selector);
+      if (chatHeader) {
+        chatHeader.appendChild(button); // Adds button to the end
+
+      }
+    }
+  } else {
+    // Remove the button if it exists
+    if (existingButton) {
+
+      existingButton.remove();
+    }
+  }
+};
 
 export const toggleHiddenItems = (toggle) => {
 
@@ -474,174 +506,6 @@ export const toggleHiddenItems = (toggle) => {
     if (styleElement) {
       styleElement.remove();
     }
-  }
-};
-
-
-let chatWindow = null;
-let chatContainer;  // Initialize chatContainer as null
-let observer = null;
-
-export const togglePopOutChat = (toggle) => {
-  // Only select chatContainer if it's not already set
-  if (!chatContainer) {
-    chatContainer = document.querySelector(".chat_chat__2rdNg"); // Update selector as needed
-  }
-
-  if (!chatContainer) {
-    
-    return;
-  }
-
-  if (toggle) {
-    // Open the pop-out window if it's not already open
-    if (!chatWindow || chatWindow.closed) {
-      chatWindow = window.open('', 'ChatPopOut', 'width=400,height=600');
-      if (!chatWindow) {
-        
-        return;
-      }
-
-      // Set up the HTML structure in the new window with scaling and auto-scroll CSS
-      chatWindow.document.write(`
-        <html>
-          <head>
-            <title>Chat Pop-Out</title>
-            <style>
-              body, html {
-                margin: 0;
-                padding: 0;
-                height: 100%;
-                overflow: hidden;
-                font-family: Arial, sans-serif;
-              }
-              #popOutChatContainer {
-                display: flex;
-                flex-direction: column;
-                height: 100vh;
-                width: 100%;
-                padding: 0;
-                box-sizing: border-box;
-                background-color: #191d21;
-                border: 1px solid #505050;
-              }
-              .chat_header__8kNPS {
-                flex: 0 0 auto;
-                display: flex;
-                align-items: center;
-                padding: 4px 4px 4px 8px;
-                background-color: #740700;
-                border-bottom: 1px solid #505050;
-                border-top-left-radius: 4px;
-                border-top-right-radius: 4px;
-                z-index: 2;
-              }
-              #chatMessagesContainer {
-                flex: 1 1 auto;
-                overflow-y: auto;
-                background-color: rgba(0,0,0,.5);
-              }
-              .chat-input_chat-input__GAgOF {
-                flex: 0 0 auto;
-                display: flex;
-                flex-direction: column;
-                position: relative;
-                border-top: 1px solid #505050;
-                font-family: JetBrains Mono,monospace;
-                font-size: 16px;
-                line-height: 16px;
-                color: #aaa;
-                text-shadow: 2px 2px 0 rgba(0,0,0,.75);
-                --mobile-bottom-panel-height: 40vh;
-                --mobile-bottom-nav-height: 48px;
-              }
-              .chat_title__CrfQP{
-                color: #fff;
-                font-weight: 600;
-              }
-              .chat_presence__90XuO{
-                color: #f8ec94;
-                display: flex;
-                margin-left: 8px;
-                text-transform: uppercase;
-                font-weight: 200;
-                font-size: 14px;
-              }
-              .maejok-chatters_presence-container{
-                text-align: center;
-                cursor: pointer;
-              
-              }
-            </style>
-          </head>
-          <body>
-            <div id="popOutChatContainer">
-              <div id="chatHeader"></div>
-              <div id="chatMessagesContainer"></div>
-              <div id="chatInput"></div>
-            </div>
-          </body>
-        </html>
-      `);
-      chatWindow.document.close();
-
-      // Clone the initial chat container content
-      const chatHeaderElem = chatContainer.querySelector('.chat_header__8kNPS').cloneNode(true);
-      const chatMessagesElem = chatContainer.querySelector('#chat-messages').cloneNode(true);
-      const chatInputElem = chatContainer.querySelector('.chat-input_chat-input__GAgOF').cloneNode(true);
-
-      const popOutChatContainer = chatWindow.document.getElementById('popOutChatContainer');
-      chatWindow.document.getElementById('chatHeader').appendChild(chatHeaderElem);
-      chatWindow.document.getElementById('chatMessagesContainer').appendChild(chatMessagesElem);
-      chatWindow.document.getElementById('chatInput').appendChild(chatInputElem);
-
-      // Copy stylesheets and inline styles from the main document to the pop-out window
-      const styles = document.head.querySelectorAll('link[rel="stylesheet"], style');
-      styles.forEach(style => {
-        chatWindow.document.head.appendChild(style.cloneNode(true));
-      });
-
-      // Hide the chat container on the main page (optional)
-      //chatContainer.style.display = 'none';
-
-      // Set up a MutationObserver to keep the pop-out chat in sync and auto-scroll
-      const chatMessagesContainer = chatWindow.document.getElementById('chatMessagesContainer');
-      const chatMessagesSource = chatContainer.querySelector('#chat-messages');
-
-      observer = new MutationObserver(() => {
-        // Update chat messages
-        const newChatMessages = chatMessagesSource.cloneNode(true);
-        chatMessagesContainer.replaceChild(newChatMessages, chatMessagesContainer.firstChild);
-
-        // Scroll to the bottom for auto-scrolling
-        chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
-      });
-
-      // Start observing changes in the original chat messages
-      observer.observe(chatMessagesSource, { childList: true, subtree: true, characterData: true });
-
-      // Initial scroll to bottom
-      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
-
-      
-    }
-  } else {
-    // Close the pop-out window if it's open
-    if (chatWindow && !chatWindow.closed) {
-      chatWindow.close();
-      chatWindow = null;
-    }
-
-    // Show the chat container on the main page again
-    //chatContainer.style.display = 'block';
-
-    // Disconnect the observer if it exists
-    if (observer) {
-      observer.disconnect();
-      observer = null;
-    }
-
-    
   }
 };
 
@@ -1470,6 +1334,10 @@ export const startMaejokTools = async () => {
   toggleTimestampOverlay(config.get("enableTimestampOverlay"));
   toggleUserOverlay(config.get("enableUserOverlay"));
   toggleScreenTakeovers(config.get("hideScreenTakeovers"));
+  togglePopoutChatButton(config.get("enablePopoutChatButton"))
+  toggleHiddenItems(config.get("showHiddenItems"));
+  toggleTokenConversion(config.get("convertTokenValues"));
+
   observers.chat.start();
   observers.home.start();
   if (config.get("hideGlobalMissions")) {
@@ -1513,6 +1381,7 @@ export const stopMaejokTools = () => {
   observers.chatters.stop();
   observers.body.stop();
   observers.modal.stop();
+  observers.tokens.stop();
 
   disableSoundEffects(false);
   stopRecentChatters();
