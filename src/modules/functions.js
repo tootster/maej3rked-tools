@@ -326,11 +326,9 @@ export const displayUserNameOverlay = () => {
 export const toggleTokenConversion = (toggle) => {
   const tokenToUsdRate = config.get("tokenToUsdRate"); 
   const usdExchangeRate = config.get("usdExchangeRate");
-
-  if (!state.get("observers").tokensActive && toggle) {
-    observers.tokens.start();
-  }else if (!toggle){
-    observers.tokens.stop();
+  //!state.get("observers").tokensActive && 
+  if (!state.get("observers").modal && toggle) {
+    observers.modal.start();
   }
   
   const convertTokensToLocalCurrency = (element) => {
@@ -416,6 +414,7 @@ export const toggleTokenConversion = (toggle) => {
 
     selectors.forEach((selector) => {
       document.querySelectorAll(selector).forEach((element) => {
+       
         if (element.closest(ELEMENTS.token.toysBigToyPrice.selector)) return;
         if (toggle) {
           convertTokensToLocalCurrency(element);
