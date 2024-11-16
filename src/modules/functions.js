@@ -409,6 +409,7 @@ export const toggleTokenConversion = (toggle) => {
       ELEMENTS.token.sfxModalTokens.selector,
       ELEMENTS.token.toysFishtoysTokens.selector,
       ELEMENTS.token.buyTokensModal.selector,
+      ELEMENTS.token.generateLootPrice.selector,
       ELEMENTS.token.voteModalTokens.selector + " span"
     ];
 

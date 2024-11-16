@@ -672,6 +672,10 @@ const Elements = {
       selector: `.get-fishtoys-modal_fishtoy__XFh5h.get-fishtoys-modal_bigtoy__LOwwY`,
       classes: ["get-fishtoys-modal_fishtoy__XFh5h", "get-fishtoys-modal_bigtoy__LOwwY"],
     },
+    generateLootPrice: {
+      selector: `[class^=item-generator-modal_cost__]`,
+      classes: "item-generator-modal_cost__XJRS_",
+    },
   },
 };
 
