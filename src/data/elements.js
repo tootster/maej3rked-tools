@@ -44,6 +44,10 @@ const Elements = {
       selector: `[class^="livepeer-video-player_quality"]`,
       class: "livepeer-video-player_quality__1WPkz",
     },
+    fullscreen: {
+      selector: `[class^="livepeer-video-player_fullscreen"]`,
+      class: "livepeer-video-player_fullscreen__qCmpW",
+    },
     timestamp: {
       selector: `.maejok-timestamp-container`,
       class: "maejok-timestamp-container",
@@ -676,6 +680,12 @@ const Elements = {
       selector: `[class^=item-generator-modal_cost__]`,
       classes: "item-generator-modal_cost__XJRS_",
     },
+    proflepicModalTokens: {
+      selector: `[class^=pfp-modal_header__]`,
+      classes: "pfp-modal_header__e1BJ0",
+    },
+
+    
   },
 };
 

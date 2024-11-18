@@ -9,6 +9,7 @@ import {
   BIG_SCREEN_STYLES_ONLINE,
   BIG_SCREEN_STYLES_OFFLINE,
   DEFAULT_KEYBINDS,
+  CHAT_OVERLAY_CONFIG,
   REPO_URL_ROOT,
 } from "./constants";
 import Message from "../classes/Message";
@@ -404,6 +405,7 @@ export const toggleTokenConversion = (toggle) => {
 
   const processElements = () => {
     const selectors = [
+      ELEMENTS.token.proflepicModalTokens.selector,
       ELEMENTS.token.topBarUserTokens.selector,
       ELEMENTS.token.ttsModalTokens.selector,
       ELEMENTS.token.sfxModalTokens.selector,
@@ -429,6 +431,185 @@ export const toggleTokenConversion = (toggle) => {
   // Initial processing
   processElements();
 };
+
+export const enableChatOverlay = (toggle) => {
+  let chatOverlayWrapper = document.getElementById("chatOverlayWrapper")
+  let buttonParentContainer = document.getElementById("hidechatOverlayButtonWrapper");
+  let fullscreenButtonContainer = document.querySelector(ELEMENTS.livestreams.fullscreen.selector);
+  let videoPlayerElement = document.querySelector('div[data-livepeer-wrapper]');
+
+  if(chatOverlayWrapper){chatOverlayWrapper.remove();}
+  chatOverlayWrapper = null;
+
+  if(buttonParentContainer){buttonParentContainer.remove();}
+  buttonParentContainer = null;
+
+  if (toggle) {
+    
+    if (!chatOverlayWrapper) {
+      // Create the wrapper container
+      chatOverlayWrapper = document.createElement('div');
+      applyConfigToElement(chatOverlayWrapper, CHAT_OVERLAY_CONFIG.overlayWrapper);
+
+      // Create the chat container (scrollable)
+      const chatOverlayContainer = document.createElement('div');
+      applyConfigToElement(chatOverlayContainer, CHAT_OVERLAY_CONFIG.overlayContainer);
+      
+      // Add Event listeners.
+      chatOverlayContainer.addEventListener('scroll', () => {
+        const scrollTop = chatOverlayContainer.scrollTop;
+        const scrollHeight = chatOverlayContainer.scrollHeight;
+        const clientHeight = chatOverlayContainer.clientHeight;
+
+        // Stop autoscrolling if the user scrolls up
+        let isAutoScrolling = scrollTop + clientHeight >= scrollHeight - 1;
+
+        state.set("isChatOverlayAutoscrolling", isAutoScrolling);
+        // Show or hide the "Scroll to Bottom" button
+        scrollToBottomButton.style.display = isAutoScrolling ? 'none' : 'block';
+      });
+
+      // Create the "Scroll to Bottom" button
+      const scrollToBottomButton = document.createElement('div');
+      applyConfigToElement(scrollToBottomButton, CHAT_OVERLAY_CONFIG.scrollBottomButton);
+
+      // Add Event listeners.
+      scrollToBottomButton.addEventListener('mouseenter', () => {
+        scrollToBottomButton.style.backgroundColor = '#191d21';
+        scrollToBottomButton.style.border = '1px solid #ffffff';
+        scrollToBottomButton.style.color = ' #ffffff';
+      });
+
+      scrollToBottomButton.addEventListener('mouseleave', () => {
+        scrollToBottomButton.style.backgroundColor = 'hsla(53,88%,78%,.1)';
+        scrollToBottomButton.style.border = '1px solid #f8ec94'
+        scrollToBottomButton.style.color = ' #f8ec94';
+      });
+
+      // Scroll to bottom when the button is clicked
+      scrollToBottomButton.addEventListener('click', () => {
+        chatOverlayContainer.scrollTop = chatOverlayContainer.scrollHeight;
+        state.set("isChatOverlayAutoscrolling", true);
+        scrollToBottomButton.style.display = 'none';
+      });
+
+      // Append the chat container and button to the wrapper
+      chatOverlayWrapper.appendChild(chatOverlayContainer);
+      chatOverlayWrapper.appendChild(scrollToBottomButton);
+    }else {
+      console.error('Chat Overlay container already exists.');
+    }
+
+    if(fullscreenButtonContainer){
+      fullscreenButtonContainer.style.display = 'flex';
+      fullscreenButtonContainer.style.alignItems = 'center';
+      fullscreenButtonContainer.style.gap = '8px'; // Optional spacing between buttons
+
+      if (!buttonParentContainer) {
+        // Create a parent container for the button that hides the chat overlay
+        buttonParentContainer = document.createElement('div');
+        applyConfigToElement(buttonParentContainer, CHAT_OVERLAY_CONFIG.hideChatOverlayButtonWrapper);
+  
+        // Create the toggle chat button
+        const toggleChatButton = document.createElement('button');
+        applyConfigToElement(toggleChatButton, CHAT_OVERLAY_CONFIG.hideChatOverlayButton);
+  
+        buttonParentContainer.appendChild(toggleChatButton);
+  
+        toggleChatButton.addEventListener('click', () => {
+          const isVisible = chatOverlayWrapper.style.display === 'block';
+          chatOverlayWrapper.style.display = isVisible ? 'none' : 'block';
+          toggleChatButton.setAttribute('aria-pressed', !isVisible);
+          if(state.get("isChatOverlayAutoscrolling")){chatOverlayContainer.scrollTop = chatOverlayContainer.scrollHeight;}
+        });
+
+        // Insert the buttonParentContainer before the fullscreen button container
+        fullscreenButtonContainer.parentElement.insertBefore(buttonParentContainer, fullscreenButtonContainer);
+        
+      } else {
+        console.error('Hide Chat Overlay button already exists.');
+      }
+  
+    }else{console.error('Full Screen button container doesnt exist.');}
+
+    if (videoPlayerElement && fullscreenButtonContainer) {
+      videoPlayerElement.appendChild(chatOverlayWrapper);
+      state.get("observers").fullscreen?.disconnect();
+  
+      //Create a targeted observer that checks if the video player is fullscreen.
+      const fullscreenObserver = new MutationObserver(() => {
+        const isFullscreen = videoPlayerElement.getAttribute('data-fullscreen') === 'true';
+        state.set("isPlayerFullscreen", isFullscreen);
+        chatOverlayWrapper.style.display = isFullscreen ? 'block' : 'none';
+        buttonParentContainer.style.display = isFullscreen ? 'flex' : 'none';
+        if (isFullscreen) {
+          // Reset autoscrolling when enabling fullscreen
+          chatOverlayContainer.scrollTop = chatOverlayContainer.scrollHeight;
+          state.set("isChatOverlayAutoscrolling", true);
+          scrollToBottomButton.style.display = 'none';
+        }
+      });
+      fullscreenObserver.observe(videoPlayerElement, {
+        attributes: true,
+        attributeFilter: ['data-fullscreen'],
+      });
+      state.set("observers", {
+        ...state.get("observers"),
+        fullscreen: fullscreenObserver,
+      });
+    } else {
+      console.error('Video player element not found. Unable to attach chat overlay.');
+      return;
+    }
+
+  } else {
+    if(buttonParentContainer){buttonParentContainer.remove();}
+    if(chatOverlayWrapper){chatOverlayWrapper.remove();}
+    state.get("observers").fullscreen?.disconnect();
+  }
+};
+
+export const addMessageToChatOverlay = (node) => {
+  try{
+    const chatOverlayContainer = document.getElementById("chatOverlayContainer")
+    const updatedMessages = node.cloneNode(true);
+    updatedMessages.style.textShadow = '5px 5px 4px #000000';
+    chatOverlayContainer.appendChild(updatedMessages);
+    // Auto-scroll to the bottom
+    if(state.get("isChatOverlayAutoscrolling")){
+      chatOverlayContainer.scrollTop = chatOverlayContainer.scrollHeight;
+    }
+  }catch{
+    console.error("Error retreiving chat message.")
+    return;
+  }
+}
+
+export function applyConfigToElement(element, config) {
+  if (!config || typeof config !== 'object') {
+    throw new Error('Invalid config object provided');
+  }
+
+  for (const [key, value] of Object.entries(config)) {
+    if (value === undefined || value === null) continue; // Skip undefined/null properties
+
+    if (key === 'style') {
+      if (typeof value === 'string') {
+        element.style.cssText = value; // Apply styles as a string
+      } else if (typeof value === 'object') {
+        Object.assign(element.style, value); // Apply styles as an object
+      }
+    } else if (key === 'innerHTML') {
+      element.innerHTML = value; // Set innerHTML
+    } else {
+      try {
+        element[key] = value; // Assign other properties
+      } catch (e) {
+        console.warn(`Failed to set property "${key}" on element:`, e);
+      }
+    }
+  }
+}
 
 export const togglePopoutChatButton = (toggle) => {
   const buttonId = "chat-link-button";
@@ -1337,9 +1518,11 @@ export const startMaejokTools = async () => {
   togglePopoutChatButton(config.get("enablePopoutChatButton"))
   toggleHiddenItems(config.get("showHiddenItems"));
   toggleTokenConversion(config.get("convertTokenValues"));
-
+  enableChatOverlay(config.get("enableFullScreenChatOverlay"));
+  
   observers.chat.start();
   observers.home.start();
+
   if (config.get("hideGlobalMissions")) {
     observers.body.start();
     observers.modal.start();

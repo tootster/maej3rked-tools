@@ -165,6 +165,98 @@ export const DARK_MODE_STYLES = `
 }
 `;
 
+export const CHAT_OVERLAY_CONFIG = {
+  overlayWrapper: {
+    id: 'chatOverlayWrapper',
+    style: `
+      position: relative;
+      right: 16px;
+      pointer-events: auto;
+      width: 18vw;
+      height: calc(100% - 128px);
+      background-color: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgb(80, 80, 80);
+      z-index: 9999;
+      display: none; /* Hidden by default */
+      padding: 10px;
+      box-sizing: border-box;
+      float: right;
+      bottom: 64px;
+      top: 64px;
+    `
+  },
+  overlayContainer: {
+    id: 'chatOverlayContainer',
+    style: `
+      position: relative;
+      width: 100%;
+      height: 100%; 
+      overflow-y: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      overflow: -moz-scrollbars-none;
+    `
+  },
+  scrollBottomButton: {
+    id: 'scrollToBottomButton',
+    textContent: 'Scroll to Bottom',
+    style: `
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
+      cursor: pointer;
+      text-align: center;
+      padding: 10px 20px;
+      font-weight: 600;
+      background-color: hsla(53,88%,78%,.1);
+      color: #f8ec94;
+      text-transform: uppercase;
+      border-radius: 4px;
+      border: 1px solid #f8ec94;
+      transform: translateX(-50%);
+      display: none; /* Hidden by default */
+      z-index: 10000;
+      width: 95%;
+    `
+  },
+  hideChatOverlayButtonWrapper: {
+    className: 'livepeer-video-player_fullscreen__qCmpW',
+    id: 'hidechatOverlayButtonWrapper',
+    style: `
+      display: none;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,0,0,0.5);
+      right: 48px;
+    `
+  },
+  hideChatOverlayButton: {
+    id: 'toggleChatButton',
+    type: 'button',
+    ariaPressed: 'false',
+    ariaLabel: 'Toggle Chat Overlay',
+    title: 'Toggle Chat Overlay',
+    style: `
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 24px;
+      height: 24px;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+    `,
+    innerHTML: `
+      <div class="icon_icon__bDzMA">
+        <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+          <path d="M20 2H2v20h2V4h16v12H6v2H4v2h2v-2h16V2h-2z" fill="currentColor"></path>
+        </svg>
+      </div>
+    `
+  }
+};
+
 export const SCREEN_TAKEOVERS_STYLES = `
 .happening_happening__Ca2E7,
 .happening_backdrop__JCihz,
