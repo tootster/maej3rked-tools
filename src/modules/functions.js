@@ -1001,8 +1001,7 @@ export const createEventLogEntry = (toast) => {
   message.style = "";
   message.classList.add(ELEMENTS.settings.events.toastFix.class);
 
-  body.parentNode.style.width = "100%";
-  body.parentNode.style.minWidth = "";
+  body.parentNode.classList.add("maejok-toast-body-fix");
   body.append(timestamp);
 
   state.set("events", [
