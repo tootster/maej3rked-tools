@@ -189,10 +189,14 @@ export const toggleControlOverlay = (force) => {
   const qualityControl = document.querySelector(
     ELEMENTS.livestreams.quality.selector
   );
+  const fullscreenControl = document.querySelector(
+    ELEMENTS.livestreams.fullscreen.selector
+  );
 
   if (!config.get("enableControlOverlay")) {
     videoControls?.classList.remove("maejok-hide");
     qualityControl?.classList.remove("maejok-hide");
+    fullscreenControl?.classList.remove("maejok-hide");
     return;
   }
 
@@ -202,7 +206,7 @@ export const toggleControlOverlay = (force) => {
     state.set("controlOverlayDisabled", force);
   }
 
-  if (!videoControls || !qualityControl) {
+  if (!videoControls || !qualityControl || !fullscreenControl) {
     return;
   }
 
@@ -214,9 +218,11 @@ export const toggleControlOverlay = (force) => {
   if (disabled) {
     videoControls.classList.remove("maejok-hide");
     qualityControl.classList.remove("maejok-hide");
+    fullscreenControl.classList.remove("maejok-hide");
   } else {
     videoControls.classList.add("maejok-hide");
     qualityControl.classList.add("maejok-hide");
+    fullscreenControl.classList.add("maejok-hide");
   }
 };
 
@@ -324,19 +330,24 @@ export const displayUserNameOverlay = () => {
 };
 
 export const toggleTokenConversion = (toggle) => {
-  const tokenToUsdRate = config.get("tokenToUsdRate"); 
+  const tokenToUsdRate = config.get("tokenToUsdRate");
   const usdExchangeRate = config.get("usdExchangeRate");
-  //!state.get("observers").tokensActive && 
+  //!state.get("observers").tokensActive &&
   if (!state.get("observers").modal && toggle) {
     observers.modal.start();
   }
-  
+
   const convertTokensToLocalCurrency = (element) => {
     if (!element.hasAttribute("data-original")) {
       element.setAttribute("data-original", element.innerHTML); // Store original HTML content
     }
 
-    const hasMultiplePrices = element.querySelector("span") && [...element.childNodes].some(node => node.nodeType === Node.TEXT_NODE && node.textContent.includes("₣"));
+    const hasMultiplePrices =
+      element.querySelector("span") &&
+      [...element.childNodes].some(
+        (node) =>
+          node.nodeType === Node.TEXT_NODE && node.textContent.includes("₣")
+      );
 
     if (hasMultiplePrices) {
       element.querySelectorAll("span").forEach((span) => {
@@ -344,7 +355,11 @@ export const toggleTokenConversion = (toggle) => {
         if (tokenText.startsWith("₣")) {
           const tokenValue = parseFloat(tokenText.slice(1));
           if (!isNaN(tokenValue)) {
-            const localCurrencyValue = (tokenValue * tokenToUsdRate * usdExchangeRate).toFixed(2);
+            const localCurrencyValue = (
+              tokenValue *
+              tokenToUsdRate *
+              usdExchangeRate
+            ).toFixed(2);
             span.innerHTML = `<span style="text-decoration: line-through;">$${localCurrencyValue}</span>`;
           }
         }
@@ -353,21 +368,33 @@ export const toggleTokenConversion = (toggle) => {
       element.childNodes.forEach((node, index, nodeList) => {
         if (node.nodeType === Node.TEXT_NODE) {
           let text = node.textContent.trim();
-          if (text === "₣" && nodeList[index + 1] && nodeList[index + 1].nodeType === Node.TEXT_NODE) {
+          if (
+            text === "₣" &&
+            nodeList[index + 1] &&
+            nodeList[index + 1].nodeType === Node.TEXT_NODE
+          ) {
             const nextText = nodeList[index + 1].textContent.trim();
             if (!isNaN(parseFloat(nextText))) {
               const combinedText = text + nextText;
               const tokenValue = parseFloat(combinedText.slice(1));
               if (!isNaN(tokenValue)) {
-                const localCurrencyValue = (tokenValue * tokenToUsdRate * usdExchangeRate).toFixed(2);
+                const localCurrencyValue = (
+                  tokenValue *
+                  tokenToUsdRate *
+                  usdExchangeRate
+                ).toFixed(2);
                 node.textContent = `$${localCurrencyValue}`;
-                nodeList[index + 1].textContent = '';
+                nodeList[index + 1].textContent = "";
               }
             }
           } else if (text.startsWith("₣")) {
             const tokenValue = parseFloat(text.slice(1));
             if (!isNaN(tokenValue)) {
-              const localCurrencyValue = (tokenValue * tokenToUsdRate * usdExchangeRate).toFixed(2);
+              const localCurrencyValue = (
+                tokenValue *
+                tokenToUsdRate *
+                usdExchangeRate
+              ).toFixed(2);
               node.textContent = `$${localCurrencyValue}`;
             }
           }
@@ -380,13 +407,23 @@ export const toggleTokenConversion = (toggle) => {
       if (tokenMatch) {
         const tokenValue = parseFloat(tokenMatch[1]);
         if (!isNaN(tokenValue)) {
-          const localCurrencyValue = (tokenValue * tokenToUsdRate * usdExchangeRate).toFixed(2);
-          element.innerHTML = originalText.replace(tokenMatch[0], `$${localCurrencyValue}`);
+          const localCurrencyValue = (
+            tokenValue *
+            tokenToUsdRate *
+            usdExchangeRate
+          ).toFixed(2);
+          element.innerHTML = originalText.replace(
+            tokenMatch[0],
+            `$${localCurrencyValue}`
+          );
         }
       }
     }
 
-    if (element.classList.contains(ELEMENTS.token.ttsModalTokens.class) || element.classList.contains(ELEMENTS.token.sfxModalTokens.class)) {
+    if (
+      element.classList.contains(ELEMENTS.token.ttsModalTokens.class) ||
+      element.classList.contains(ELEMENTS.token.sfxModalTokens.class)
+    ) {
       element.style.width = "135px";
     }
   };
@@ -397,7 +434,10 @@ export const toggleTokenConversion = (toggle) => {
       element.innerHTML = originalContent;
       element.removeAttribute("data-original");
     }
-    if (element.classList.contains(ELEMENTS.token.ttsModalTokens.class) || element.classList.contains(ELEMENTS.token.sfxModalTokens.class)) {
+    if (
+      element.classList.contains(ELEMENTS.token.ttsModalTokens.class) ||
+      element.classList.contains(ELEMENTS.token.sfxModalTokens.class)
+    ) {
       element.style.width = "96px";
     }
   };
@@ -410,12 +450,11 @@ export const toggleTokenConversion = (toggle) => {
       ELEMENTS.token.toysFishtoysTokens.selector,
       ELEMENTS.token.buyTokensModal.selector,
       ELEMENTS.token.generateLootPrice.selector,
-      ELEMENTS.token.voteModalTokens.selector + " span"
+      ELEMENTS.token.voteModalTokens.selector + " span",
     ];
 
     selectors.forEach((selector) => {
       document.querySelectorAll(selector).forEach((element) => {
-       
         if (element.closest(ELEMENTS.token.toysBigToyPrice.selector)) return;
         if (toggle) {
           convertTokensToLocalCurrency(element);
@@ -439,12 +478,12 @@ export const togglePopoutChatButton = (toggle) => {
       // Create the button
       const button = document.createElement("button");
       button.id = buttonId;
-      button.style.background = "none";       // No background
-      button.style.border = "none";           // No border
-      button.style.cursor = "pointer";        // Pointer cursor
-      button.style.paddingRight = "10px";     // Right padding
-      button.style.paddingLeft = "10px";     // Right padding
-      button.style.color = "#ffffff";         // Default icon color (white)
+      button.style.background = "none"; // No background
+      button.style.border = "none"; // No border
+      button.style.cursor = "pointer"; // Pointer cursor
+      button.style.paddingRight = "10px"; // Right padding
+      button.style.paddingLeft = "10px"; // Right padding
+      button.style.color = "#ffffff"; // Default icon color (white)
 
       // Add the SVG icon
       button.innerHTML = `
@@ -474,20 +513,17 @@ export const togglePopoutChatButton = (toggle) => {
       const chatHeader = document.querySelector(ELEMENTS.chat.header.selector);
       if (chatHeader) {
         chatHeader.appendChild(button); // Adds button to the end
-
       }
     }
   } else {
     // Remove the button if it exists
     if (existingButton) {
-
       existingButton.remove();
     }
   }
 };
 
 export const toggleHiddenItems = (toggle) => {
-
   const styleId = "polygon-fill-style";
   let styleElement = document.getElementById(styleId);
 
@@ -1333,7 +1369,7 @@ export const startMaejokTools = async () => {
   toggleTimestampOverlay(config.get("enableTimestampOverlay"));
   toggleUserOverlay(config.get("enableUserOverlay"));
   toggleScreenTakeovers(config.get("hideScreenTakeovers"));
-  togglePopoutChatButton(config.get("enablePopoutChatButton"))
+  togglePopoutChatButton(config.get("enablePopoutChatButton"));
   toggleHiddenItems(config.get("showHiddenItems"));
   toggleTokenConversion(config.get("convertTokenValues"));
 

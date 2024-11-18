@@ -44,6 +44,10 @@ const Elements = {
       selector: `[class^="livepeer-video-player_quality"]`,
       class: "livepeer-video-player_quality__1WPkz",
     },
+    fullscreen: {
+      selector: `[class^="livepeer-video-player_fullscreen"]`,
+      class: "livepeer-video-player_fullscreen__qCmpW",
+    },
     timestamp: {
       selector: `.maejok-timestamp-container`,
       class: "maejok-timestamp-container",
@@ -670,7 +674,10 @@ const Elements = {
     },
     toysBigToyPrice: {
       selector: `.get-fishtoys-modal_fishtoy__XFh5h.get-fishtoys-modal_bigtoy__LOwwY`,
-      classes: ["get-fishtoys-modal_fishtoy__XFh5h", "get-fishtoys-modal_bigtoy__LOwwY"],
+      classes: [
+        "get-fishtoys-modal_fishtoy__XFh5h",
+        "get-fishtoys-modal_bigtoy__LOwwY",
+      ],
     },
     generateLootPrice: {
       selector: `[class^=item-generator-modal_cost__]`,
