@@ -32,6 +32,14 @@
   position: relative !important;
 }
 
-.maejok-toast-body-full-width {
-  
+.maejok-toast-body-fix {
+  position: relative;
+  min-width: auto !important;
+  max-width: inherit !important;
+  width: 100%;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
 }
