@@ -25,8 +25,11 @@ import {
   pluginName,
   disableSoundEffects,
   toggleScanLines,
+  toggleHiddenItems,
   toggleScreenTakeovers,
   toggleTimestampOverlay,
+  toggleTokenConversion,
+  togglePopoutChatButton,
   toggleNavigationOverlay,
   toggleUserOverlay,
   keyEventToString,
@@ -80,7 +83,10 @@ export const saveSettings = async () => {
   disableSoundEffects(config.get("disableSoundEffects"));
   applySettingsToChat();
   toggleScanLines();
+  togglePopoutChatButton(config.get("enablePopoutChatButton"));
+  toggleHiddenItems(config.get("showHiddenItems"));
   toggleDimMode(config.get("enableDimMode"));
+  toggleTokenConversion(config.get("convertTokenValues"));
   toggleTimestampOverlay(config.get("enableTimestampOverlay"));
   toggleNavigationOverlay(config.get("hideNavigationOverlay"));
   toggleUserOverlay(config.get("enableUserOverlay"));
@@ -325,8 +331,12 @@ export const createSettingsModal = () => {
 export function validateInput(accept, value) {
   switch (accept) {
     case "number":
-      const onlyNumbersRegex = /^\d+$/;
-      return onlyNumbersRegex.test(value);
+      const decimalNumberRegex = /^\d+(\.\d+)?$/; // Allows integers and decimals
+      return decimalNumberRegex.test(value);
+
+    case "integer":
+      const integerRegex = /^\d+$/; // Allows only whole numbers
+      return integerRegex.test(value);
 
     default:
       break;

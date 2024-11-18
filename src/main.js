@@ -27,8 +27,8 @@ import "./styles/styles.scss";
 
   const enableDimMode =
     config.get("enableDimMode") && config.get("enablePlugin");
-  toggleDimMode(enableDimMode);
 
+  toggleDimMode(enableDimMode);
   toggleScanLines(config.get("hideScanLines") && config.get("enablePlugin"));
 
   const address = window.location.href;

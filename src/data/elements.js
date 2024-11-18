@@ -643,6 +643,40 @@ const Elements = {
       class: `toast_success__DNYPY`,
     },
   },
+  token: {
+    ttsModalTokens: {
+      selector: `[class^="tts-modal_tokens__"]`,
+      class: "tts-modal_tokens__yZ5jv",
+    },
+    sfxModalTokens: {
+      selector: `[class^="sfx-modal_tokens__"]`,
+      class: "sfx-modal_tokens__i1DhV",
+    },
+    topBarUserTokens: {
+      selector: `[class^="top-bar-user_tokens__"]`,
+      class: "top-bar-user_tokens__vAwEj",
+    },
+    toysFishtoysTokens: {
+      selector: `[class^="get-fishtoys-modal_cost__"]`,
+      class: "get-fishtoys-modal_cost__e3dHa",
+    },
+    buyTokensModal: {
+      selector: `[class^="get-tokens-modal_tokens__"]`,
+      class: "get-tokens-modal_tokens__LX5HO",
+    },
+    voteModalTokens: {
+      selector: `[class^="confirm-modal_body__"]`,
+      class: "confirm-modal_body__LQQc6",
+    },
+    toysBigToyPrice: {
+      selector: `.get-fishtoys-modal_fishtoy__XFh5h.get-fishtoys-modal_bigtoy__LOwwY`,
+      classes: ["get-fishtoys-modal_fishtoy__XFh5h", "get-fishtoys-modal_bigtoy__LOwwY"],
+    },
+    generateLootPrice: {
+      selector: `[class^=item-generator-modal_cost__]`,
+      classes: "item-generator-modal_cost__XJRS_",
+    },
+  },
 };
 
 export default Elements;
