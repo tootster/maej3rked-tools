@@ -1,5 +1,24 @@
 # MAEJ3RKED-TOOLS CHANGE LOG
 
+# **_v2.23.0_**
+
+_Release: 11-17-2024_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- N/A
+
+### Features Added / Changed
+
+- hide video control overlay hides fullscreen button
+- add highlight hidden items thanks to @tootster [#29](https://github.com/f3rked/maej3rked-tools/pull/29)
+- add token -> currency conversion thanks to @tootster [#29](https://github.com/f3rked/maej3rked-tools/pull/29)
+- add chat popout button thanks to @tootster [#29](https://github.com/f3rked/maej3rked-tools/pull/29)
+
 # **_v2.22.0_**
 
 _Release: 11-12-2024_
