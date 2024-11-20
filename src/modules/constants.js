@@ -7,6 +7,8 @@ export const PACKAGE_URL = `${REPO_RAW_ROOT}/package.json`;
 export const ONE_MINUTE = 60 * 1000;
 export const TEN_MINUTES = ONE_MINUTE * 10;
 
+export const CHAT_OVERLAY_MESSAGE_QUEUE = [];
+
 export const SOUNDS = new Map([
   //long
   ["doom", "mp3"],
@@ -174,7 +176,7 @@ export const CHAT_OVERLAY_CONFIG = {
       pointer-events: auto;
       width: 18vw;
       height: calc(100% - 128px);
-      background-color: rgba(0, 0, 0, 0.3);
+      background-color: rgba(0, 0, 0, 0.5);
       border: 1px solid rgb(80, 80, 80);
       z-index: 9999;
       display: none; /* Hidden by default */

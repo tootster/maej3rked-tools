@@ -11,6 +11,7 @@ import {
   DEFAULT_KEYBINDS,
   CHAT_OVERLAY_CONFIG,
   REPO_URL_ROOT,
+  CHAT_OVERLAY_MESSAGE_QUEUE,
 } from "./constants";
 import Message from "../classes/Message";
 import ELEMENTS from "../data/elements";
@@ -471,6 +472,7 @@ export const toggleTokenConversion = (toggle) => {
   processElements();
 };
 
+
 export const enableChatOverlay = (toggle) => {
   let chatOverlayWrapper = document.getElementById("chatOverlayWrapper")
   let buttonParentContainer = document.getElementById("hidechatOverlayButtonWrapper");
@@ -493,6 +495,7 @@ export const enableChatOverlay = (toggle) => {
       // Create the chat container (scrollable)
       const chatOverlayContainer = document.createElement('div');
       applyConfigToElement(chatOverlayContainer, CHAT_OVERLAY_CONFIG.overlayContainer);
+
       
       // Add Event listeners.
       chatOverlayContainer.addEventListener('scroll', () => {
@@ -608,19 +611,38 @@ export const enableChatOverlay = (toggle) => {
   }
 };
 
+
+
 export const addMessageToChatOverlay = (node) => {
-  try{
-    const chatOverlayContainer = document.getElementById("chatOverlayContainer")
-    const updatedMessages = node.cloneNode(true);
+  const updatedMessages = node.cloneNode(true);
+  const countOfChatMessages = chatOverlayContainer.children.length;
+  if(state.get("isChatOverlayAutoscrolling")){
+    //Add the chat message and apply styles
+    //const chatOverlayContainer = document.getElementById("chatOverlayContainer")    
     updatedMessages.style.textShadow = '5px 5px 4px #000000';
     chatOverlayContainer.appendChild(updatedMessages);
-    // Auto-scroll to the bottom
-    if(state.get("isChatOverlayAutoscrolling")){
-      chatOverlayContainer.scrollTop = chatOverlayContainer.scrollHeight;
+  
+    //Remove excess messages
+    if (countOfChatMessages >= 100) {
+      const excessMessages = countOfChatMessages - 100 + 1; // +1 to account for the newly added message
+      for (let i = 0; i < excessMessages; i++) {
+        chatOverlayContainer.removeChild(chatOverlayContainer.firstElementChild);
+      }
     }
-  }catch{
-    console.error("Error retreiving chat message.")
-    return;
+
+    //Add queued messages if we are autoscrolling again
+    while (CHAT_OVERLAY_MESSAGE_QUEUE.length > 0) {
+      const message = CHAT_OVERLAY_MESSAGE_QUEUE.shift();
+      chatOverlayContainer.appendChild(message);
+    }
+
+    // Auto-scroll to the bottom
+    chatOverlayContainer.scrollTop = chatOverlayContainer.scrollHeight;
+  }else {
+    if (CHAT_OVERLAY_MESSAGE_QUEUE.length >= 100) {
+      CHAT_OVERLAY_MESSAGE_QUEUE.shift(); // Remove the oldest message
+    }
+    CHAT_OVERLAY_MESSAGE_QUEUE.push(updatedMessages);
   }
 }
 
