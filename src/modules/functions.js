@@ -630,11 +630,15 @@ export const addMessageToChatOverlay = (node) => {
       }
     }
 
-    //Add queued messages if we are autoscrolling again
+    const fragment = document.createDocumentFragment();
     while (CHAT_OVERLAY_MESSAGE_QUEUE.length > 0) {
       const message = CHAT_OVERLAY_MESSAGE_QUEUE.shift();
-      chatOverlayContainer.appendChild(message);
+      fragment.appendChild(message);
     }
+    if(fragment.childElementCount > 0){
+      chatOverlayContainer.appendChild(fragment);
+    }
+
 
     // Auto-scroll to the bottom
     chatOverlayContainer.scrollTop = chatOverlayContainer.scrollHeight;
@@ -642,6 +646,7 @@ export const addMessageToChatOverlay = (node) => {
     if (CHAT_OVERLAY_MESSAGE_QUEUE.length >= 100) {
       CHAT_OVERLAY_MESSAGE_QUEUE.shift(); // Remove the oldest message
     }
+    console.log("add chat message to queue");
     CHAT_OVERLAY_MESSAGE_QUEUE.push(updatedMessages);
   }
 }
