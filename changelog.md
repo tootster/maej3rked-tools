@@ -1,5 +1,21 @@
 # MAEJ3RKED-TOOLS CHANGE LOG
 
+# **_v2.23.1_**
+
+_Release: 11-21-2024_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- Fix tank time and username display in livestream header after site update
+
+### Features Added / Changed
+
+- N/A
+
 # **_v2.23.0_**
 
 _Release: 11-17-2024_
