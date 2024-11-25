@@ -12,6 +12,7 @@ import {
   CHAT_OVERLAY_CONFIG,
   REPO_URL_ROOT,
   CHAT_OVERLAY_MESSAGE_QUEUE,
+  VIDEOPLAYER_HOTKEYS,
 } from "./constants";
 import Message from "../classes/Message";
 import ELEMENTS from "../data/elements";
@@ -24,6 +25,7 @@ import {
   update as updateRecentChatters,
 } from "./recent-chatters";
 import observers from "./observers";
+import { decode, encode } from "@msgpack/msgpack";
 
 export const getReactProps = (element) => {
   if (!element) return null;
@@ -472,184 +474,387 @@ export const toggleTokenConversion = (toggle) => {
   processElements();
 };
 
-
 export const enableChatOverlay = (toggle) => {
-  let chatOverlayWrapper = document.getElementById("chatOverlayWrapper")
+  // Get existing elements by their IDs and selectors
+  let chatOverlayWrapper = document.getElementById("chatOverlayWrapper");
   let buttonParentContainer = document.getElementById("hidechatOverlayButtonWrapper");
   let fullscreenButtonContainer = document.querySelector(ELEMENTS.livestreams.fullscreen.selector);
   let videoPlayerElement = document.querySelector('div[data-livepeer-wrapper]');
 
-  if(chatOverlayWrapper){chatOverlayWrapper.remove();}
+  // Clean up any existing overlay elements if they exist
+  if (chatOverlayWrapper) chatOverlayWrapper.remove();
   chatOverlayWrapper = null;
 
-  if(buttonParentContainer){buttonParentContainer.remove();}
+  if (buttonParentContainer) buttonParentContainer.remove();
   buttonParentContainer = null;
 
+  // If the toggle is enabled, initialize and display the chat overlay
   if (toggle) {
-    
     if (!chatOverlayWrapper) {
-      // Create the wrapper container
+      // Create the main parent container for the chat overlay
       chatOverlayWrapper = document.createElement('div');
       applyConfigToElement(chatOverlayWrapper, CHAT_OVERLAY_CONFIG.overlayWrapper);
 
-      // Create the chat container (scrollable)
+      // Create the chat container (scrollable area for chat messages)
       const chatOverlayContainer = document.createElement('div');
       applyConfigToElement(chatOverlayContainer, CHAT_OVERLAY_CONFIG.overlayContainer);
 
-      
-      // Add Event listeners.
-      chatOverlayContainer.addEventListener('scroll', () => {
-        const scrollTop = chatOverlayContainer.scrollTop;
-        const scrollHeight = chatOverlayContainer.scrollHeight;
-        const clientHeight = chatOverlayContainer.clientHeight;
-
-        // Stop autoscrolling if the user scrolls up
-        let isAutoScrolling = scrollTop + clientHeight >= scrollHeight - 1;
-
-        state.set("isChatOverlayAutoscrolling", isAutoScrolling);
-        // Show or hide the "Scroll to Bottom" button
-        scrollToBottomButton.style.display = isAutoScrolling ? 'none' : 'block';
-      });
-
-      // Create the "Scroll to Bottom" button
+      // Create the "Scroll to Bottom" button for returning to the latest messages
       const scrollToBottomButton = document.createElement('div');
       applyConfigToElement(scrollToBottomButton, CHAT_OVERLAY_CONFIG.scrollBottomButton);
 
-      // Add Event listeners.
+      // Create the container for the message input box and send button
+      const messageInputContainer = document.createElement('div');
+      applyConfigToElement(messageInputContainer, CHAT_OVERLAY_CONFIG.messageInputContainer);
+
+      // Create the message input box for user text entry
+      const messageInput = document.createElement('input');
+      applyConfigToElement(messageInput, CHAT_OVERLAY_CONFIG.messageInput);
+
+      // Create the "Send" button for submitting messages
+      const sendButton = document.createElement('button');
+      applyConfigToElement(sendButton, CHAT_OVERLAY_CONFIG.sendButton);
+
+      // Track mouse hover state over the chat overlay
+      let isMouseInside = false;
+
+      // Event listener to handle mouse entering the overlay
+      chatOverlayWrapper.addEventListener('mouseenter', () => {
+        isMouseInside = true;
+        chatOverlayWrapper.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+        messageInputContainer.style.opacity = "1";
+      });
+
+      // Event listener to handle mouse leaving the overlay
+      chatOverlayWrapper.addEventListener('mouseleave', () => {
+        isMouseInside = false;
+        const isEmpty = !messageInput.value.trim();
+        if (isEmpty) {
+          chatOverlayWrapper.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+          messageInputContainer.style.opacity = "0";
+        }
+      });
+
+      // Handle scrolling within the chat container
+      chatOverlayContainer.addEventListener('scroll', () => {
+        const { scrollTop, scrollHeight, clientHeight } = chatOverlayContainer;
+        const isAutoScrolling = scrollTop + clientHeight >= scrollHeight - 1;
+
+        // Update autoscrolling state and toggle the "Scroll to Bottom" button visibility
+        state.set("isChatOverlayAutoscrolling", isAutoScrolling);
+        scrollToBottomButton.style.display = isAutoScrolling ? 'none' : 'block';
+      });
+
+      // Handle hover effects for the "Scroll to Bottom" button
       scrollToBottomButton.addEventListener('mouseenter', () => {
         scrollToBottomButton.style.backgroundColor = '#191d21';
         scrollToBottomButton.style.border = '1px solid #ffffff';
-        scrollToBottomButton.style.color = ' #ffffff';
+        scrollToBottomButton.style.color = '#ffffff';
       });
 
       scrollToBottomButton.addEventListener('mouseleave', () => {
         scrollToBottomButton.style.backgroundColor = 'hsla(53,88%,78%,.1)';
-        scrollToBottomButton.style.border = '1px solid #f8ec94'
-        scrollToBottomButton.style.color = ' #f8ec94';
+        scrollToBottomButton.style.border = '1px solid #f8ec94';
+        scrollToBottomButton.style.color = '#f8ec94';
       });
 
-      // Scroll to bottom when the button is clicked
+      // Automatically scroll to the bottom when the button is clicked
       scrollToBottomButton.addEventListener('click', () => {
         chatOverlayContainer.scrollTop = chatOverlayContainer.scrollHeight;
         state.set("isChatOverlayAutoscrolling", true);
         scrollToBottomButton.style.display = 'none';
       });
 
-      // Append the chat container and button to the wrapper
+      // Allow sending messages by pressing "Enter" in the input box
+      messageInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' && !sendButton.disabled) {
+          event.preventDefault(); // Prevent default form submission behavior
+          sendButton.click(); // Trigger the "Send" button
+        }
+      });
+
+      // Update "Send" button state based on input content
+      messageInput.addEventListener('input', () => {
+        const isEmpty = !messageInput.value.trim();
+        sendButton.disabled = isEmpty;
+        sendButton.style.opacity = isEmpty ? '0.5' : '1';
+
+        if (isEmpty && !isMouseInside) {
+          chatOverlayWrapper.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+          messageInputContainer.style.opacity = "0";
+        }
+      });
+
+      // Add hover effects for the "Send" button
+      sendButton.addEventListener('mouseenter', () => {
+        sendButton.style.color = '#8c8e90';
+      });
+
+      sendButton.addEventListener('mouseleave', () => {
+        sendButton.style.color = '#f8ec94';
+      });
+
+      // Send the message when the "Send" button is clicked
+      sendButton.addEventListener('click', () => {
+        if (!sendButton.disabled) {
+          const message = messageInput.value.trim();
+          if (message) {
+            sendMessage(2, ["chat:message", message], { compress: true });
+          }
+          messageInput.value = ''; // Clear the input box
+          sendButton.disabled = true; // Disable the button again
+          sendButton.style.opacity = '0.5'; // Indicate disabled state
+        }
+      });
+
+      // Prevent video player hotkeys from interfering with the overlay when typing
+      messageInput.addEventListener('keydown', (event) => {
+        if (!messageInput.inputIsFocused && VIDEOPLAYER_HOTKEYS.includes(event.key.toLowerCase())) {
+          event.stopPropagation();
+        }
+      });
+
+      messageInput.addEventListener('keyup', (event) => {
+        if (!messageInput.inputIsFocused && VIDEOPLAYER_HOTKEYS.includes(event.key.toLowerCase())) {
+          event.stopPropagation();
+        }
+      });
+
+      // Append created elements to their respective containers
+      messageInputContainer.appendChild(messageInput);
+      messageInputContainer.appendChild(sendButton);
       chatOverlayWrapper.appendChild(chatOverlayContainer);
       chatOverlayWrapper.appendChild(scrollToBottomButton);
-    }else {
+      chatOverlayWrapper.appendChild(messageInputContainer);
+    } else {
       console.error('Chat Overlay container already exists.');
     }
 
-    if(fullscreenButtonContainer){
+    // Set up the "Hide Chat Overlay" button if the fullscreen button container exists
+    if (fullscreenButtonContainer) {
       fullscreenButtonContainer.style.display = 'flex';
       fullscreenButtonContainer.style.alignItems = 'center';
-      fullscreenButtonContainer.style.gap = '8px'; // Optional spacing between buttons
+      fullscreenButtonContainer.style.gap = '8px';
 
       if (!buttonParentContainer) {
-        // Create a parent container for the button that hides the chat overlay
         buttonParentContainer = document.createElement('div');
         applyConfigToElement(buttonParentContainer, CHAT_OVERLAY_CONFIG.hideChatOverlayButtonWrapper);
-  
-        // Create the toggle chat button
+
         const toggleChatButton = document.createElement('button');
         applyConfigToElement(toggleChatButton, CHAT_OVERLAY_CONFIG.hideChatOverlayButton);
-  
+
         buttonParentContainer.appendChild(toggleChatButton);
-  
+
+        // Add functionality to toggle the chat overlay visibility
         toggleChatButton.addEventListener('click', () => {
           const isVisible = chatOverlayWrapper.style.display === 'block';
           chatOverlayWrapper.style.display = isVisible ? 'none' : 'block';
           toggleChatButton.setAttribute('aria-pressed', !isVisible);
-          if(state.get("isChatOverlayAutoscrolling")){chatOverlayContainer.scrollTop = chatOverlayContainer.scrollHeight;}
+          if (state.get("isChatOverlayAutoscrolling")) {
+            chatOverlayContainer.scrollTop = chatOverlayContainer.scrollHeight;
+          }
         });
 
-        // Insert the buttonParentContainer before the fullscreen button container
         fullscreenButtonContainer.parentElement.insertBefore(buttonParentContainer, fullscreenButtonContainer);
-        
       } else {
         console.error('Hide Chat Overlay button already exists.');
       }
-  
-    }else{console.error('Full Screen button container doesnt exist.');}
+    } else {
+      console.error('Fullscreen button container doesn\'t exist.');
+    }
 
+    // Attach the chat overlay to the video player and monitor fullscreen changes
     if (videoPlayerElement && fullscreenButtonContainer) {
       videoPlayerElement.appendChild(chatOverlayWrapper);
       state.get("observers").fullscreen?.disconnect();
-  
-      //Create a targeted observer that checks if the video player is fullscreen.
+
       const fullscreenObserver = new MutationObserver(() => {
         const isFullscreen = videoPlayerElement.getAttribute('data-fullscreen') === 'true';
         state.set("isPlayerFullscreen", isFullscreen);
         chatOverlayWrapper.style.display = isFullscreen ? 'block' : 'none';
         buttonParentContainer.style.display = isFullscreen ? 'flex' : 'none';
         if (isFullscreen) {
-          // Reset autoscrolling when enabling fullscreen
           chatOverlayContainer.scrollTop = chatOverlayContainer.scrollHeight;
           state.set("isChatOverlayAutoscrolling", true);
           scrollToBottomButton.style.display = 'none';
         }
       });
+
       fullscreenObserver.observe(videoPlayerElement, {
         attributes: true,
         attributeFilter: ['data-fullscreen'],
       });
+
       state.set("observers", {
         ...state.get("observers"),
         fullscreen: fullscreenObserver,
       });
     } else {
       console.error('Video player element not found. Unable to attach chat overlay.');
-      return;
     }
-
   } else {
-    if(buttonParentContainer){buttonParentContainer.remove();}
-    if(chatOverlayWrapper){chatOverlayWrapper.remove();}
+    // Clean up overlay elements if toggle is disabled
+    if (buttonParentContainer) buttonParentContainer.remove();
+    if (chatOverlayWrapper) chatOverlayWrapper.remove();
     state.get("observers").fullscreen?.disconnect();
   }
 };
 
-
-
 export const addMessageToChatOverlay = (node) => {
+  // Clone the incoming message node to avoid modifying the original
   const updatedMessages = node.cloneNode(true);
+
+  // Get the current number of messages in the chat overlay
   const countOfChatMessages = chatOverlayContainer.children.length;
-  if(state.get("isChatOverlayAutoscrolling")){
-    //Add the chat message and apply styles
-    //const chatOverlayContainer = document.getElementById("chatOverlayContainer")    
-    updatedMessages.style.textShadow = '5px 5px 4px #000000';
+
+  if (state.get("isChatOverlayAutoscrolling")) {
+
+    // Add the new message to the chat overlay container
     chatOverlayContainer.appendChild(updatedMessages);
-  
-    //Remove excess messages
+
+    // Limit the number of messages in the chat overlay to 100
     if (countOfChatMessages >= 100) {
-      const excessMessages = countOfChatMessages - 100 + 1; // +1 to account for the newly added message
+      const excessMessages = countOfChatMessages - 100 + 1; // +1 for the newly added message
       for (let i = 0; i < excessMessages; i++) {
         chatOverlayContainer.removeChild(chatOverlayContainer.firstElementChild);
       }
     }
 
-    const fragment = document.createDocumentFragment();
-    while (CHAT_OVERLAY_MESSAGE_QUEUE.length > 0) {
-      const message = CHAT_OVERLAY_MESSAGE_QUEUE.shift();
-      fragment.appendChild(message);
-    }
-    if(fragment.childElementCount > 0){
-      chatOverlayContainer.appendChild(fragment);
+    // Check if there are queued messages and add them to the chat
+    if (CHAT_OVERLAY_MESSAGE_QUEUE.length > 0) {
+      const fragment = document.createDocumentFragment();
+
+      // Add all queued messages to a document fragment
+      while (CHAT_OVERLAY_MESSAGE_QUEUE.length > 0) {
+        const message = CHAT_OVERLAY_MESSAGE_QUEUE.shift();
+        fragment.appendChild(message);
+      }
+
+      // Append the fragment if it contains any messages
+      if (fragment.childElementCount > 0) {
+        chatOverlayContainer.appendChild(fragment);
+      }
     }
 
-
-    // Auto-scroll to the bottom
+    // Automatically scroll to the bottom to show the newest message
     chatOverlayContainer.scrollTop = chatOverlayContainer.scrollHeight;
-  }else {
+  } else {
+    // If auto-scrolling is disabled, queue the incoming message instead
+
+    // Ensure the queue does not exceed 100 messages by removing the oldest one
     if (CHAT_OVERLAY_MESSAGE_QUEUE.length >= 100) {
-      CHAT_OVERLAY_MESSAGE_QUEUE.shift(); // Remove the oldest message
+      CHAT_OVERLAY_MESSAGE_QUEUE.shift();
     }
-    console.log("add chat message to queue");
+
+    // Add the cloned message to the message queue
     CHAT_OVERLAY_MESSAGE_QUEUE.push(updatedMessages);
   }
-}
+};
+
+// Store the target WebSocket instance
+let targetWebSocket = null;
+let currentMessageId = 0; 
+
+export const hookWebSocket = () => {
+  console.log("[WebSocket Inspector] Installing hooks...");
+
+  // Store original methods and descriptors
+  const originalSend = WebSocket.prototype.send;
+  const originalAddEventListener = WebSocket.prototype.addEventListener;
+  const originalOnMessageDescriptor = Object.getOwnPropertyDescriptor(WebSocket.prototype, "onmessage");
+
+  // Intercept outgoing messages
+  WebSocket.prototype.send = function (data) {
+    if (!targetWebSocket && this.url.includes("wss://ws.fishtank.live")) {
+      targetWebSocket = this; // Store the reference
+    }
+
+    // Uncomment for debugging.
+    // if (data instanceof ArrayBuffer) {
+    //   try {
+    //     const decoded = decode(data);
+    //     console.log("[WebSocket Inspector] Sent data (Decoded):", decoded);
+    //   } catch (err) {
+    //     console.error("[WebSocket Inspector] Failed to decode outgoing message:", err);
+    //   }
+    // }
+
+    return originalSend.call(this, data);
+  };
+
+  // Intercept addEventListener for incoming messages
+  WebSocket.prototype.addEventListener = function (type, listener, options) {
+    if (type === "message") {
+      const wrappedListener = (event) => {
+        //Un comment for debugging
+        // if (event.data instanceof ArrayBuffer) {
+        //   try {
+        //     const decoded = decode(event.data);
+        //      console.log("[WebSocket Inspector] Incoming message (Decoded):", decoded);
+        //   } catch (err) {
+        //     console.error("[WebSocket Inspector] Failed to decode incoming message:", err);
+        //   }
+        // }
+        listener.call(this, event); // Call the original listener
+      };
+      return originalAddEventListener.call(this, type, wrappedListener, options);
+    }
+
+    return originalAddEventListener.call(this, type, listener, options);
+  };
+
+  // Wrap onmessage to log and pass events correctly
+  Object.defineProperty(WebSocket.prototype, "onmessage", {
+    get: originalOnMessageDescriptor.get,
+    set: function (callback) {
+      const wrappedCallback = (event) => {
+        if (event.data instanceof ArrayBuffer) {
+          interceptIncomingMessages(event);
+          //Uncomment for debugging.
+          // try {
+          //   const decoded = decode(event.data);
+          //   if (!decoded.type === 2) {
+          //     console.log("[WebSocket Inspector] Incoming message (Decoded):", decoded);
+          //   }
+          // } catch (err) {
+          //   console.error("[WebSocket Inspector] Failed to decode incoming message:", err);
+          // }
+        }
+        callback(event); // Pass the event to the original onmessage handler
+      };
+
+      originalOnMessageDescriptor.set.call(this, wrappedCallback);
+    },
+  });
+  console.log("[WebSocket Inspector] Hooks installed successfully.");
+};
+
+export const sendMessage = (type, data, options = {}, nsp = "/") => {
+  const message = {
+      type,
+      data,
+      options,
+      id: currentMessageId, // Use the current ID
+      nsp,
+  };
+
+  console.log(`[WebSocket Inspector] Sending message with ID: ${currentMessageId}`);
+  const encodedBuffer = encode(message); // Encode the message with MessagePack
+  targetWebSocket.send(encodedBuffer); // Send the encoded message
+
+  console.log("[WebSocket Inspector] Message sent:", message);
+};
+
+const interceptIncomingMessages = (event) => {
+  const decoded = decode(event.data); // Decode the incoming message
+
+  // Check if the message is an acknowledgment with type 3
+  if (decoded && decoded.type === 3 && typeof decoded.id === "number") {
+      //console.log(`[WebSocket Inspector] Acknowledgment received for ID: ${decoded.id}`);
+      currentMessageId = decoded.id + 1; // Update the currentMessageId
+      //console.log(`[WebSocket Inspector] Next message ID set to: ${currentMessageId}`);
+  }
+};
 
 export function applyConfigToElement(element, config) {
   if (!config || typeof config !== 'object') {
