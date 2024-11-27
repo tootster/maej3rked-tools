@@ -183,20 +183,28 @@ const fetchLiveStreamStatus = async () => {
 };
 
 export const toggleControlOverlay = (force) => {
-  const videoControls = document.querySelector(
-    ELEMENTS.livestreams.controls.selector
+  const liveStreamContainer = document.querySelector(
+    ELEMENTS.livestreams.selector
   );
-  const qualityControl = document.querySelector(
+  const volumeControls = liveStreamContainer.querySelector(
+    ELEMENTS.livestreams.volume.selector
+  );
+  console.log(volumeControls);
+  const qualityControl = liveStreamContainer.querySelector(
     ELEMENTS.livestreams.quality.selector
   );
-  const fullscreenControl = document.querySelector(
+  const fullscreenControl = liveStreamContainer.querySelector(
     ELEMENTS.livestreams.fullscreen.selector
+  );
+  const clipControl = liveStreamContainer.querySelector(
+    ELEMENTS.livestreams.clip.selector
   );
 
   if (!config.get("enableControlOverlay")) {
-    videoControls?.classList.remove("maejok-hide");
+    volumeControls?.classList.remove("maejok-hide");
     qualityControl?.classList.remove("maejok-hide");
     fullscreenControl?.classList.remove("maejok-hide");
+    clipControl?.classList.remove("maejok-hide");
     return;
   }
 
@@ -206,7 +214,12 @@ export const toggleControlOverlay = (force) => {
     state.set("controlOverlayDisabled", force);
   }
 
-  if (!videoControls || !qualityControl || !fullscreenControl) {
+  if (
+    !volumeControls ||
+    !qualityControl ||
+    !fullscreenControl ||
+    !clipControl
+  ) {
     return;
   }
 
@@ -216,13 +229,15 @@ export const toggleControlOverlay = (force) => {
   }
 
   if (disabled) {
-    videoControls.classList.remove("maejok-hide");
+    volumeControls.classList.remove("maejok-hide");
     qualityControl.classList.remove("maejok-hide");
     fullscreenControl.classList.remove("maejok-hide");
+    clipControl.classList.remove("maejok-hide");
   } else {
-    videoControls.classList.add("maejok-hide");
+    volumeControls.classList.add("maejok-hide");
     qualityControl.classList.add("maejok-hide");
     fullscreenControl.classList.add("maejok-hide");
+    clipControl.classList.add("maejok-hide");
   }
 };
 

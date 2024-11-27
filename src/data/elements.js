@@ -36,17 +36,21 @@ const Elements = {
       selector: `[class^="live-streams_selected-live-stream"]`,
       class: `live-streams_selected-live-stream__bFOAj`,
     },
-    controls: {
-      selector: `[class^="livepeer-video-player_controls"]`,
-      class: "livepeer-video-player_controls__y36El",
+    volume: {
+      selector: `[class^="hls-stream-player_volume"]`,
+      class: "hls-stream-player_volume__Ucryi",
+    },
+    clip: {
+      selector: `[class^="hls-stream-player_clip"]`,
+      class: "hls-stream-player_clip__OrKWA",
     },
     quality: {
-      selector: `[class^="livepeer-video-player_quality"]`,
-      class: "livepeer-video-player_quality__1WPkz",
+      selector: `[class^="hls-stream-player_quality"]`,
+      class: "hls-stream-player_quality__RdZRA",
     },
     fullscreen: {
-      selector: `[class^="livepeer-video-player_fullscreen"]`,
-      class: "livepeer-video-player_fullscreen__qCmpW",
+      selector: `[class^="hls-stream-player_fullscreen"]`,
+      class: "hls-stream-player_fullscreen__Y3RhA",
     },
     timestamp: {
       selector: `.maejok-timestamp-container`,

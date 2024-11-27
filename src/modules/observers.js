@@ -93,9 +93,9 @@ const observers = {
   modal: {
     start: () => {
       state.get("observers").modal?.disconnect();
-  
+
       const nextElement = document.getElementById("__next");
-  
+
       const modalSubtreeObserver = (modalNode) => {
         const modalNestedObserver = new MutationObserver((mutations) => {
           mutations.forEach((mutation) => {
@@ -104,7 +104,7 @@ const observers = {
                 if (
                   childNode.matches(
                     `${ELEMENTS.token.generateLootPrice.selector}, ${ELEMENTS.token.topBarUserTokens.selector}, ${ELEMENTS.token.ttsModalTokens.selector}, ${ELEMENTS.token.sfxModalTokens.selector}, ${ELEMENTS.token.toysFishtoysTokens.selector}, ${ELEMENTS.token.buyTokensModal.selector}, ${ELEMENTS.token.voteModalTokens.selector} span`
-                ) ||
+                  ) ||
                   childNode.querySelector(
                     `${ELEMENTS.token.generateLootPrice.selector}, ${ELEMENTS.token.topBarUserTokens.selector}, ${ELEMENTS.token.ttsModalTokens.selector}, ${ELEMENTS.token.sfxModalTokens.selector}, ${ELEMENTS.token.toysFishtoysTokens.selector}, ${ELEMENTS.token.buyTokensModal.selector}, ${ELEMENTS.token.voteModalTokens.selector} span`
                   )
@@ -115,13 +115,16 @@ const observers = {
             });
           });
         });
-  
+
         // Start observing with subtree: true on the modal node itself
-        modalNestedObserver.observe(modalNode, { childList: true, subtree: true });
+        modalNestedObserver.observe(modalNode, {
+          childList: true,
+          subtree: true,
+        });
         // Store the observer instance for cleanup
         state.get("observers").modalNestedObserver = modalNestedObserver;
       };
-  
+
       const modalObserver = new MutationObserver(async (mutations) => {
         mutations.forEach((mutation) => {
           if (
@@ -130,36 +133,42 @@ const observers = {
           ) {
             return;
           }
-  
+
           mutation.addedNodes.forEach((addedNode) => {
             if (addedNode.innerHTML.includes("Application error:")) {
               addedNode.innerHTML =
                 addedNode.innerHTML +
                 `<div style="background-color: rgba(0,0,0,0.5); padding: 10px; width: 775px; line-height: 1em; color: red; font-weight: 900; font-size: 2em; text-shadow: 0 0 3px maroon">MAEJOK-TOOLS NOTICE</div><div style="background-color: rgba(0,0,0,0.5); width: 775px; color: #ff7b7b; font-weight: 900; padding: 10px; text-shadow: 0 0 6px black">Something happened and the site crashed...<br/><br/>Please, for the love of everything holy, DISABLE MAEJOK-TOOLS AND CONFIRM THE PLUGIN IS NOT THE CAUSE OF THE ERROR *BEFORE* MAKING ANY BUG REPORTS<br/><br/>If the error no longer exists after disabling the plugin, <a href="https://github.com/f3rked/maej3rked-tools/issues" target="_blank" style="color: #4747ff;">report the bug on GitHub</a>. <br/><br/>However, if, AND ONLY IF, the error persists after fully disabling MAEJOK-TOOLS from within your UserScript extension, you may report the bug on <a href="https://fishtank.guru/" target="_blank" style="color: #4747ff;">the fishtank.guru discord.</a><br/><br/>DO NOT <u><b>UNDER ANY CIRCUMSTANCE</u></b> CONTACT WES, JET, FISHTANK STAFF OR ANYONE ELSE ABOUT A BUGS CAUSED BY MAEJOK-TOOLS!</div>`;
             }
-  
+
             if (addedNode.id === "modal") {
               // Ensure any previous observer is disconnected before setting up a new one
               state.get("observers").modalNestedObserver?.disconnect();
               modalSubtreeObserver(addedNode); // Set up a fresh observer on modal content
-  
-              addedNode.querySelectorAll(
-                `${ELEMENTS.token.topBarUserTokens.selector}, ${ELEMENTS.token.ttsModalTokens.selector}, ${ELEMENTS.token.sfxModalTokens.selector}, ${ELEMENTS.token.toysFishtoysTokens.selector}, ${ELEMENTS.token.buyTokensModal.selector}, ${ELEMENTS.token.voteModalTokens.selector} span`
-              ).forEach((tokenElement) => {
-                if (!tokenElement.closest(`.${ELEMENTS.token.toysBigToyPrice.classes[0]}.${ELEMENTS.token.toysBigToyPrice.classes[1]}`)) {
-                  toggleTokenConversion(config.get("convertTokenValues"));
-                }
-              });
-  
+
+              addedNode
+                .querySelectorAll(
+                  `${ELEMENTS.token.topBarUserTokens.selector}, ${ELEMENTS.token.ttsModalTokens.selector}, ${ELEMENTS.token.sfxModalTokens.selector}, ${ELEMENTS.token.toysFishtoysTokens.selector}, ${ELEMENTS.token.buyTokensModal.selector}, ${ELEMENTS.token.voteModalTokens.selector} span`
+                )
+                .forEach((tokenElement) => {
+                  if (
+                    !tokenElement.closest(
+                      `.${ELEMENTS.token.toysBigToyPrice.classes[0]}.${ELEMENTS.token.toysBigToyPrice.classes[1]}`
+                    )
+                  ) {
+                    toggleTokenConversion(config.get("convertTokenValues"));
+                  }
+                });
+
               checkTTSFilteredWords(addedNode);
-  
+
               const title = getElementText(ELEMENTS.modal.title.text.selector);
-  
+
               const hideMissionsEnabled = config.get("hideGlobalMissions");
               if (hideMissionsEnabled && title?.includes("Global Mission")) {
                 addedNode.setAttribute("style", "display: none !important");
               }
-  
+
               const dragModalEnabled = config.get("enableDragModal");
               if (
                 dragModalEnabled &&
@@ -200,10 +209,10 @@ const observers = {
           });
         });
       });
-  
+
       // Start observing only direct children of `__next` to detect modal open/close
       modalObserver.observe(nextElement, { childList: true });
-  
+
       state.set("observers", {
         ...state.get("observers"),
         modal: modalObserver,
@@ -216,7 +225,7 @@ const observers = {
       observers.modalNestedObserver?.disconnect(); // Ensure nested observer is disconnected on stop
     },
   },
-  
+
   home: {
     start: () => {
       state.get("observers").home?.disconnect();
@@ -238,7 +247,7 @@ const observers = {
 
           const playerControlsAdded =
             mutation.addedNodes[0].classList?.contains(
-              "livepeer-video-player_controls__y36El"
+              "hls-stream-player_status__Jza42"
             );
 
           if (!livestreamAdded && !playerControlsAdded) {
@@ -263,14 +272,6 @@ const observers = {
 
           mutation.addedNodes.forEach((addedNode) => {
             if (livestreamAdded) {
-              const liveStreamPanel = document.querySelector(
-                ELEMENTS.livestreams.selected.selector
-              );
-
-              if (!liveStreamPanel) {
-                return;
-              }
-
               if (timestampOverlayEnabled) {
                 displayCurrentTankTime();
               }
@@ -349,7 +350,6 @@ const observers = {
       observers.body?.disconnect();
     },
   },
-
 };
 
 export default observers;
