@@ -1,5 +1,21 @@
 # MAEJ3RKED-TOOLS CHANGE LOG
 
+# **_v2.23.2_**
+
+_Release: 11-26-2024_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- Fix video control hiding after site update
+
+### Features Added / Changed
+
+- N/A
+
 # **_v2.23.1_**
 
 _Release: 11-21-2024_
