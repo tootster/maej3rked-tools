@@ -8,6 +8,7 @@ import {
   BAD_WORDS,
   BIG_SCREEN_STYLES_ONLINE,
   BIG_SCREEN_STYLES_OFFLINE,
+  BIGSCREEN_STRETCH_STYLES,
   DEFAULT_KEYBINDS,
   REPO_URL_ROOT,
 } from "./constants";
@@ -578,9 +579,12 @@ export const toggleBigScreen = (mode = null, muted = false) => {
 
   state.set("bigScreenState", mode);
 
-  const big_screen_styles = state.get("isShowLive")
-    ? BIG_SCREEN_STYLES_ONLINE
-    : BIG_SCREEN_STYLES_OFFLINE;
+  let big_screen_styles = BIG_SCREEN_STYLES_OFFLINE;
+  if (state.get("isShowLive")) {
+    big_screen_styles = config.get("enableBigscreenFill")
+      ? BIG_SCREEN_STYLES_ONLINE + BIGSCREEN_STRETCH_STYLES
+      : BIG_SCREEN_STYLES_ONLINE;
+  }
 
   if (mode) {
     const style = document.createElement("style");
