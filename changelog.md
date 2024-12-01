@@ -1,5 +1,25 @@
 # MAEJ3RKED-TOOLS CHANGE LOG
 
+# **_v2.24.0_**
+
+_Release: 12-01-2024_
+
+### Notes
+
+- There was a site update about a week ago that changed the css for the video player to respect the aspect ratio. Previously,
+  this stretched the video player to whatever the size of the container was. In the case of bigscreen, this means, now there are bars on
+  side or top based on the size of your browser window to keep the aspect ratio at 16:9. So I've added an option to match the previous behavior for
+  those that prefer it.
+
+### Bug Fixes
+
+- Fix chat settings not working on the popout chat
+
+### Features Added / Changed
+
+- Add option to have big screen mode match previous behavior to fit the video player to the size of the window
+- Reoganize options - added video player options section
+
 # **_v2.23.2_**
 
 _Release: 11-26-2024_
