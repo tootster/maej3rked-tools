@@ -190,7 +190,6 @@ export const toggleControlOverlay = (force) => {
   const volumeControls = liveStreamContainer.querySelector(
     ELEMENTS.livestreams.volume.selector
   );
-  console.log(volumeControls);
   const qualityControl = liveStreamContainer.querySelector(
     ELEMENTS.livestreams.quality.selector
   );
@@ -201,11 +200,19 @@ export const toggleControlOverlay = (force) => {
     ELEMENTS.livestreams.clip.selector
   );
 
+  const controls = [
+    liveStreamContainer,
+    volumeControls,
+    qualityControl,
+    fullscreenControl,
+    clipControl,
+  ];
+
   if (!config.get("enableControlOverlay")) {
-    volumeControls?.classList.remove("maejok-hide");
-    qualityControl?.classList.remove("maejok-hide");
-    fullscreenControl?.classList.remove("maejok-hide");
-    clipControl?.classList.remove("maejok-hide");
+    controls.forEach((control) => {
+      control?.classList.remove("maejok-hide");
+    });
+
     return;
   }
 
@@ -215,12 +222,8 @@ export const toggleControlOverlay = (force) => {
     state.set("controlOverlayDisabled", force);
   }
 
-  if (
-    !volumeControls ||
-    !qualityControl ||
-    !fullscreenControl ||
-    !clipControl
-  ) {
+  const controlsNotPresent = controls.some((control) => !control);
+  if (controlsNotPresent) {
     return;
   }
 
@@ -230,15 +233,13 @@ export const toggleControlOverlay = (force) => {
   }
 
   if (disabled) {
-    volumeControls.classList.remove("maejok-hide");
-    qualityControl.classList.remove("maejok-hide");
-    fullscreenControl.classList.remove("maejok-hide");
-    clipControl.classList.remove("maejok-hide");
+    controls.forEach((control) => {
+      control.classList.remove("maejok-hide");
+    });
   } else {
-    volumeControls.classList.add("maejok-hide");
-    qualityControl.classList.add("maejok-hide");
-    fullscreenControl.classList.add("maejok-hide");
-    clipControl.classList.add("maejok-hide");
+    controls.forEach((control) => {
+      control.classList.add("maejok-hide");
+    });
   }
 };
 
