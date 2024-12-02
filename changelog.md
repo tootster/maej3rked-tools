@@ -1,5 +1,21 @@
 # MAEJ3RKED-TOOLS CHANGE LOG
 
+# **_v2.25.0_**
+
+_Release: 12-01-2024_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- N/A
+
+### Features Added / Changed
+
+- Add TTS Log feature
+
 # **_v2.24.0_**
 
 _Release: 12-01-2024_
