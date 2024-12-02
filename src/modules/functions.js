@@ -201,7 +201,6 @@ export const toggleControlOverlay = (force) => {
   );
 
   const controls = [
-    liveStreamContainer,
     volumeControls,
     qualityControl,
     fullscreenControl,
@@ -1210,6 +1209,19 @@ export const hideGiftMessage = (toast) => {
   }
 };
 
+const createCurrentTankTimestamp = () => {
+  const d = new Date();
+  return d.toLocaleString("en-US", {
+    timeZone: "America/New_York",
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
+};
+
 export const createEventLogEntry = (toast) => {
   const toastExclusionPattern = /(level|item|mission)/;
 
@@ -1256,19 +1268,27 @@ export const createEventLogEntry = (toast) => {
 };
 
 export const createTtsLogEntry = (node) => {
-  const from = node.querySelector(".chat-message-tts_from__1QSqc").textContent;
-  const room = node.querySelector(".chat-message-tts_room__1lmqo").textContent;
-  const message = node.querySelector(
-    ".chat-message-tts_message__sWVCc"
+  const ttsElements = ELEMENTS.chat.tts;
+  const from = node.querySelector(ttsElements.info.from.selector).textContent;
+  const room = node.querySelector(ttsElements.info.room.selector).textContent;
+  const message = node.querySelector(ttsElements.message.selector).textContent;
+  const timestamp = node.querySelector(
+    ttsElements.footer.timestamp.selector
   ).textContent;
   const voice = node.querySelector(
-    ".chat-message-tts_voice__Cme9G"
+    ttsElements.footer.voice.selector
   ).textContent;
 
   state.set("tts", [
     ...state.get("tts"),
     {
-      ttsContent: { from: from, room: room, message: message, voice: voice },
+      ttsContent: {
+        from: from,
+        room: room,
+        message: message,
+        voice: voice,
+        timestamp: timestamp,
+      },
       added: Date.now(),
     },
   ]);
@@ -1305,7 +1325,7 @@ export const createTtsLog = () => {
       </div>
       <div class="${ttsElements.footer.class}">
         <div class="${ttsElements.footer.voice.class}">${tts.voice}</div>
-        <div class="${ttsElements.footer.timestamp.class}">12/1/24, 10:59 PM</div>
+        <div class="${ttsElements.footer.timestamp.class}">${tts.timestamp}</div>
       </div>
     </div>`;
 

@@ -361,8 +361,8 @@ const Elements = {
           class: "chat-message-tts_voice__Cme9G",
         },
         timestamp: {
-          selector: `[class^="chat-message-tts_voice"]`,
-          class: "chat-message-tts_voice__Cme9G",
+          selector: `[class^="chat-message-tts_timestamp"]`,
+          class: "chat-message-tts_timestamp__pIVv0",
         },
       },
     },
