@@ -1,5 +1,22 @@
 # MAEJ3RKED-TOOLS CHANGE LOG
 
+# **_v2.25.1_**
+
+_Release: 12-02-2024_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- Fix tts log timestamp
+- Fix video control overlay hiding
+
+### Features Added / Changed
+
+- N/A
+
 # **_v2.25.0_**
 
 _Release: 12-01-2024_
