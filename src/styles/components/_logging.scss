@@ -1,5 +1,6 @@
 .maejok-settings_mentions-list,
-.maejok-settings_events-list {
+.maejok-settings_events-list,
+.maejok-settings_tts-list {
   display: flex;
   flex-flow: column;
   background-color: rgba($color-black, 0.65);

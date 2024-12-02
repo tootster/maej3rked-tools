@@ -888,6 +888,9 @@ export const processChatMessage = (node, logMentions = true) => {
     processMentions(message);
   }
 
+  if (cfg.enableTtsLog && message.type === "tts") {
+    createTtsLogEntry(node);
+  }
   checkRoomChange(node);
 
   const msgHideTypes = {
@@ -1250,6 +1253,64 @@ export const createEventLogEntry = (toast) => {
     ...state.get("events"),
     { html: wrapper.outerHTML, added: Date.now() },
   ]);
+};
+
+export const createTtsLogEntry = (node) => {
+  const from = node.querySelector(".chat-message-tts_from__1QSqc").textContent;
+  const room = node.querySelector(".chat-message-tts_room__1lmqo").textContent;
+  const message = node.querySelector(
+    ".chat-message-tts_message__sWVCc"
+  ).textContent;
+  const voice = node.querySelector(
+    ".chat-message-tts_voice__Cme9G"
+  ).textContent;
+
+  state.set("tts", [
+    ...state.get("tts"),
+    {
+      ttsContent: { from: from, room: room, message: message, voice: voice },
+      added: Date.now(),
+    },
+  ]);
+};
+
+export const createTtsLog = () => {
+  const ttsMessages = state.get("tts");
+
+  return ttsMessages.map((ttsMessage) => {
+    const tts = ttsMessage.ttsContent;
+    const ttsElements = ELEMENTS.chat.tts;
+    const html = `<div class="${ttsElements.class}">
+      <div class="${ttsElements.icon.class}">
+        <svg
+          stroke="currentColor"
+          fill="currentColor"
+          stroke-width="0"
+          viewBox="0 0 512 512"
+          height="40"
+          width="40"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M18.62 18.707l2.302 456.713c20.172 6.097 50.346 5.194 68.094-5.3 9.74-5.762 15.83-13.314 17.318-24.757 1.49-11.442-2.114-27.866-15.775-49.85-65.15-104.838-43.09-217.272 24.12-283.156 67.208-65.883 179.805-84.665 289.812-7.214 18.312 12.892 28.41 13.426 35.156 10.308 6.748-3.117 13.086-12.55 18.036-26.186 4.95-13.637 8.515-30.532 12.306-45.967 2.094-8.527 4.108-16.49 6.856-23.647L18.62 18.707zm239.07 54.02c-8.728-.036-17.285.53-25.64 1.652l156.454 92.8 21.037-37.436c-5.072-2.376-10.346-5.476-15.806-9.32-47.14-33.19-93.62-47.523-136.043-47.697zM127.913 125.56l-.15.143c-26.928 26.397-46.107 60.924-53.93 99.686 75.5-10.072 121.71 72.345 177.38 61.495 6.68-57.468-59.496-126.038-123.3-161.326zm227.297 47.21c-6.87 36.037-29.7 77.615-66.003 113.92-36.093 36.095-77.76 59.255-113.646 66.27 40.94 8.506 92.248-8.67 131.747-48.17 39.643-39.646 56.63-91 47.902-132.02zm66.103 4.302v.004-.004zm0 .004c-9.198 48.248-39.766 103.918-88.374 152.528-48.327 48.328-104.113 79.337-152.167 88.732 54.816 11.39 123.514-11.608 176.4-64.498 53.08-53.082 75.822-121.842 64.14-176.762zm67.328 10.985c-11.378 59.698-49.203 128.58-109.345 188.725-59.794 59.798-128.82 98.17-188.28 109.79 67.825 14.094 152.828-14.364 218.264-79.804 65.677-65.678 93.815-150.757 79.36-218.71zM71.07 243.337c-4.794 44.69 5.3 93.938 35.362 142.314 7.806 12.562 13.057 24.113 16.01 34.75l36.103-21.412L71.07 243.336z"></path>
+        </svg>
+      </div>
+      <div class="${ttsElements.title.class}">TTS</div>
+      <div class="${ttsElements.info.class}">
+        <span class="${ttsElements.info.from.class}">${tts.from}</span>
+        <span class="${ttsElements.info.to.class}">-&gt;</span>
+        <span class="${ttsElements.info.room.class}">${tts.room}</span>
+      </div>
+      <div class="${ttsElements.message.class}">
+        ${tts.message}
+      </div>
+      <div class="${ttsElements.footer.class}">
+        <div class="${ttsElements.footer.voice.class}">${tts.voice}</div>
+        <div class="${ttsElements.footer.timestamp.class}">12/1/24, 10:59 PM</div>
+      </div>
+    </div>`;
+
+    return { html: html, added: ttsMessage.added };
+  });
 };
 
 export const runUserAgreement = () => {

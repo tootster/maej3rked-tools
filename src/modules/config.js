@@ -1,6 +1,6 @@
 import state from "./state";
 import { BAD_WORDS } from "./constants";
-import { pluginName } from "./functions";
+import { createTtsLog, pluginName } from "./functions";
 import { clickResetKeybindButton } from "./events";
 
 const Config = () => {
@@ -73,6 +73,8 @@ const Config = () => {
     reverseMentionLog: false,
     enableEventsLog: false,
     reverseEventsLog: false,
+    enableTtsLog: false,
+    reverseTtsLog: false,
 
     agreementVersion: null,
 
@@ -791,6 +793,7 @@ const Config = () => {
           groups: [
             { name: "mentions", label: "Mentions Log" },
             { name: "events", label: "Events Log" },
+            { name: "tts", label: "TTS Log" },
           ],
           inputs: [
             // mentions
@@ -816,7 +819,7 @@ const Config = () => {
               group: "mentions",
               help: {
                 label: "?",
-                text: `<p>Enabling this option set the mentions log to list in order of newest to oldest.</p><p>After toggling this option, you must close and reopen the settings window to see the changes.</p>`,
+                text: `<p>Enabling this option will set the mentions log to list in order of newest to oldest.</p><p>After toggling this option, you must close and reopen the settings window to see the changes.</p>`,
               },
             },
             // mentionsLog
@@ -849,7 +852,7 @@ const Config = () => {
               group: "events",
               help: {
                 label: "?",
-                text: `<p>Enabling this option set the events log to list in order of newest to oldest.</p><p>After toggling this option, you must close and reopen the settings window to see the changes.</p>`,
+                text: `<p>Enabling this option will set the events log to list in order of newest to oldest.</p><p>After toggling this option, you must close and reopen the settings window to see the changes.</p>`,
               },
             },
             // eventsLog
@@ -859,6 +862,39 @@ const Config = () => {
               type: "events-log",
               value: state.get("events"),
               group: "events",
+            },
+            // ttsLog
+            {
+              name: "enableTtsLog",
+              label: "Enable TTS Logging",
+              type: "toggle",
+              value: cfg.enableTtsLog,
+              group: "tts",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option will temporarily store <strong>TTS Messages</strong>.</p>
+                       <p>This log WILL clear every time you refresh or close the page.</p>`,
+              },
+            },
+            // reverseTtsLog
+            {
+              name: "reverseTtsLog",
+              label: "Show Newest First",
+              type: "toggle",
+              value: cfg.reverseTtsLog,
+              group: "tts",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option will set the tts log to list in order of newest to oldest.</p><p>After toggling this option, you must close and reopen the settings window to see the changes.</p>`,
+              },
+            },
+            // ttsLog
+            {
+              name: "ttsLog",
+              label: "TTS Log",
+              type: "tts-log",
+              value: createTtsLog(),
+              group: "tts",
             },
           ],
         },

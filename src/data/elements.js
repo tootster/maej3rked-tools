@@ -325,6 +325,46 @@ const Elements = {
     tts: {
       selector: `[class^="chat-message-tts_chat-message-tts__"]`,
       class: "chat-message-tts_chat-message-tts__2Jlxi",
+      icon: {
+        selector: `[class^="chat-message-tts_icon"]`,
+        class: "chat-message-tts_icon__DWVlb",
+      },
+      title: {
+        selector: `[class^="chat-message-tts_title"]`,
+        class: "chat-message-tts_title__vqGKb",
+      },
+      info: {
+        selector: `[class^="chat-message-tts_info"]`,
+        class: "chat-message-tts_info__Ud32g",
+        from: {
+          selector: `[class^="chat-message-tts_from"]`,
+          class: "chat-message-tts_from__1QSqc",
+        },
+        to: {
+          selector: `[class^="chat-message-tts_to"]`,
+          class: "chat-message-tts_to__GKbmT",
+        },
+        room: {
+          selector: `[class^="chat-message-tts_room"]`,
+          class: "chat-message-tts_room__1lmqo",
+        },
+      },
+      message: {
+        selector: `[class^="chat-message-tts_message"]`,
+        class: "chat-message-tts_message__sWVCc",
+      },
+      footer: {
+        selector: `[class^="chat-message-tts_footer"]`,
+        class: "chat-message-tts_footer__qJQlN",
+        voice: {
+          selector: `[class^="chat-message-tts_voice"]`,
+          class: "chat-message-tts_voice__Cme9G",
+        },
+        timestamp: {
+          selector: `[class^="chat-message-tts_voice"]`,
+          class: "chat-message-tts_voice__Cme9G",
+        },
+      },
     },
     sfx: {
       selector: `[class^="chat-message-sfx_chat-message-sfx__"]`,
@@ -516,6 +556,15 @@ const Elements = {
       },
       toastFix: {
         class: "maejok-event-toast-fix",
+      },
+    },
+    tts: {
+      class: "maejok-settings_tts-list",
+      item: {
+        class: "maejok-settings_tts-list-item",
+        remove: {
+          class: "maejok-settings_tts-list-item-remove",
+        },
       },
     },
     config: {

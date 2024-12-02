@@ -9,6 +9,7 @@ const State = () => {
     events: [],
     controlOverlayDisabled: false,
     mentions: [],
+    tts: [],
     recentChatters: [],
     observers: {
       chat: null,
