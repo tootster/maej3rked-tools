@@ -1,5 +1,21 @@
 # MAEJ3RKED-TOOLS CHANGE LOG
 
+# **_v2.26.0_**
+
+_Release: 12-02-2024_
+
+### Notes
+
+- This is stupid.
+
+### Bug Fixes
+
+- N/A
+
+### Features Added / Changed
+
+- Added a little easter egg for these trying nontent times (press ctrl + alt + 7)
+
 # **_v2.25.1_**
 
 _Release: 12-02-2024_
