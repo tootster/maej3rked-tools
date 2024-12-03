@@ -299,7 +299,7 @@ export const toggleTimestampOverlay = (toggle) => {
 
 export const displayCurrentTankTime = () => {
   const playerHeaderTarget = document.querySelector(
-    ".live-stream-player_report__2Ki1w"
+    ".live-stream-player_right__YlQQh"
   );
 
   if (!playerHeaderTarget) {
@@ -372,7 +372,7 @@ export const toggleUserOverlay = (toggle) => {
 
 export const displayUserNameOverlay = () => {
   const playerHeaderTarget = document.querySelector(
-    ".live-stream-player_report__2Ki1w"
+    ".live-stream-player_right__YlQQh"
   );
 
   if (!playerHeaderTarget) {
