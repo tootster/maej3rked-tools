@@ -1,5 +1,21 @@
 # MAEJ3RKED-TOOLS CHANGE LOG
 
+# **_v2.26.1_**
+
+_Release: 12-03-2024_
+
+### Notes
+
+- Site update broke settings that displayed elements in the video player top bar
+
+### Bug Fixes
+
+- Fix tanktime and username overlay
+
+### Features Added / Changed
+
+- N/A
+
 # **_v2.26.0_**
 
 _Release: 12-02-2024_
