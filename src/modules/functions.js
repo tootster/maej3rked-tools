@@ -183,6 +183,47 @@ const fetchLiveStreamStatus = async () => {
   }
 };
 
+export const toggleNontentOverlay = () => {
+  const liveStreamContainer = document.querySelector(
+    ELEMENTS.livestreams.selector
+  );
+
+  if (!liveStreamContainer) {
+    return;
+  }
+
+  const nontentOverlayActive = state.get("nontentOverlayActive");
+  state.set("nontentOverlayActive", !nontentOverlayActive);
+  console.log(nontentOverlayActive);
+
+  if (nontentOverlayActive) {
+    const image = liveStreamContainer.querySelector(
+      ".maejok-nontent-overlay-container"
+    );
+
+    image.remove();
+  } else {
+    const container = document.createElement("div");
+    container.classList.add("maejok-nontent-overlay-container");
+    const image = document.createElement("img");
+    image.classList.add("maejok-nontent-overlay");
+    image.src =
+      "https://img1.picmix.com/output/stamp/normal/0/8/5/4/1324580_5d2c0.gif";
+    container.appendChild(image);
+    const image3 = document.createElement("img");
+    image3.classList.add("maejok-nontent-overlay");
+    image3.src =
+      "https://img1.picmix.com/output/stamp/normal/0/6/5/0/510560_f6854.gif";
+    container.appendChild(image3);
+    const image2 = document.createElement("img");
+    image2.classList.add("maejok-nontent-overlay");
+    image2.src =
+      "https://img1.picmix.com/output/stamp/normal/0/8/5/4/1324580_5d2c0.gif";
+    container.appendChild(image2);
+    liveStreamContainer.appendChild(container);
+  }
+};
+
 export const toggleControlOverlay = (force) => {
   const liveStreamContainer = document.querySelector(
     ELEMENTS.livestreams.selector

@@ -10,6 +10,7 @@ const State = () => {
     controlOverlayDisabled: false,
     mentions: [],
     tts: [],
+    nontentOverlayActive: false,
     recentChatters: [],
     observers: {
       chat: null,
