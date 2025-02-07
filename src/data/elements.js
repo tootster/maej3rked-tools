@@ -36,17 +36,21 @@ const Elements = {
       selector: `[class^="live-streams_selected-live-stream"]`,
       class: `live-streams_selected-live-stream__bFOAj`,
     },
-    controls: {
-      selector: `[class^="livepeer-video-player_controls"]`,
-      class: "livepeer-video-player_controls__y36El",
+    volume: {
+      selector: `[class^="hls-stream-player_volume"]`,
+      class: "hls-stream-player_volume__Ucryi",
+    },
+    clip: {
+      selector: `[class^="hls-stream-player_clip"]`,
+      class: "hls-stream-player_clip__OrKWA",
     },
     quality: {
-      selector: `[class^="livepeer-video-player_quality"]`,
-      class: "livepeer-video-player_quality__1WPkz",
+      selector: `[class^="hls-stream-player_quality"]`,
+      class: "hls-stream-player_quality__RdZRA",
     },
     fullscreen: {
-      selector: `[class^="livepeer-video-player_fullscreen"]`,
-      class: "livepeer-video-player_fullscreen__qCmpW",
+      selector: `[class^="hls-stream-player_fullscreen"]`,
+      class: "hls-stream-player_fullscreen__Y3RhA",
     },
     timestamp: {
       selector: `.maejok-timestamp-container`,
@@ -321,6 +325,46 @@ const Elements = {
     tts: {
       selector: `[class^="chat-message-tts_chat-message-tts__"]`,
       class: "chat-message-tts_chat-message-tts__2Jlxi",
+      icon: {
+        selector: `[class^="chat-message-tts_icon"]`,
+        class: "chat-message-tts_icon__DWVlb",
+      },
+      title: {
+        selector: `[class^="chat-message-tts_title"]`,
+        class: "chat-message-tts_title__vqGKb",
+      },
+      info: {
+        selector: `[class^="chat-message-tts_info"]`,
+        class: "chat-message-tts_info__Ud32g",
+        from: {
+          selector: `[class^="chat-message-tts_from"]`,
+          class: "chat-message-tts_from__1QSqc",
+        },
+        to: {
+          selector: `[class^="chat-message-tts_to"]`,
+          class: "chat-message-tts_to__GKbmT",
+        },
+        room: {
+          selector: `[class^="chat-message-tts_room"]`,
+          class: "chat-message-tts_room__1lmqo",
+        },
+      },
+      message: {
+        selector: `[class^="chat-message-tts_message"]`,
+        class: "chat-message-tts_message__sWVCc",
+      },
+      footer: {
+        selector: `[class^="chat-message-tts_footer"]`,
+        class: "chat-message-tts_footer__qJQlN",
+        voice: {
+          selector: `[class^="chat-message-tts_voice"]`,
+          class: "chat-message-tts_voice__Cme9G",
+        },
+        timestamp: {
+          selector: `[class^="chat-message-tts_timestamp"]`,
+          class: "chat-message-tts_timestamp__pIVv0",
+        },
+      },
     },
     sfx: {
       selector: `[class^="chat-message-sfx_chat-message-sfx__"]`,
@@ -512,6 +556,15 @@ const Elements = {
       },
       toastFix: {
         class: "maejok-event-toast-fix",
+      },
+    },
+    tts: {
+      class: "maejok-settings_tts-list",
+      item: {
+        class: "maejok-settings_tts-list-item",
+        remove: {
+          class: "maejok-settings_tts-list-item-remove",
+        },
       },
     },
     config: {

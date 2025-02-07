@@ -1,6 +1,6 @@
 import state from "./state";
 import { BAD_WORDS } from "./constants";
-import { pluginName } from "./functions";
+import { createTtsLog, pluginName } from "./functions";
 import { clickResetKeybindButton } from "./events";
 
 const Config = () => {
@@ -10,7 +10,7 @@ const Config = () => {
     enableDimMode: false,
 
     convertTokenValues: false,
-    usdExchangeRate: 1.00,
+    usdExchangeRate: 1.0,
     tokenToUsdRate: 0.0828,
 
     enableFullScreenChatOverlay: false,
@@ -22,6 +22,7 @@ const Config = () => {
     enableTTSFilterWarning: false,
     persistBigScreen: false,
     bigScreenState: false,
+    enableBigscreenFill: false,
     enableControlOverlay: false,
     enableTimestampOverlay: false,
     enableUserOverlay: false,
@@ -74,6 +75,8 @@ const Config = () => {
     reverseMentionLog: false,
     enableEventsLog: false,
     reverseEventsLog: false,
+    enableTtsLog: false,
+    reverseTtsLog: false,
 
     agreementVersion: null,
 
@@ -102,6 +105,7 @@ const Config = () => {
           groups: [
             { name: "plugin", label: "Plugin Settings" },
             { name: "site-options", label: "Site-wide Options" },
+            { name: "video-player-options", label: "Video Player Options" },
           ],
           inputs: [
             // plugin
@@ -154,71 +158,7 @@ const Config = () => {
               group: "plugin",
             },
             // site-options
-            // enableBigScreen
-            {
-              name: "enableBigScreen",
-              label: "Enable Big Screen Mode",
-              type: "toggle",
-              value: cfg.enableBigScreen,
-              group: "site-options",
-              help: {
-                label: "?",
-                text: `<p>Enabling this option creates a keyboard shortcut to toggle <strong>Big Screen Mode</strong> which makes the videos take priority in the layout.</p>
-                <p>Keyboard Shortcut: <strong>CTRL+\`</strong> (tilda, above TAB key)</p>
-                <p>or using <strong>CTRL+SHIFT+SPACE BAR</strong>.</p>`,
-              },
-            },
-            // persistBigScreen
-            {
-              name: "persistBigScreen",
-              label: "Persist Big Screen",
-              type: "toggle",
-              value: cfg.persistBigScreen,
-              group: "site-options",
-              help: {
-                label: "?",
-                text: `<p>Enabling this option will restore the last <strong>Big Screen Mode</strong> state upon refreshing the site.</p>`,
-              },
-            },
-            // enableVideoControls
-            {
-              name: "enableControlOverlay",
-              label: "Enable Video Control Overlay Shortcut",
-              type: "toggle",
-              value: cfg.enableControlOverlay,
-              group: "site-options",
-              help: {
-                label: "?",
-                text: `<p>Enabling this option creates a keyboard shortcut to toggle <strong>the video controls overlay</strong> which will show or hide the overlay.</p>
-                <p><strong><i>It will hide the controls when enabled, but you can show them again by using the shortcut.  You may have to click on the window to regain focus for the shortcut to work.</i></strong></p>
-                <p>Keyboard Shortcut: <strong>CTRL+SHIFT+H</strong></p>`,
-              },
-            },
-            // enableTimestampOverlay
-            {
-              name: "enableTimestampOverlay",
-              label: "Enable Tank Time Overlay ",
-              type: "toggle",
-              value: cfg.enableTimestampOverlay,
-              group: "site-options",
-              help: {
-                label: "?",
-                text: `<p>Enabling this option will display a timestamp of the current time in the tank at the top of the video player.</p>`,
-              },
-            },
-            // enableUserOverlay
-            {
-              name: "enableUserOverlay",
-              label: "Enable User Name Overlay ",
-              type: "toggle",
-              value: cfg.enableUserOverlay,
-              group: "site-options",
-              help: {
-                label: "?",
-                text: `<p><strong>Enabling this option will display your username at at the top of the video player.</strong></p>
-                <p><i>This is intended to help out clippers if they want to embed credit easily.</i></p>`,
-              },
-            },
+
             // enableDimMode
             {
               name: "enableDimMode",
@@ -319,42 +259,6 @@ const Config = () => {
                 text: `<p>Enabling this option will prevent the <strong>Screen Takeovers</strong> (Cigarette Deliveries, Loot Crates, etc.) from showing, however, you will still hear the sound effect.</p>`,
               },
             },
-            // hideScanLines
-            {
-              name: "hideScanLines",
-              label: "Hide Scan Lines Effect",
-              type: "toggle",
-              value: cfg.hideScanLines,
-              group: "site-options",
-              help: {
-                label: "?",
-                text: `<p>Enabling this option hide the <strong>Scan Line Effect</strong> seen across the site.</p>`,
-              },
-            },
-            // hideNavigationOverlay
-            {
-              name: "hideNavigationOverlay",
-              label: "Hide Stream Navigation Overlay",
-              type: "toggle",
-              value: cfg.hideNavigationOverlay,
-              group: "site-options",
-              help: {
-                label: "?",
-                text: `<p>Enabling this option will hide the <strong>Stream Navigation Overlay</strong> that displays semi-transparent polygons over the livestream on hover.</p>`,
-              },
-            },
-            // showHiddenItems
-            {
-              name: "showHiddenItems",
-              label: "Show hidden items",
-              type: "toggle",
-              value: cfg.showHiddenItems,
-              group: "site-options",
-              help: {
-                label: "?",
-                text: `<p>Enabling this option will show all hidden items with a green highlight you spoil sport</p>`,
-              },
-            },
             //convertTokenValues
             {
               name: "convertTokenValues",
@@ -370,7 +274,7 @@ const Config = () => {
               },
               config: {
                 title: "Exchange Rates",
-                
+
                 options: [
                   {
                     type: "number",
@@ -435,6 +339,121 @@ const Config = () => {
               help: {
                 label: "?",
                 text: `<p>Enabling this option will hide the <strong>Gifted Season Pass Messages</strong> that pop up and disable the sound.</p>`,
+              },
+            },
+            // video-player-options
+            // enableBigScreen
+            {
+              name: "enableBigScreen",
+              label: "Enable Big Screen Mode",
+              type: "toggle",
+              value: cfg.enableBigScreen,
+              group: "video-player-options",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option creates a keyboard shortcut to toggle <strong>Big Screen Mode</strong> which makes the videos take priority in the layout.</p>
+                  <p>Keyboard Shortcut: <strong>CTRL+\`</strong> (tilda, above TAB key)</p>
+                  <p>or using <strong>CTRL+SHIFT+SPACE BAR</strong>.</p>`,
+              },
+            },
+            // persistBigScreen
+            {
+              name: "persistBigScreen",
+              label: "Persist Big Screen",
+              type: "toggle",
+              value: cfg.persistBigScreen,
+              group: "video-player-options",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option will restore the last <strong>Big Screen Mode</strong> state upon refreshing the site.</p>`,
+              },
+            },
+            // enableBigscreenFill
+            {
+              name: "enableBigscreenFill",
+              label: "Enable Bigscreen Fill",
+              type: "toggle",
+              value: cfg.enableBigscreenFill,
+              group: "video-player-options",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option will cause <strong>bigscreen mode video player to fill the whole screen.</strong></p>
+                  <p><i>This is how the video player worked before a recent site update.  It does slightly stretch the image, but in my opinion it's hard to tell unless you're being really autistic about it.</i></p>`,
+              },
+            },
+            // enableVideoControls
+            {
+              name: "enableControlOverlay",
+              label: "Enable Video Control Overlay Shortcut",
+              type: "toggle",
+              value: cfg.enableControlOverlay,
+              group: "video-player-options",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option creates a keyboard shortcut to toggle <strong>the video controls overlay</strong> which will show or hide the overlay.</p>
+                  <p><strong><i>It will hide the controls when enabled, but you can show them again by using the shortcut.  You may have to click on the window to regain focus for the shortcut to work.</i></strong></p>
+                  <p>Keyboard Shortcut: <strong>CTRL+SHIFT+H</strong></p>`,
+              },
+            },
+            // enableTimestampOverlay
+            {
+              name: "enableTimestampOverlay",
+              label: "Enable Tank Time Overlay ",
+              type: "toggle",
+              value: cfg.enableTimestampOverlay,
+              group: "video-player-options",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option will display a timestamp of the current time in the tank at the top of the video player.</p>`,
+              },
+            },
+            // enableUserOverlay
+            {
+              name: "enableUserOverlay",
+              label: "Enable User Name Overlay",
+              type: "toggle",
+              value: cfg.enableUserOverlay,
+              group: "video-player-options",
+              help: {
+                label: "?",
+                text: `<p><strong>Enabling this option will display your username at at the top of the video player.</strong></p>
+                  <p><i>This is intended to help out clippers if they want to embed credit easily.</i></p>`,
+              },
+            },
+            // hideScanLines
+            {
+              name: "hideScanLines",
+              label: "Hide Scan Lines Effect",
+              type: "toggle",
+              value: cfg.hideScanLines,
+              group: "video-player-options",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option hide the <strong>Scan Line Effect</strong> seen across the site.</p>`,
+              },
+            },
+            // hideNavigationOverlay
+            {
+              name: "hideNavigationOverlay",
+              label: "Hide Stream Navigation Overlay",
+              type: "toggle",
+              value: cfg.hideNavigationOverlay,
+              group: "video-player-options",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option will hide the <strong>Stream Navigation Overlay</strong> that displays semi-transparent polygons over the livestream on hover.</p>`,
+              },
+            },
+            // showHiddenItems
+            {
+              name: "showHiddenItems",
+              label: "Show hidden items",
+              type: "toggle",
+              value: cfg.showHiddenItems,
+              group: "video-player-options",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option will show all hidden items with a green highlight you spoil sport</p>`,
               },
             },
           ],
@@ -653,7 +672,7 @@ const Config = () => {
                 ],
               },
             },
-            
+
             {
               name: "recentChattersThreshold",
               type: "hidden",
@@ -788,6 +807,7 @@ const Config = () => {
           groups: [
             { name: "mentions", label: "Mentions Log" },
             { name: "events", label: "Events Log" },
+            { name: "tts", label: "TTS Log" },
           ],
           inputs: [
             // mentions
@@ -813,7 +833,7 @@ const Config = () => {
               group: "mentions",
               help: {
                 label: "?",
-                text: `<p>Enabling this option set the mentions log to list in order of newest to oldest.</p><p>After toggling this option, you must close and reopen the settings window to see the changes.</p>`,
+                text: `<p>Enabling this option will set the mentions log to list in order of newest to oldest.</p><p>After toggling this option, you must close and reopen the settings window to see the changes.</p>`,
               },
             },
             // mentionsLog
@@ -846,7 +866,7 @@ const Config = () => {
               group: "events",
               help: {
                 label: "?",
-                text: `<p>Enabling this option set the events log to list in order of newest to oldest.</p><p>After toggling this option, you must close and reopen the settings window to see the changes.</p>`,
+                text: `<p>Enabling this option will set the events log to list in order of newest to oldest.</p><p>After toggling this option, you must close and reopen the settings window to see the changes.</p>`,
               },
             },
             // eventsLog
@@ -856,6 +876,39 @@ const Config = () => {
               type: "events-log",
               value: state.get("events"),
               group: "events",
+            },
+            // ttsLog
+            {
+              name: "enableTtsLog",
+              label: "Enable TTS Logging",
+              type: "toggle",
+              value: cfg.enableTtsLog,
+              group: "tts",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option will temporarily store <strong>TTS Messages</strong>.</p>
+                       <p>This log WILL clear every time you refresh or close the page.</p>`,
+              },
+            },
+            // reverseTtsLog
+            {
+              name: "reverseTtsLog",
+              label: "Show Newest First",
+              type: "toggle",
+              value: cfg.reverseTtsLog,
+              group: "tts",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option will set the tts log to list in order of newest to oldest.</p><p>After toggling this option, you must close and reopen the settings window to see the changes.</p>`,
+              },
+            },
+            // ttsLog
+            {
+              name: "ttsLog",
+              label: "TTS Log",
+              type: "tts-log",
+              value: createTtsLog(),
+              group: "tts",
             },
           ],
         },
