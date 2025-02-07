@@ -11,6 +11,8 @@ const State = () => {
     events: [],
     controlOverlayDisabled: false,
     mentions: [],
+    tts: [],
+    nontentOverlayActive: false,
     recentChatters: [],
     observers: {
       chat: null,

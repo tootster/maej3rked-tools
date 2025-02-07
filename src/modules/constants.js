@@ -280,6 +280,32 @@ export const BIG_SCREEN_STYLES_ONLINE = `
 }
 `;
 
+export const BIGSCREEN_STRETCH_STYLES = `
+.hls-stream-player_fullscreen__Y3RhA {
+  top: 32px !important;
+}
+
+.live-stream-player_container__A4sNR {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100% !important;
+  top: -32px;
+}
+
+.live-stream-player_live-stream-player__4CHjG .live-stream-player_container__A4sNR video {
+    height: 100%;
+    aspect-ratio: unset !important;
+    width: 100%;
+    object-fit: fill;
+}
+
+.live-stream-player_header__58imR {
+  z-index: 5;
+}
+`;
+
 export const BIG_SCREEN_STYLES_OFFLINE = `
 .home_home__pUFCA .home_right__j_b3u {
   grid-column: 1/4;
@@ -296,6 +322,50 @@ export const BIG_SCREEN_STYLES_OFFLINE = `
 .tts-history_tts-history__8_9eB  {
   display: none !important;
 }
+`;
+
+export const CHAT_OVERLAY = `
+  .home_home__pUFCA .home_right__j_b3u {
+    grid-column: 3/4;
+    grid-row: 2/6;
+    box-shadow: 4px 4px 0 rgba(0,0,0,.5);
+    /* border-radius: 4px; */
+    display: flex !important;
+    opacity: 40%;
+    z-index: 100;
+    height: calc(100% - 32px);
+    /* top: -32px; */
+    margin-top: 30px;
+    border: none;
+  }
+
+  .chat_chat__2rdNg {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    background-color: transparent;
+    /* border: 1px solid #505050; */
+    /* border-radius: 4px; */
+  }
+
+  .chat_chat__2rdNg .chat_messages__2IBEJ {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    /* background-color: rgba(0,0,0,.5); */
+    padding: 8px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    display: flex !important;
+    z-index: 1000;
+  }
 `;
 
 export const ROOMS = {

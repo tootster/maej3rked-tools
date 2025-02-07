@@ -24,6 +24,22 @@
   font-size: 14px;
 }
 
+.maejok-nontent-overlay-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  align-content: center;
+  justify-items: center;
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
+}
+
+.maejok-nontent-overlay {
+  z-index: 1000;
+}
+
 .maejok-dim-mode {
   position: fixed;
   top: 0;

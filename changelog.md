@@ -1,5 +1,122 @@
 # MAEJ3RKED-TOOLS CHANGE LOG
 
+# **_v2.26.1_**
+
+_Release: 12-03-2024_
+
+### Notes
+
+- Site update broke settings that displayed elements in the video player top bar
+
+### Bug Fixes
+
+- Fix tanktime and username overlay
+
+### Features Added / Changed
+
+- N/A
+
+# **_v2.26.0_**
+
+_Release: 12-02-2024_
+
+### Notes
+
+- This is stupid.
+
+### Bug Fixes
+
+- N/A
+
+### Features Added / Changed
+
+- Added a little easter egg for these trying nontent times (press ctrl + alt + 7)
+
+# **_v2.25.1_**
+
+_Release: 12-02-2024_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- Fix tts log timestamp
+- Fix video control overlay hiding
+
+### Features Added / Changed
+
+- N/A
+
+# **_v2.25.0_**
+
+_Release: 12-01-2024_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- N/A
+
+### Features Added / Changed
+
+- Add TTS Log feature
+
+# **_v2.24.0_**
+
+_Release: 12-01-2024_
+
+### Notes
+
+- There was a site update about a week ago that changed the css for the video player to respect the aspect ratio. Previously,
+  this stretched the video player to whatever the size of the container was. In the case of bigscreen, this means, now there are bars on
+  side or top based on the size of your browser window to keep the aspect ratio at 16:9. So I've added an option to match the previous behavior for
+  those that prefer it.
+
+### Bug Fixes
+
+- Fix chat settings not working on the popout chat
+
+### Features Added / Changed
+
+- Add option to have big screen mode match previous behavior to fit the video player to the size of the window
+- Reoganize options - added video player options section
+
+# **_v2.23.2_**
+
+_Release: 11-26-2024_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- Fix video control hiding after site update
+
+### Features Added / Changed
+
+- N/A
+
+# **_v2.23.1_**
+
+_Release: 11-21-2024_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- Fix tank time and username display in livestream header after site update
+
+### Features Added / Changed
+
+- N/A
+
 # **_v2.23.0_**
 
 _Release: 11-17-2024_

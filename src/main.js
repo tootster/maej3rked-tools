@@ -34,10 +34,6 @@ import "./styles/styles.scss";
   toggleScanLines(config.get("hideScanLines") && config.get("enablePlugin"));
 
   const address = window.location.href;
-  const userData = config.get("userData");
-  if (userData) {
-    state.set("user", userData);
-  }
 
   let isLoaded = false;
   let chat,

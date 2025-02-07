@@ -20,6 +20,7 @@ import {
   toggleItemInList,
   inputIsFocused,
   keyEventToString,
+  toggleNontentOverlay,
 } from "./functions";
 import * as settings from "./settings";
 import * as menu from "./menu";
@@ -270,6 +271,10 @@ export const keyPress = (event) => {
   ) {
     toggleBigScreen();
     return;
+  }
+
+  if (event.ctrlKey && event.altKey && event.code == "Digit7") {
+    toggleNontentOverlay();
   }
 
   if (event.ctrlKey && event.shiftKey && event.code === keys.h) {

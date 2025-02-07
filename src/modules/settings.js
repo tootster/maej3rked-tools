@@ -308,8 +308,10 @@ export const createSettingsModal = () => {
         createKeybindInput(cfg, panel, modal);
       else if (["hidden"].includes(cfg.type)) createHiddenInput(cfg, panel);
       else if (["mentions-log"].includes(cfg.type))
-        createMentionsLog(cfg, panel);
-      else if (["events-log"].includes(cfg.type)) createEventsLog(cfg, panel);
+        createLog(cfg, panel, "Mentions");
+      else if (["events-log"].includes(cfg.type))
+        createLog(cfg, panel, "Events");
+      else if (["tts-log"].includes(cfg.type)) createLog(cfg, panel, "Tts");
       else if (["color-picker"].includes(cfg.type))
         createHighlightsPanel(cfg, panel);
     });
@@ -636,40 +638,12 @@ function createHighlightsPanel(list, panel) {
 
   accordion.appendChild(wrapper);
 }
-
-function createMentionsLog(list, panel) {
-  const reverse = config.get("reverseMentionLog");
-  const props = ELEMENTS.settings;
-  const log = reverse
-    ? list.value.sort((a, b) => b.added - a.added)
-    : list.value.sort((a, b) => a.added - b.added);
-
-  const accordion = panel.querySelector(`[data-group-content="${list.group}"]`);
-
-  const wrapper = document.createElement("div");
-  accordion ? accordion.appendChild(wrapper) : panel.appendChild(wrapper);
-
-  if (log.length > 0) {
-    wrapper.classList.add(props.mentions.class);
-    log.forEach((mention) => {
-      const message = document.createElement("div");
-      message.classList.add(props.mentions.item.class);
-      message.innerHTML = mention.html;
-      wrapper.appendChild(message);
-    });
-  } else {
-    wrapper.innerHTML = "No mentions yet...";
-    wrapper.style.color = "gray";
-    wrapper.style.textAlign = "center";
-  }
-
-  accordion.appendChild(wrapper);
-}
-
-function createEventsLog(list, panel) {
+function createLog(list, panel, type) {
   // refactor this to make resusable createLog for mentions and events
-  const reverse = config.get("reverseEventsLog");
+
+  const reverse = config.get(`reverse${type}Log`);
   const props = ELEMENTS.settings;
+  const logSettings = props[type.toLowerCase()];
 
   const log = reverse
     ? list.value.sort((a, b) => b.added - a.added)
@@ -678,15 +652,15 @@ function createEventsLog(list, panel) {
   const wrapper = document.createElement("div");
   accordion ? accordion.appendChild(wrapper) : panel.appendChild(wrapper);
   if (log.length > 0) {
-    wrapper.classList.add(props.events.class);
-    log.forEach((event) => {
+    wrapper.classList.add(logSettings.class);
+    log.forEach((log) => {
       const message = document.createElement("div");
-      message.classList.add(props.events.item.class);
-      message.innerHTML = event.html;
+      message.classList.add(logSettings.item.class);
+      message.innerHTML = log.html;
       wrapper.appendChild(message);
     });
   } else {
-    wrapper.innerHTML = "No events yet...";
+    wrapper.innerHTML = `No ${type.toLowerCase()} yet...`;
     wrapper.style.color = "gray";
     wrapper.style.textAlign = "center";
   }
