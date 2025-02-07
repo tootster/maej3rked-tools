@@ -474,68 +474,63 @@ export const toggleTokenConversion = (toggle) => {
   processElements();
 };
 
+function toggleFullscreen(element) {
+  const isFullscreen = state.get("isPlayerFullscreen")
+  if (!isFullscreen) {
+      if (element.requestFullscreen) {
+        element.requestFullscreen();
+      } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+      } else if (element.webkitRequestFullScreen) {
+        element.webkitRequestFullScreen();
+      } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+      }
+  } else {
+      if (document.exitFullscreen) {
+          document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+      }
+  }
+}
+
+const createElementWithConfig = (type, config) => {
+  const element = document.createElement(type);
+  applyConfigToElement(element, config);
+  return element;
+};
+
 export const enableChatOverlay = (toggle) => {
   // Get existing elements by their IDs and selectors
-  let chatOverlayWrapper = document.getElementById("chatOverlayWrapper");
-  let buttonParentContainer = document.getElementById("hidechatOverlayButtonWrapper");
-  let fullscreenButtonContainer = document.querySelector(ELEMENTS.livestreams.fullscreen.selector);
-  let videoPlayerElement = document.querySelector('div[data-livepeer-wrapper]');
+  let chatOverlayWrapper = document.getElementById("chatOverlayWrapper")
+  let toggleChatButton = document.getElementById("toggleChatButton");
+  let fullscreenButtonContainer = document.querySelector(".hls-stream-player_fullscreen__Y3RhA");
+  let videoPlayerElement = document.querySelector('.hls-stream-player_hls-stream-player__BJiGl');
 
   // Clean up any existing overlay elements if they exist
   if (chatOverlayWrapper) chatOverlayWrapper.remove();
   chatOverlayWrapper = null;
-
-  if (buttonParentContainer) buttonParentContainer.remove();
-  buttonParentContainer = null;
+  if (toggleChatButton) toggleChatButton.remove();
+  toggleChatButton = null;
 
   // If the toggle is enabled, initialize and display the chat overlay
   if (toggle) {
     if (!chatOverlayWrapper) {
-      // Create the main parent container for the chat overlay
-      chatOverlayWrapper = document.createElement('div');
-      applyConfigToElement(chatOverlayWrapper, CHAT_OVERLAY_CONFIG.overlayWrapper);
+      // Main container
+      chatOverlayWrapper = createElementWithConfig('div', CHAT_OVERLAY_CONFIG.overlayWrapper);
 
-      // Create the chat container (scrollable area for chat messages)
-      const chatOverlayContainer = document.createElement('div');
-      applyConfigToElement(chatOverlayContainer, CHAT_OVERLAY_CONFIG.overlayContainer);
+      // Sub-elements
+      var chatOverlayContainer = createElementWithConfig('div', CHAT_OVERLAY_CONFIG.overlayContainer);
+      var scrollToBottomButton = createElementWithConfig('div', CHAT_OVERLAY_CONFIG.scrollBottomButton);
+      var messageInputContainer = createElementWithConfig('div', CHAT_OVERLAY_CONFIG.messageInputContainer);
+      var messageInput = createElementWithConfig('input', CHAT_OVERLAY_CONFIG.messageInput);
+      var sendButton = createElementWithConfig('button', CHAT_OVERLAY_CONFIG.sendButton);
 
-      // Create the "Scroll to Bottom" button for returning to the latest messages
-      const scrollToBottomButton = document.createElement('div');
-      applyConfigToElement(scrollToBottomButton, CHAT_OVERLAY_CONFIG.scrollBottomButton);
-
-      // Create the container for the message input box and send button
-      const messageInputContainer = document.createElement('div');
-      applyConfigToElement(messageInputContainer, CHAT_OVERLAY_CONFIG.messageInputContainer);
-
-      // Create the message input box for user text entry
-      const messageInput = document.createElement('input');
-      applyConfigToElement(messageInput, CHAT_OVERLAY_CONFIG.messageInput);
-
-      // Create the "Send" button for submitting messages
-      const sendButton = document.createElement('button');
-      applyConfigToElement(sendButton, CHAT_OVERLAY_CONFIG.sendButton);
-
-      // Track mouse hover state over the chat overlay
-      let isMouseInside = false;
-
-      // Event listener to handle mouse entering the overlay
-      chatOverlayWrapper.addEventListener('mouseenter', () => {
-        isMouseInside = true;
-        chatOverlayWrapper.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
-        messageInputContainer.style.opacity = "1";
-      });
-
-      // Event listener to handle mouse leaving the overlay
-      chatOverlayWrapper.addEventListener('mouseleave', () => {
-        isMouseInside = false;
-        const isEmpty = !messageInput.value.trim();
-        if (isEmpty) {
-          chatOverlayWrapper.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-          messageInputContainer.style.opacity = "0";
-        }
-      });
-
-      // Handle scrolling within the chat container
       chatOverlayContainer.addEventListener('scroll', () => {
         const { scrollTop, scrollHeight, clientHeight } = chatOverlayContainer;
         const isAutoScrolling = scrollTop + clientHeight >= scrollHeight - 1;
@@ -545,31 +540,19 @@ export const enableChatOverlay = (toggle) => {
         scrollToBottomButton.style.display = isAutoScrolling ? 'none' : 'block';
       });
 
-      // Handle hover effects for the "Scroll to Bottom" button
-      scrollToBottomButton.addEventListener('mouseenter', () => {
-        scrollToBottomButton.style.backgroundColor = '#191d21';
-        scrollToBottomButton.style.border = '1px solid #ffffff';
-        scrollToBottomButton.style.color = '#ffffff';
-      });
-
-      scrollToBottomButton.addEventListener('mouseleave', () => {
-        scrollToBottomButton.style.backgroundColor = 'hsla(53,88%,78%,.1)';
-        scrollToBottomButton.style.border = '1px solid #f8ec94';
-        scrollToBottomButton.style.color = '#f8ec94';
-      });
-
-      // Automatically scroll to the bottom when the button is clicked
       scrollToBottomButton.addEventListener('click', () => {
         chatOverlayContainer.scrollTop = chatOverlayContainer.scrollHeight;
         state.set("isChatOverlayAutoscrolling", true);
         scrollToBottomButton.style.display = 'none';
       });
 
-      // Allow sending messages by pressing "Enter" in the input box
       messageInput.addEventListener('keydown', (event) => {
         if (event.key === 'Enter' && !sendButton.disabled) {
           event.preventDefault(); // Prevent default form submission behavior
           sendButton.click(); // Trigger the "Send" button
+        }
+        if (!messageInput.inputIsFocused && VIDEOPLAYER_HOTKEYS.includes(event.key.toLowerCase())) {
+          event.stopPropagation();
         }
       });
 
@@ -578,23 +561,8 @@ export const enableChatOverlay = (toggle) => {
         const isEmpty = !messageInput.value.trim();
         sendButton.disabled = isEmpty;
         sendButton.style.opacity = isEmpty ? '0.5' : '1';
-
-        if (isEmpty && !isMouseInside) {
-          chatOverlayWrapper.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-          messageInputContainer.style.opacity = "0";
-        }
       });
 
-      // Add hover effects for the "Send" button
-      sendButton.addEventListener('mouseenter', () => {
-        sendButton.style.color = '#8c8e90';
-      });
-
-      sendButton.addEventListener('mouseleave', () => {
-        sendButton.style.color = '#f8ec94';
-      });
-
-      // Send the message when the "Send" button is clicked
       sendButton.addEventListener('click', () => {
         if (!sendButton.disabled) {
           const message = messageInput.value.trim();
@@ -607,43 +575,27 @@ export const enableChatOverlay = (toggle) => {
         }
       });
 
-      // Prevent video player hotkeys from interfering with the overlay when typing
-      messageInput.addEventListener('keydown', (event) => {
-        if (!messageInput.inputIsFocused && VIDEOPLAYER_HOTKEYS.includes(event.key.toLowerCase())) {
-          event.stopPropagation();
-        }
-      });
-
-      messageInput.addEventListener('keyup', (event) => {
-        if (!messageInput.inputIsFocused && VIDEOPLAYER_HOTKEYS.includes(event.key.toLowerCase())) {
-          event.stopPropagation();
-        }
-      });
-
-      // Append created elements to their respective containers
       messageInputContainer.appendChild(messageInput);
       messageInputContainer.appendChild(sendButton);
       chatOverlayWrapper.appendChild(chatOverlayContainer);
       chatOverlayWrapper.appendChild(scrollToBottomButton);
       chatOverlayWrapper.appendChild(messageInputContainer);
+      
     } else {
       console.error('Chat Overlay container already exists.');
     }
 
+    
     // Set up the "Hide Chat Overlay" button if the fullscreen button container exists
     if (fullscreenButtonContainer) {
-      fullscreenButtonContainer.style.display = 'flex';
-      fullscreenButtonContainer.style.alignItems = 'center';
-      fullscreenButtonContainer.style.gap = '8px';
-
-      if (!buttonParentContainer) {
-        buttonParentContainer = document.createElement('div');
-        applyConfigToElement(buttonParentContainer, CHAT_OVERLAY_CONFIG.hideChatOverlayButtonWrapper);
-
-        const toggleChatButton = document.createElement('button');
-        applyConfigToElement(toggleChatButton, CHAT_OVERLAY_CONFIG.hideChatOverlayButton);
-
-        buttonParentContainer.appendChild(toggleChatButton);
+      Object.assign(fullscreenButtonContainer.style, {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px'
+      });
+      
+      if (!toggleChatButton) {
+        const toggleChatButton = createElementWithConfig('button', CHAT_OVERLAY_CONFIG.hideChatOverlayButton);
 
         // Add functionality to toggle the chat overlay visibility
         toggleChatButton.addEventListener('click', () => {
@@ -655,54 +607,45 @@ export const enableChatOverlay = (toggle) => {
           }
         });
 
-        fullscreenButtonContainer.parentElement.insertBefore(buttonParentContainer, fullscreenButtonContainer);
+        document.addEventListener('fullscreenchange', () => {
+          const isFullscreen = document.fullscreenElement !== null; // Check if an element is in fullscreen mode
+          //console.log(`Fullscreen state changed: ${isFullscreen ? 'ENTERED' : 'EXITED'}`);
+          state.set("isPlayerFullscreen", isFullscreen);
+          chatOverlayWrapper.style.display = isFullscreen ? 'block' : 'none';
+          toggleChatButton.style.display = isFullscreen ? 'flex' : 'none';
+          if (isFullscreen) {
+            chatOverlayContainer.scrollTop = chatOverlayContainer.scrollHeight;
+            state.set("isChatOverlayAutoscrolling", true);
+            scrollToBottomButton.style.display = 'none';
+          }
+        });
+        
+        //hook into the existing fullscreen button to allow the overlay to work
+        const fullscreenButton = fullscreenButtonContainer.querySelector('button');
+        fullscreenButton.onclick = () => {
+          const element = document.querySelector(".hls-stream-player_hls-stream-player__BJiGl");
+          toggleFullscreen(element)
+        };
+        fullscreenButtonContainer.appendChild(toggleChatButton);
       } else {
         console.error('Hide Chat Overlay button already exists.');
       }
     } else {
       console.error('Fullscreen button container doesn\'t exist.');
     }
-
-    // Attach the chat overlay to the video player and monitor fullscreen changes
+    // Attach the chat overlay to the video player
     if (videoPlayerElement && fullscreenButtonContainer) {
       videoPlayerElement.appendChild(chatOverlayWrapper);
-      state.get("observers").fullscreen?.disconnect();
-
-      const fullscreenObserver = new MutationObserver(() => {
-        const isFullscreen = videoPlayerElement.getAttribute('data-fullscreen') === 'true';
-        state.set("isPlayerFullscreen", isFullscreen);
-        chatOverlayWrapper.style.display = isFullscreen ? 'block' : 'none';
-        buttonParentContainer.style.display = isFullscreen ? 'flex' : 'none';
-        if (isFullscreen) {
-          chatOverlayContainer.scrollTop = chatOverlayContainer.scrollHeight;
-          state.set("isChatOverlayAutoscrolling", true);
-          scrollToBottomButton.style.display = 'none';
-        }
-      });
-
-      fullscreenObserver.observe(videoPlayerElement, {
-        attributes: true,
-        attributeFilter: ['data-fullscreen'],
-      });
-
-      state.set("observers", {
-        ...state.get("observers"),
-        fullscreen: fullscreenObserver,
-      });
     } else {
       console.error('Video player element not found. Unable to attach chat overlay.');
     }
-  } else {
-    // Clean up overlay elements if toggle is disabled
-    if (buttonParentContainer) buttonParentContainer.remove();
-    if (chatOverlayWrapper) chatOverlayWrapper.remove();
-    state.get("observers").fullscreen?.disconnect();
   }
 };
 
 export const addMessageToChatOverlay = (node) => {
   // Clone the incoming message node to avoid modifying the original
   const updatedMessages = node.cloneNode(true);
+  const chatOverlayContainer = document.querySelector(".chatoverlay-chatcontainer");
 
   // Get the current number of messages in the chat overlay
   const countOfChatMessages = chatOverlayContainer.children.length;
@@ -769,15 +712,15 @@ export const hookWebSocket = () => {
       targetWebSocket = this; // Store the reference
     }
 
-    // Uncomment for debugging.
-    // if (data instanceof ArrayBuffer) {
-    //   try {
-    //     const decoded = decode(data);
-    //     console.log("[WebSocket Inspector] Sent data (Decoded):", decoded);
-    //   } catch (err) {
-    //     console.error("[WebSocket Inspector] Failed to decode outgoing message:", err);
-    //   }
-    // }
+  //Uncomment for debugging.
+   // if (data instanceof ArrayBuffer) {
+   //   try {
+   //     const decoded = decode(data);
+   //     console.log("[WebSocket Inspector] Sent data (Decoded):", decoded);
+   //   } catch (err) {
+   //     console.error("[WebSocket Inspector] Failed to decode outgoing message:", err);
+   //   }
+   // }
 
     return originalSend.call(this, data);
   };
@@ -787,14 +730,14 @@ export const hookWebSocket = () => {
     if (type === "message") {
       const wrappedListener = (event) => {
         //Un comment for debugging
-        // if (event.data instanceof ArrayBuffer) {
-        //   try {
-        //     const decoded = decode(event.data);
-        //      console.log("[WebSocket Inspector] Incoming message (Decoded):", decoded);
-        //   } catch (err) {
-        //     console.error("[WebSocket Inspector] Failed to decode incoming message:", err);
-        //   }
-        // }
+        //if (event.data instanceof ArrayBuffer) {
+        //  try {
+        //    const decoded = decode(event.data);
+        //     console.log("[WebSocket Inspector] Incoming message (Decoded):", decoded);
+        //  } catch (err) {
+        //    console.error("[WebSocket Inspector] Failed to decode incoming message:", err);
+        //  }
+        //}
         listener.call(this, event); // Call the original listener
       };
       return originalAddEventListener.call(this, type, wrappedListener, options);
@@ -811,14 +754,14 @@ export const hookWebSocket = () => {
         if (event.data instanceof ArrayBuffer) {
           interceptIncomingMessages(event);
           //Uncomment for debugging.
-          // try {
-          //   const decoded = decode(event.data);
-          //   if (!decoded.type === 2) {
-          //     console.log("[WebSocket Inspector] Incoming message (Decoded):", decoded);
-          //   }
-          // } catch (err) {
-          //   console.error("[WebSocket Inspector] Failed to decode incoming message:", err);
-          // }
+          //try {
+          //  const decoded = decode(event.data);
+            //if (!decoded.type === 2) {
+          //    console.log("[WebSocket Inspector] Incoming message (Decoded):", decoded);
+            //}
+          //} catch (err) {
+         //   console.error("[WebSocket Inspector] Failed to decode incoming message:", err);
+         // }
         }
         callback(event); // Pass the event to the original onmessage handler
       };
@@ -872,6 +815,8 @@ export function applyConfigToElement(element, config) {
       }
     } else if (key === 'innerHTML') {
       element.innerHTML = value; // Set innerHTML
+    } else if (key === 'class') {
+      element.className = value; // Handle the 'class' property correctly
     } else {
       try {
         element[key] = value; // Assign other properties
