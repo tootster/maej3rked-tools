@@ -13,5 +13,6 @@
 // @match        https://www.fishtank.live/clips
 // @match        https://www.fishtank.live/clip/*
 // @match        https://www.fishtank.live/chat
+// @match        https://www.fishtank.live/episodes
 // @run-at       document-idle
 // ==/UserScript==
