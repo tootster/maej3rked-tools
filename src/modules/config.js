@@ -8,6 +8,7 @@ const Config = () => {
     userData: null,
     enablePlugin: true,
     enableDimMode: false,
+    enableHideCountdown: false,
 
     convertTokenValues: false,
     usdExchangeRate: 1.0,
@@ -167,6 +168,18 @@ const Config = () => {
               help: {
                 label: "?",
                 text: `<p>Enabling this option reduces the brightness of the site</p>`,
+              },
+            },
+            // enableDimMode
+            {
+              name: "enableHideCountdown",
+              label: "Enable Hide Countdown",
+              type: "toggle",
+              value: cfg.enableHideCountdown,
+              group: "site-options",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option hides the countdown modal displayed on site load.</p>`,
               },
             },
             // enableDragModal

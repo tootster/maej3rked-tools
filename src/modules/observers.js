@@ -241,13 +241,25 @@ const observers = {
             return;
           }
 
+          if (
+            mutation.addedNodes[0]?.classList?.contains(
+              ELEMENTS.modal.countdown.class
+            ) &&
+            config.get("enableHideCountdown")
+          ) {
+            mutation.addedNodes[0].setAttribute(
+              "style",
+              "display: none !important"
+            );
+          }
+
           const livestreamAdded = mutation.addedNodes[0].classList?.contains(
-            ELEMENTS.livestreams.player.class
+            ELEMENTS.livestreams.selected.class
           );
 
           const playerControlsAdded =
             mutation.addedNodes[0].classList?.contains(
-              "hls-stream-player_status__Jza42"
+              ELEMENTS.livestreams.status.class
             );
 
           if (!livestreamAdded && !playerControlsAdded) {
@@ -327,7 +339,8 @@ const observers = {
           if (
             mutation.addedNodes[0]?.className.includes(
               "global-mission-modal_backdrop__oVezg"
-            )
+            ) &&
+            config.get("hideGlobalMissions")
           ) {
             mutation.addedNodes[0].setAttribute(
               "style",

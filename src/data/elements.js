@@ -48,6 +48,10 @@ const Elements = {
       selector: `[class^="hls-stream-player_quality"]`,
       class: "hls-stream-player_quality__RdZRA",
     },
+    status: {
+      selector: `[class^="hls-stream-player_status"]`,
+      class: "hls-stream-player_status__Jza42",
+    },
     fullscreen: {
       selector: `[class^="hls-stream-player_fullscreen"]`,
       class: "hls-stream-player_fullscreen__Y3RhA",
@@ -430,6 +434,10 @@ const Elements = {
   modal: {
     selector: `[class^="modal_modal"]`,
     class: "modal_modal__MS70U",
+    countdown: {
+      selector: `[class^="live-streams-countdown_live-streams-countdown"]`,
+      class: "live-streams-countdown_live-streams-countdown__vAbBo",
+    },
     confirm: {
       selector: `[class^="confirm-modal_confirm-modal"] button:nth-child(1)`,
       class: "button_button__p28wJ",

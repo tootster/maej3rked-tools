@@ -194,7 +194,6 @@ export const toggleNontentOverlay = () => {
 
   const nontentOverlayActive = state.get("nontentOverlayActive");
   state.set("nontentOverlayActive", !nontentOverlayActive);
-  console.log(nontentOverlayActive);
 
   if (nontentOverlayActive) {
     const image = liveStreamContainer.querySelector(
@@ -1237,6 +1236,16 @@ export const hideToastMessage = (toast) => {
   }
 };
 
+export const hideCountdown = () => {
+  const countdownModal = document.querySelector(
+    ELEMENTS.modal.countdown.selector
+  );
+
+  if (countdownModal) {
+    countdownModal.classList.add("maejok-hide");
+  }
+};
+
 export const hideGiftMessage = (toast) => {
   // Way to distinguish other types of system messages
   const containsHeader = toast.querySelector("h3");
@@ -1517,6 +1526,11 @@ export const startMaejokTools = async () => {
 
   observers.chat.start();
   observers.home.start();
+
+  if (config.get("enableHideCountdown")) {
+    hideCountdown();
+  }
+
   if (config.get("hideGlobalMissions")) {
     observers.body.start();
     observers.modal.start();

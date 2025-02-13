@@ -1,5 +1,21 @@
 # MAEJ3RKED-TOOLS CHANGE LOG
 
+# **_v2.27.0_**
+
+_Release: 02-12-2025_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- Fix issue with username overlay when switching cams
+
+### Features Added / Changed
+
+- Add option to hide countdown modal
+
 # **_v2.26.2_**
 
 _Release: 02-12-2025_
