@@ -1,5 +1,21 @@
 # MAEJ3RKED-TOOLS CHANGE LOG
 
+# **_v2.26.2_**
+
+_Release: 02-12-2025_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- N/A
+
+### Features Added / Changed
+
+- Add fishtank.live/episodes to userscript match list
+
 # **_v2.26.1_**
 
 _Release: 12-03-2024_
