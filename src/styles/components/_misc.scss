@@ -24,6 +24,23 @@
   font-size: 14px;
 }
 
+.maejok-search-container {
+  //background-color: "#fff";
+  padding: "5px";
+  border: "1px solid #ccc";
+
+}
+
+.maejok-search-container input[type="text"] {
+  padding: 2px;
+}
+
+.maejok-search-container input[type="text"]:focus {
+  outline: none;
+  border: 1px solid white;
+  box-shadow: none;
+}
+
 .maejok-nontent-overlay-container {
   position: absolute;
   top: 0;

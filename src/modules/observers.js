@@ -5,6 +5,7 @@ import {
   getElementText,
   checkTTSFilteredWords,
   displayCurrentTankTime,
+  displayStreamSearch,
   displayUserNameOverlay,
   toggleNavigationOverlay,
   toggleTokenConversion,
@@ -12,6 +13,7 @@ import {
   createEventLogEntry,
   hideToastMessage,
   hideGiftMessage,
+  hideStreamSearch,
 } from "./functions";
 import ELEMENTS from "../data/elements";
 import { makeDraggable } from "./events";
@@ -253,6 +255,23 @@ const observers = {
             );
           }
 
+          if (config.get("enableStreamSearch")) {
+            const streamGrid = document.querySelector(
+              ".live-streams_live-streams-grid__Tp4ah"
+            );
+            if (streamGrid) {
+              displayStreamSearch();
+            }
+          }
+
+          const liveStreamContainer = document.querySelector(
+            ".live-streams_live-streams__BYV96"
+          );
+
+          if (!liveStreamContainer) {
+            hideStreamSearch();
+          }
+
           const livestreamAdded = mutation.addedNodes[0].classList?.contains(
             ELEMENTS.livestreams.selected.class
           );
@@ -265,6 +284,8 @@ const observers = {
           if (!livestreamAdded && !playerControlsAdded) {
             return;
           }
+
+          hideStreamSearch();
 
           const controlOverlayEnabled = config.get("enableControlOverlay");
           const timestampOverlayEnabled = config.get("enableTimestampOverlay");

@@ -223,6 +223,58 @@ export const toggleNontentOverlay = () => {
   }
 };
 
+export const hideStreamSearch = () => {
+  const searchContainer = document.querySelector(".maejok-search-container");
+  if (!searchContainer) {
+    return;
+  }
+  searchContainer.classList.add("maejok-hide");
+  const input = searchContainer.querySelector("input");
+  input.value = "";
+};
+
+export const displayStreamSearch = () => {
+  const fishtankLogo = document.querySelector(ELEMENTS.header.logo.selector);
+
+  if (!fishtankLogo) {
+    return;
+  }
+
+  let searchContainer;
+  searchContainer = document.querySelector(".maejok-search-container");
+  if (searchContainer) {
+    searchContainer?.classList.remove("maejok-hide");
+    return;
+  }
+
+  searchContainer = document.createElement("div");
+  searchContainer.classList.add("maejok-search-container");
+
+  const searchInput = document.createElement("input");
+  searchInput.type = "text";
+  searchInput.placeholder = "Search livestreams...";
+  searchInput.classList.add("maejok-search-input");
+  searchContainer.appendChild(searchInput);
+
+  fishtankLogo.insertAdjacentElement("afterend", searchContainer);
+
+  searchInput.addEventListener("input", () => {
+    const filter = searchInput.value.toLowerCase();
+    const streams = document.querySelectorAll(
+      ".live-streams_live-stream__4Q7MX"
+    );
+
+    streams.forEach((stream) => {
+      // Update the selector to target the title element within each stream
+      const titleElem = stream.querySelector(".live-stream_name__ngU04");
+      if (titleElem) {
+        const titleText = titleElem.textContent.toLowerCase();
+        stream.style.display = titleText.includes(filter) ? "" : "none";
+      }
+    });
+  });
+};
+
 export const toggleControlOverlay = (force) => {
   const liveStreamContainer = document.querySelector(
     ELEMENTS.livestreams.selector
@@ -1526,6 +1578,10 @@ export const startMaejokTools = async () => {
 
   observers.chat.start();
   observers.home.start();
+
+  if (config.get("enableStreamSearch")) {
+    displayStreamSearch();
+  }
 
   if (config.get("enableHideCountdown")) {
     hideCountdown();

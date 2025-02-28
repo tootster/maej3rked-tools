@@ -34,6 +34,8 @@ import {
   toggleUserOverlay,
   keyEventToString,
   toggleControlOverlay,
+  hideStreamSearch,
+  displayStreamSearch,
 } from "./functions";
 import {
   start as startRecentChatters,
@@ -56,6 +58,7 @@ export const saveSettings = async () => {
   const prevEventLog = config.get("enableEventsLog");
   const prevTTSFilter = config.get("enableTTSFilterWarning");
   const prevControlOverlay = config.get("enableControlOverlay");
+  const prevStreamSearch = config.get("enableStreamSearch");
 
   inputs.forEach((input) => {
     const key = input.id.replace("-hidden", "");
@@ -119,6 +122,18 @@ export const saveSettings = async () => {
 
   if (!config.get("enableRecentChatters")) {
     stopRecentChatters();
+  }
+
+  const streamSearchJustEnabled =
+    config.get("enableStreamSearch") &&
+    prevStreamSearch !== config.get("enableStreamSearch");
+
+  if (streamSearchJustEnabled) {
+    displayStreamSearch();
+  }
+
+  if (!config.get("enableStreamSearch")) {
+    hideStreamSearch();
   }
 
   const startUpdateChecker =
