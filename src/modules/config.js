@@ -8,7 +8,7 @@ const Config = () => {
     userData: null,
     enablePlugin: true,
     enableDimMode: false,
-    enableHideCountdown: false,
+    enableHideInitialModal: false,
 
     convertTokenValues: false,
     usdExchangeRate: 1.0,
@@ -171,16 +171,16 @@ const Config = () => {
                 text: `<p>Enabling this option reduces the brightness of the site</p>`,
               },
             },
-            // enableDimMode
+            // enableHideInitialModal
             {
-              name: "enableHideCountdown",
-              label: "Enable Hide Countdown",
+              name: "enableHideInitialModal",
+              label: "Enable Hide Initial Modal",
               type: "toggle",
-              value: cfg.enableHideCountdown,
+              value: cfg.enableHideInitialModal,
               group: "site-options",
               help: {
                 label: "?",
-                text: `<p>Enabling this option hides the countdown modal displayed on site load.</p>`,
+                text: `<p>Enabling this option hides the modal displayed on site load.</p>`,
               },
             },
             // enableDragModal

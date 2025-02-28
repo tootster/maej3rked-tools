@@ -1288,13 +1288,14 @@ export const hideToastMessage = (toast) => {
   }
 };
 
-export const hideCountdown = () => {
-  const countdownModal = document.querySelector(
-    ELEMENTS.modal.countdown.selector
+export const hideInitialModal = () => {
+  const initialModal = document.querySelector(
+    ".live-streams-auditions_live-streams-auditions__sRcSq"
   );
+  console.log(initialModal);
 
-  if (countdownModal) {
-    countdownModal.classList.add("maejok-hide");
+  if (initialModal) {
+    initialModal.classList.add("maejok-hide");
   }
 };
 
@@ -1583,11 +1584,14 @@ export const startMaejokTools = async () => {
     displayStreamSearch();
   }
 
-  if (config.get("enableHideCountdown")) {
-    hideCountdown();
+  if (config.get("enableHideInitialModal")) {
+    hideInitialModal();
   }
 
-  if (config.get("hideGlobalMissions")) {
+  if (
+    config.get("hideGlobalMissions") ||
+    config.get("enableHideInitialModal")
+  ) {
     observers.body.start();
     observers.modal.start();
   }

@@ -243,18 +243,6 @@ const observers = {
             return;
           }
 
-          if (
-            mutation.addedNodes[0]?.classList?.contains(
-              ELEMENTS.modal.countdown.class
-            ) &&
-            config.get("enableHideCountdown")
-          ) {
-            mutation.addedNodes[0].setAttribute(
-              "style",
-              "display: none !important"
-            );
-          }
-
           if (config.get("enableStreamSearch")) {
             const streamGrid = document.querySelector(
               ".live-streams_live-streams-grid__Tp4ah"
@@ -355,6 +343,18 @@ const observers = {
             mutation.addedNodes.length === 0
           ) {
             return;
+          }
+
+          if (
+            mutation.addedNodes[0]?.classList?.contains(
+              "live-streams-auditions_live-streams-auditions__sRcSq"
+            ) &&
+            config.get("enableHideInitialModal")
+          ) {
+            mutation.addedNodes[0].setAttribute(
+              "style",
+              "display: none !important"
+            );
           }
 
           if (
