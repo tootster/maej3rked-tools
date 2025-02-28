@@ -1,5 +1,22 @@
 # MAEJ3RKED-TOOLS CHANGE LOG
 
+# **_v2.28.0_**
+
+_Release: 02-27-2025_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- N/A
+
+### Features Added / Changed
+
+- Change option to hide countdown modal to hide initial modal (now auditions)
+- Add stream search
+
 # **_v2.27.0_**
 
 _Release: 02-12-2025_
