@@ -350,7 +350,7 @@ export const toggleTimestampOverlay = (toggle) => {
 
 export const displayCurrentTankTime = () => {
   const playerHeaderTarget = document.querySelector(
-    ".live-stream-player_right__YlQQh"
+    ELEMENTS.livestreams.viewers.selector
   );
 
   if (!playerHeaderTarget) {
@@ -380,7 +380,7 @@ export const displayCurrentTankTime = () => {
     timestampTime.classList.add(timestampElement.time.class);
     targetElement.appendChild(timestampDate);
     targetElement.appendChild(timestampTime);
-    playerHeaderTarget.insertAdjacentElement("beforebegin", targetElement);
+    playerHeaderTarget.insertAdjacentElement("afterend", targetElement);
   }
 
   const d = new Date();
@@ -423,7 +423,7 @@ export const toggleUserOverlay = (toggle) => {
 
 export const displayUserNameOverlay = () => {
   const playerHeaderTarget = document.querySelector(
-    ".live-stream-player_right__YlQQh"
+    ELEMENTS.livestreams.viewers.selector
   );
 
   if (!playerHeaderTarget) {
@@ -434,7 +434,7 @@ export const displayUserNameOverlay = () => {
   const userOverlayContainer = document.createElement("div");
   userOverlayContainer.classList.add(ELEMENTS.livestreams.overlay.class);
   userOverlayContainer.innerHTML = userOverlayHTML;
-  playerHeaderTarget.insertAdjacentElement("beforebegin", userOverlayContainer);
+  playerHeaderTarget.insertAdjacentElement("afterend", userOverlayContainer);
 };
 
 export const toggleTokenConversion = (toggle) => {

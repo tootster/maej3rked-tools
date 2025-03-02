@@ -1,5 +1,21 @@
 # MAEJ3RKED-TOOLS CHANGE LOG
 
+# **_v2.28.1_**
+
+_Release: 03-02-2025_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- Fixed username and time overlay
+
+### Features Added / Changed
+
+- N/A
+
 # **_v2.28.0_**
 
 _Release: 02-27-2025_

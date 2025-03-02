@@ -44,6 +44,10 @@ const Elements = {
       selector: `[class^="hls-stream-player_clip"]`,
       class: "hls-stream-player_clip__OrKWA",
     },
+    viewers: {
+      selector: `[class^="live-stream-player_viewers__"]`,
+      class: "live-stream-player_viewers__zP7eU",
+    },
     quality: {
       selector: `[class^="hls-stream-player_quality"]`,
       class: "hls-stream-player_quality__RdZRA",
