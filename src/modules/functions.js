@@ -22,6 +22,7 @@ import {
   stop as stopRecentChatters,
   update as updateRecentChatters,
 } from "./recent-chatters";
+import refactoredObservers from "./observers/index";
 import observers from "./observers";
 
 export const getReactProps = (element) => {
@@ -1577,7 +1578,7 @@ export const startMaejokTools = async () => {
   toggleHiddenItems(config.get("showHiddenItems"));
   toggleTokenConversion(config.get("convertTokenValues"));
 
-  observers.chat.start();
+  refactoredObservers.chat.start();
   observers.home.start();
 
   if (config.get("enableStreamSearch")) {
@@ -1628,7 +1629,7 @@ export const stopMaejokTools = () => {
   toggleBigScreen(false);
   toggleLogoHover(false);
 
-  observers.chat.stop();
+  refactoredObservers.chat.stop();
   observers.chatters.stop();
   observers.body.stop();
   observers.modal.stop();
