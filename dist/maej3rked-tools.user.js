@@ -6,7 +6,7 @@
  * // @version      2.28.2
  * // @license      GNU GPLv3
  * // @homepageURL  https://github.com/f3rked/maej3rked-tools
- * // @namespace    https://greasyfork.org/en/scripts/465416-maejok-tools-for-fishtank-live
+ * // @namespace    https://greasyfork.org/en/scripts/501824-maej3rked-tools-for-fishtank-live
  * // @icon         https://raw.githubusercontent.com/f3rked/maej3rked-tools/master/public/images/icon.png
  * // @updateURL    https://github.com/f3rked/maej3rked-tools/raw/master/dist/maej3rked-tools.user.js
  * // @supportURL   https://github.com/f3rked/maej3rked-tools/issues
