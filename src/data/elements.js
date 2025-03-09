@@ -15,6 +15,10 @@ const Elements = {
     date: {
       selector: `[class^="status-bar_date"]`,
       class: "status-bar_date__mqIyI",
+      day: {
+        selector: `[class^="status-bar_day__"]`,
+        class: "status-bar_day__V8Zac",
+      },
     },
   },
   globalMissions: {
@@ -29,8 +33,20 @@ const Elements = {
       class: "live-streams_live-streams-grid__Tp4ah",
     },
     player: {
-      selector: `[class^="live-stream-player_live-stream-player__4CHjG"]`,
+      selector: `[class^="live-stream-player_live-stream-player__"]`,
       class: "live-stream-player_live-stream-player__4CHjG",
+      header: {
+        selector: `[class^="live-stream-player_header__58imR"]`,
+        class: "live-stream-player_header__58imR",
+        navigation: {
+          selector: `[class^="live-stream-player_navigation__"]`,
+          class: "live-stream-player_navigation__VqS_z",
+        },
+        close: {
+          selector: `[class^="live-stream-player_close__"]`,
+          class: "live-stream-player_close__c_GRv",
+        },
+      },
     },
     selected: {
       selector: `[class^="live-streams_selected-live-stream"]`,
