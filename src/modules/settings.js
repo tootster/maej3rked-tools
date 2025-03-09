@@ -36,6 +36,7 @@ import {
   toggleControlOverlay,
   hideStreamSearch,
   displayStreamSearch,
+  toggleCleanPlayerHeader,
 } from "./functions";
 import {
   start as startRecentChatters,
@@ -90,10 +91,12 @@ export const saveSettings = async () => {
   toggleHiddenItems(config.get("showHiddenItems"));
   toggleDimMode(config.get("enableDimMode"));
   toggleTokenConversion(config.get("convertTokenValues"));
-  toggleTimestampOverlay(config.get("enableTimestampOverlay"));
   toggleNavigationOverlay(config.get("hideNavigationOverlay"));
-  toggleUserOverlay(config.get("enableUserOverlay"));
   toggleScreenTakeovers(config.get("hideScreenTakeovers"));
+
+  toggleCleanPlayerHeader(config.get("enableTimestampOverlay") || config.get("enableUserOverlay"));
+  toggleTimestampOverlay(config.get("enableTimestampOverlay"));
+  toggleUserOverlay(config.get("enableUserOverlay"));
 
   if (!config.get("enableBigScreen")) {
     toggleBigScreen(false);

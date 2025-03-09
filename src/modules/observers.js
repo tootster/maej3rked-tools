@@ -14,6 +14,7 @@ import {
   hideToastMessage,
   hideGiftMessage,
   hideStreamSearch,
+  toggleCleanPlayerHeader,
 } from "./functions";
 import ELEMENTS from "../data/elements";
 import { makeDraggable } from "./events";
@@ -293,6 +294,10 @@ const observers = {
 
           mutation.addedNodes.forEach((addedNode) => {
             if (livestreamAdded) {
+              if (timestampOverlayEnabled || userOverlayEnabled) {
+                toggleCleanPlayerHeader(true);
+              }
+              
               if (timestampOverlayEnabled) {
                 displayCurrentTankTime();
               }
