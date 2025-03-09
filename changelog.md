@@ -1,5 +1,22 @@
 # MAEJ3RKED-TOOLS CHANGE LOG
 
+# **_v2.28.2_**
+
+_Release: 03-09-2025_
+
+### Notes
+
+- Most of the changes here will be unnoticeable.  
+- Nerd stuff: The observer pattern needed a refactor for performance and maintainability, and a lot of this is establishing a new pattern starting with the chat observer.  Also begin using JSDoc comments.
+
+### Bug Fixes
+
+- Fixed username and time overlay again - it was updated right after the last fix
+
+### Features Added / Changed
+
+- N/A
+
 # **_v2.28.1_**
 
 _Release: 03-02-2025_
