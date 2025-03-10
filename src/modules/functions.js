@@ -457,7 +457,6 @@ export const displayUserNameOverlay = (playerHeader) => {
  * @returns {HTMLElement|null} The header element or null if not found
  */
 export const toggleCleanPlayerHeader = (toggle = true) => {
-  // Find the player header
   const playerHeader = document.querySelector(ELEMENTS.livestreams.player.header.selector);
   
   if (!playerHeader) {
@@ -469,7 +468,9 @@ export const toggleCleanPlayerHeader = (toggle = true) => {
     ELEMENTS.livestreams.player.header.navigation.selector,
     ELEMENTS.livestreams.player.header.close.selector,
     ELEMENTS.livestreams.overlay.selector,
-    ELEMENTS.livestreams.timestamp.selector
+    ELEMENTS.livestreams.timestamp.selector,
+    ELEMENTS.livestreams.player.header.name.selector,
+    ELEMENTS.livestreams.viewers.selector,
   ];
   
   // Find elements to keep visible
@@ -487,9 +488,8 @@ export const toggleCleanPlayerHeader = (toggle = true) => {
     }
   });
 
-
-  const closeButton = playerHeader.querySelector(ELEMENTS.livestreams.player.header.close.selector);
-  closeButton?.classList.toggle('maejok-close-button-fix', toggle);
+  const viewers = playerHeader.querySelector(ELEMENTS.livestreams.viewers.selector);
+  viewers?.classList.toggle('maejok-viewers-fix', toggle);
   
   return playerHeader;
 };

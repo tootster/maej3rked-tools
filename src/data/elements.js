@@ -46,6 +46,10 @@ const Elements = {
           selector: `[class^="live-stream-player_close__"]`,
           class: "live-stream-player_close__c_GRv",
         },
+        name: {
+          selector: `[class^="live-stream-player_name__"]`,
+          class: "live-stream-player_name__nhgrA",
+        },
       },
     },
     selected: {
