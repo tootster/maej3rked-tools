@@ -14,5 +14,8 @@
 // @match        https://www.fishtank.live/clip/*
 // @match        https://www.fishtank.live/chat
 // @match        https://www.fishtank.live/episodes
+// @connect      fishtank.live
+// @connect      api.fishtank.live
+// @grant        GM_xmlhttpRequest
 // @run-at       document-idle
 // ==/UserScript==
