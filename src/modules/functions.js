@@ -178,6 +178,21 @@ const fetchLiveStreamStatus = async () => {
       `https://api.fishtank.live/v1/live-streams/status`,
       options
     );
+    GM_xmlhttpRequest({
+      method: "GET",
+      url: `https://api.fishtank.live/v1/live-streams/status`,
+      headers: {
+        Accept: "application/json",
+      },
+      onload: function (response) {
+        const data = JSON.parse(response.responseText);
+        return data;
+      },
+      onerror: function (error) {
+        console.error("Request failed:", error);
+        return false;
+      },
+    });
     return await data?.json();
   } catch (error) {
     return false;
@@ -350,15 +365,17 @@ export const toggleTimestampOverlay = (toggle) => {
 };
 
 export const displayCurrentTankTime = (playerHeader) => {
-  const playerHeaderElement = playerHeader || document.querySelector(
-    ELEMENTS.livestreams.player.header.selector
-  );
+  const playerHeaderElement =
+    playerHeader ||
+    document.querySelector(ELEMENTS.livestreams.player.header.selector);
 
   if (!playerHeaderElement) {
     return;
   }
 
-  const navigationElement = playerHeaderElement.querySelector(ELEMENTS.livestreams.player.header.navigation.selector);
+  const navigationElement = playerHeaderElement.querySelector(
+    ELEMENTS.livestreams.player.header.navigation.selector
+  );
 
   if (!navigationElement) {
     return;
@@ -391,7 +408,9 @@ export const displayCurrentTankTime = (playerHeader) => {
   }
 
   const d = new Date();
-  const showDay = document.querySelector(ELEMENTS.home.date.day.selector)?.textContent;
+  const showDay = document.querySelector(
+    ELEMENTS.home.date.day.selector
+  )?.textContent;
   const formattedTime = d.toLocaleString("en-US", {
     timeZone: "America/New_York",
     hour: "numeric",
@@ -429,15 +448,17 @@ export const toggleUserOverlay = (toggle) => {
 };
 
 export const displayUserNameOverlay = (playerHeader) => {
-  const playerHeaderElement = playerHeader || document.querySelector(
-    ELEMENTS.livestreams.player.header.selector
-  );
+  const playerHeaderElement =
+    playerHeader ||
+    document.querySelector(ELEMENTS.livestreams.player.header.selector);
 
   if (!playerHeaderElement) {
     return;
   }
 
-  const navigationElement = playerHeaderElement.querySelector(ELEMENTS.livestreams.player.header.navigation.selector);
+  const navigationElement = playerHeaderElement.querySelector(
+    ELEMENTS.livestreams.player.header.navigation.selector
+  );
 
   if (!navigationElement) {
     return;
@@ -457,12 +478,14 @@ export const displayUserNameOverlay = (playerHeader) => {
  * @returns {HTMLElement|null} The header element or null if not found
  */
 export const toggleCleanPlayerHeader = (toggle = true) => {
-  const playerHeader = document.querySelector(ELEMENTS.livestreams.player.header.selector);
-  
+  const playerHeader = document.querySelector(
+    ELEMENTS.livestreams.player.header.selector
+  );
+
   if (!playerHeader) {
     return null;
   }
-  
+
   // Define selectors for elements we want to keep visible
   const keepVisibleSelectors = [
     ELEMENTS.livestreams.player.header.navigation.selector,
@@ -472,25 +495,27 @@ export const toggleCleanPlayerHeader = (toggle = true) => {
     ELEMENTS.livestreams.player.header.name.selector,
     ELEMENTS.livestreams.viewers.selector,
   ];
-  
+
   // Find elements to keep visible
-  const elementsToKeepVisible = keepVisibleSelectors.map(selector => 
-    playerHeader.querySelector(selector)
-  ).filter(Boolean); // Filter out any null elements
-  
+  const elementsToKeepVisible = keepVisibleSelectors
+    .map((selector) => playerHeader.querySelector(selector))
+    .filter(Boolean); // Filter out any null elements
+
   // Get all children of the header
   const children = Array.from(playerHeader.children);
-  
+
   // Toggle the maejok-hide class on all elements except those in the keepVisible array
-  children.forEach(child => {
+  children.forEach((child) => {
     if (!elementsToKeepVisible.includes(child)) {
-      child.classList.toggle('maejok-hide', toggle);
+      child.classList.toggle("maejok-hide", toggle);
     }
   });
 
-  const viewers = playerHeader.querySelector(ELEMENTS.livestreams.viewers.selector);
-  viewers?.classList.toggle('maejok-viewers-fix', toggle);
-  
+  const viewers = playerHeader.querySelector(
+    ELEMENTS.livestreams.viewers.selector
+  );
+  viewers?.classList.toggle("maejok-viewers-fix", toggle);
+
   return playerHeader;
 };
 
@@ -1245,23 +1270,39 @@ export const increaseColorBrightness = (color) => {
   return newColor;
 };
 
-export const openProfile = async (userId) => {
-  const data = await fetchFromFishtank(
-    "get",
-    `https://www.fishtank.live/api/user/get?uid=${userId}`
-  );
+const openProfileModal = (data) => {
+  try {
+    const modal = new CustomEvent("modalopen", {
+      detail: JSON.stringify({
+        modal: "Profile",
+        data: data,
+      }),
+    });
+    document.dispatchEvent(modal);
+  } catch (error) {
+    console.error("Error opening profile modal:", error);
+  }
+};
 
-  const modal = new CustomEvent("modalopen", {
-    detail: JSON.stringify({
-      modal: "Profile",
-      data: data.profile,
-    }),
+export const openProfile = async (displayName) => {
+  GM_xmlhttpRequest({
+    method: "GET",
+    url: `https://api.fishtank.live/v1/search/users/?q=${displayName}`,
+    headers: {
+      Accept: "application/json",
+    },
+    onload: function (response) {
+      const data = JSON.parse(response.responseText);
+      openProfileModal(data.results[0]);
+    },
+    onerror: function (error) {
+      console.error("Request failed:", error);
+    },
   });
-  document.dispatchEvent(modal);
 };
 
 export const muteUser = async (user) => {
-  openProfile(user.id);
+  openProfile(user.displayName);
   let i = 0;
   const muteInterval = setInterval(() => {
     const muteButton = document.querySelector(
@@ -1631,7 +1672,9 @@ export const startMaejokTools = async () => {
   toggleHiddenItems(config.get("showHiddenItems"));
   toggleTokenConversion(config.get("convertTokenValues"));
 
-  toggleCleanPlayerHeader(config.get("enableTimestampOverlay") || config.get("enableUserOverlay"));
+  toggleCleanPlayerHeader(
+    config.get("enableTimestampOverlay") || config.get("enableUserOverlay")
+  );
   toggleTimestampOverlay(config.get("enableTimestampOverlay"));
   toggleUserOverlay(config.get("enableUserOverlay"));
 
