@@ -1,13 +1,29 @@
 # MAEJ3RKED-TOOLS CHANGE LOG
 
+# **_v2.28.3_**
+
+_Release: 03-10-2025_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- Fix user profile button and mute button in the right click menu
+
+### Features Added / Changed
+
+- N/A
+
 # **_v2.28.2_**
 
 _Release: 03-09-2025_
 
 ### Notes
 
-- Most of the changes here will be unnoticeable.  
-- Nerd stuff: The observer pattern needed a refactor for performance and maintainability, and a lot of this is establishing a new pattern starting with the chat observer.  Also begin using JSDoc comments.
+- Most of the changes here will be unnoticeable.
+- Nerd stuff: The observer pattern needed a refactor for performance and maintainability, and a lot of this is establishing a new pattern starting with the chat observer. Also begin using JSDoc comments.
 
 ### Bug Fixes
 
