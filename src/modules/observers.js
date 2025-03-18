@@ -5,6 +5,7 @@ import {
   getElementText,
   checkTTSFilteredWords,
   displayCurrentTankTime,
+  displayStreamSearch,
   displayUserNameOverlay,
   toggleNavigationOverlay,
   toggleTokenConversion,
@@ -14,6 +15,8 @@ import {
   createEventLogEntry,
   hideToastMessage,
   hideGiftMessage,
+  hideStreamSearch,
+  toggleCleanPlayerHeader,
 } from "./functions";
 import {
   TOKEN_SELECTORS,
@@ -242,18 +245,37 @@ const observers = {
             return;
           }
 
+          if (config.get("enableStreamSearch")) {
+            const streamGrid = document.querySelector(
+              ".live-streams_live-streams-grid__Tp4ah"
+            );
+            if (streamGrid) {
+              displayStreamSearch();
+            }
+          }
+
+          const liveStreamContainer = document.querySelector(
+            ".live-streams_live-streams__BYV96"
+          );
+
+          if (!liveStreamContainer) {
+            hideStreamSearch();
+          }
+
           const livestreamAdded = mutation.addedNodes[0].classList?.contains(
-            ELEMENTS.livestreams.player.class
+            ELEMENTS.livestreams.selected.class
           );
 
           const playerControlsAdded =
             mutation.addedNodes[0].classList?.contains(
-              "hls-stream-player_status__Jza42"
+              ELEMENTS.livestreams.status.class
             );
 
           if (!livestreamAdded && !playerControlsAdded) {
             return;
           }
+
+          hideStreamSearch();
           const enableFullScreenChatOverlay = config.get("enableFullScreenChatOverlay");
           const controlOverlayEnabled = config.get("enableControlOverlay");
           const timestampOverlayEnabled = config.get("enableTimestampOverlay");
@@ -274,6 +296,10 @@ const observers = {
 
           mutation.addedNodes.forEach((addedNode) => {
             if (livestreamAdded) {
+              if (timestampOverlayEnabled || userOverlayEnabled) {
+                toggleCleanPlayerHeader(true);
+              }
+              
               if (timestampOverlayEnabled) {
                 displayCurrentTankTime();
               }
@@ -331,9 +357,22 @@ const observers = {
           }
 
           if (
+            mutation.addedNodes[0]?.classList?.contains(
+              "live-streams-auditions_live-streams-auditions__sRcSq"
+            ) &&
+            config.get("enableHideInitialModal")
+          ) {
+            mutation.addedNodes[0].setAttribute(
+              "style",
+              "display: none !important"
+            );
+          }
+
+          if (
             mutation.addedNodes[0]?.className.includes(
               "global-mission-modal_backdrop__oVezg"
-            )
+            ) &&
+            config.get("hideGlobalMissions")
           ) {
             mutation.addedNodes[0].setAttribute(
               "style",

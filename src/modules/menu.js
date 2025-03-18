@@ -53,7 +53,7 @@ export const open = (type, position, options) => {
           label: "View Profile",
           action: () => {
             close();
-            openProfile(user.id);
+            openProfile(user.displayName);
           },
         },
         {
@@ -135,7 +135,7 @@ export const open = (type, position, options) => {
           label: "View Profile",
           action: () => {
             close();
-            openProfile(user.id);
+            openProfile(user.displayName);
           },
         },
         {

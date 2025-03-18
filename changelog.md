@@ -1,5 +1,103 @@
 # MAEJ3RKED-TOOLS CHANGE LOG
 
+# **_v2.28.3_**
+
+_Release: 03-10-2025_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- Fix user profile button and mute button in the right click menu
+
+### Features Added / Changed
+
+- N/A
+
+# **_v2.28.2_**
+
+_Release: 03-09-2025_
+
+### Notes
+
+- Most of the changes here will be unnoticeable.
+- Nerd stuff: The observer pattern needed a refactor for performance and maintainability, and a lot of this is establishing a new pattern starting with the chat observer. Also begin using JSDoc comments.
+
+### Bug Fixes
+
+- Fixed username and time overlay again - it was updated right after the last fix
+
+### Features Added / Changed
+
+- N/A
+
+# **_v2.28.1_**
+
+_Release: 03-02-2025_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- Fixed username and time overlay
+
+### Features Added / Changed
+
+- N/A
+
+# **_v2.28.0_**
+
+_Release: 02-27-2025_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- N/A
+
+### Features Added / Changed
+
+- Change option to hide countdown modal to hide initial modal (now auditions)
+- Add stream search
+
+# **_v2.27.0_**
+
+_Release: 02-12-2025_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- Fix issue with username overlay when switching cams
+
+### Features Added / Changed
+
+- Add option to hide countdown modal
+
+# **_v2.26.2_**
+
+_Release: 02-12-2025_
+
+### Notes
+
+- N/A
+
+### Bug Fixes
+
+- N/A
+
+### Features Added / Changed
+
+- Add fishtank.live/episodes to userscript match list
+
 # **_v2.26.1_**
 
 _Release: 12-03-2024_
