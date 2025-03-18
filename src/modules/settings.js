@@ -35,6 +35,9 @@ import {
   toggleUserOverlay,
   keyEventToString,
   toggleControlOverlay,
+  hideStreamSearch,
+  displayStreamSearch,
+  toggleCleanPlayerHeader,
 } from "./functions";
 import {
   start as startRecentChatters,
@@ -57,6 +60,7 @@ export const saveSettings = async () => {
   const prevEventLog = config.get("enableEventsLog");
   const prevTTSFilter = config.get("enableTTSFilterWarning");
   const prevControlOverlay = config.get("enableControlOverlay");
+  const prevStreamSearch = config.get("enableStreamSearch");
 
   inputs.forEach((input) => {
     const key = input.id.replace("-hidden", "");
@@ -88,11 +92,13 @@ export const saveSettings = async () => {
   toggleHiddenItems(config.get("showHiddenItems"));
   toggleDimMode(config.get("enableDimMode"));
   toggleTokenConversion(config.get("convertTokenValues"));
-  toggleTimestampOverlay(config.get("enableTimestampOverlay"));
   toggleNavigationOverlay(config.get("hideNavigationOverlay"));
-  toggleUserOverlay(config.get("enableUserOverlay"));
   toggleScreenTakeovers(config.get("hideScreenTakeovers"));
   enableChatOverlay(config.get("enableFullScreenChatOverlay"));
+
+  toggleCleanPlayerHeader(config.get("enableTimestampOverlay") || config.get("enableUserOverlay"));
+  toggleTimestampOverlay(config.get("enableTimestampOverlay"));
+  toggleUserOverlay(config.get("enableUserOverlay"));
 
   if (!config.get("enableBigScreen")) {
     toggleBigScreen(false);
@@ -121,6 +127,18 @@ export const saveSettings = async () => {
 
   if (!config.get("enableRecentChatters")) {
     stopRecentChatters();
+  }
+
+  const streamSearchJustEnabled =
+    config.get("enableStreamSearch") &&
+    prevStreamSearch !== config.get("enableStreamSearch");
+
+  if (streamSearchJustEnabled) {
+    displayStreamSearch();
+  }
+
+  if (!config.get("enableStreamSearch")) {
+    hideStreamSearch();
   }
 
   const startUpdateChecker =

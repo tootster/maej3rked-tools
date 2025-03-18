@@ -15,6 +15,10 @@ const Elements = {
     date: {
       selector: `[class^="status-bar_date"]`,
       class: "status-bar_date__mqIyI",
+      day: {
+        selector: `[class^="status-bar_day__"]`,
+        class: "status-bar_day__V8Zac",
+      },
     },
   },
   globalMissions: {
@@ -29,8 +33,24 @@ const Elements = {
       class: "live-streams_live-streams-grid__Tp4ah",
     },
     player: {
-      selector: `[class^="live-stream-player_live-stream-player__4CHjG"]`,
+      selector: `[class^="live-stream-player_live-stream-player__"]`,
       class: "live-stream-player_live-stream-player__4CHjG",
+      header: {
+        selector: `[class^="live-stream-player_header__58imR"]`,
+        class: "live-stream-player_header__58imR",
+        navigation: {
+          selector: `[class^="live-stream-player_navigation__"]`,
+          class: "live-stream-player_navigation__VqS_z",
+        },
+        close: {
+          selector: `[class^="live-stream-player_close__"]`,
+          class: "live-stream-player_close__c_GRv",
+        },
+        name: {
+          selector: `[class^="live-stream-player_name__"]`,
+          class: "live-stream-player_name__nhgrA",
+        },
+      },
     },
     selected: {
       selector: `[class^="live-streams_selected-live-stream"]`,
@@ -44,9 +64,17 @@ const Elements = {
       selector: `[class^="hls-stream-player_clip"]`,
       class: "hls-stream-player_clip__OrKWA",
     },
+    viewers: {
+      selector: `[class^="live-stream-player_viewers__"]`,
+      class: "live-stream-player_viewers__zP7eU",
+    },
     quality: {
       selector: `[class^="hls-stream-player_quality"]`,
       class: "hls-stream-player_quality__RdZRA",
+    },
+    status: {
+      selector: `[class^="hls-stream-player_status"]`,
+      class: "hls-stream-player_status__Jza42",
     },
     fullscreen: {
       selector: `[class^="hls-stream-player_fullscreen"]`,
@@ -430,6 +458,10 @@ const Elements = {
   modal: {
     selector: `[class^="modal_modal"]`,
     class: "modal_modal__MS70U",
+    countdown: {
+      selector: `[class^="live-streams-countdown_live-streams-countdown"]`,
+      class: "live-streams-countdown_live-streams-countdown__vAbBo",
+    },
     confirm: {
       selector: `[class^="confirm-modal_confirm-modal"] button:nth-child(1)`,
       class: "button_button__p28wJ",

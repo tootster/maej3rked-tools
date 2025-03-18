@@ -8,6 +8,7 @@ const Config = () => {
     userData: null,
     enablePlugin: true,
     enableDimMode: false,
+    enableHideInitialModal: false,
 
     convertTokenValues: false,
     usdExchangeRate: 1.0,
@@ -26,6 +27,7 @@ const Config = () => {
     enableControlOverlay: false,
     enableTimestampOverlay: false,
     enableUserOverlay: false,
+    enableStreamSearch: false,
     controlOverlayDisabled: false,
     disableSoundEffects: false,
     hideGlobalMissions: false,
@@ -169,6 +171,18 @@ const Config = () => {
               help: {
                 label: "?",
                 text: `<p>Enabling this option reduces the brightness of the site</p>`,
+              },
+            },
+            // enableHideInitialModal
+            {
+              name: "enableHideInitialModal",
+              label: "Enable Hide Initial Modal",
+              type: "toggle",
+              value: cfg.enableHideInitialModal,
+              group: "site-options",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option hides the modal displayed on site load.</p>`,
               },
             },
             // enableDragModal
@@ -418,6 +432,18 @@ const Config = () => {
                 label: "?",
                 text: `<p><strong>Enabling this option will display your username at at the top of the video player.</strong></p>
                   <p><i>This is intended to help out clippers if they want to embed credit easily.</i></p>`,
+              },
+            },
+            // enableStreamSearch
+            {
+              name: "enableStreamSearch",
+              label: "Enable Stream Search",
+              type: "toggle",
+              value: cfg.enableStreamSearch,
+              group: "video-player-options",
+              help: {
+                label: "?",
+                text: `<p>Enabling this option will add a search input when viewing the stream grid to show streams relevant to the input.`,
               },
             },
             // hideScanLines

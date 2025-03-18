@@ -44,7 +44,10 @@ import "./styles/styles.scss";
   let hasFetchedShowLiveStatus,
     isPopoutChat = false;
 
-  if (config.get("hideGlobalMissions")) {
+  if (
+    config.get("hideGlobalMissions") ||
+    config.get("enableHideInitialModal")
+  ) {
     observers.body.start();
   }
 

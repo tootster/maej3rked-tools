@@ -26,6 +26,7 @@ import {
   stop as stopRecentChatters,
   update as updateRecentChatters,
 } from "./recent-chatters";
+import refactoredObservers from "./observers/index";
 import observers from "./observers";
 import { decode, encode } from "@msgpack/msgpack";
 
@@ -182,6 +183,21 @@ const fetchLiveStreamStatus = async () => {
       `https://api.fishtank.live/v1/live-streams/status`,
       options
     );
+    GM_xmlhttpRequest({
+      method: "GET",
+      url: `https://api.fishtank.live/v1/live-streams/status`,
+      headers: {
+        Accept: "application/json",
+      },
+      onload: function (response) {
+        const data = JSON.parse(response.responseText);
+        return data;
+      },
+      onerror: function (error) {
+        console.error("Request failed:", error);
+        return false;
+      },
+    });
     return await data?.json();
   } catch (error) {
     return false;
@@ -199,7 +215,6 @@ export const toggleNontentOverlay = () => {
 
   const nontentOverlayActive = state.get("nontentOverlayActive");
   state.set("nontentOverlayActive", !nontentOverlayActive);
-  console.log(nontentOverlayActive);
 
   if (nontentOverlayActive) {
     const image = liveStreamContainer.querySelector(
@@ -227,6 +242,58 @@ export const toggleNontentOverlay = () => {
     container.appendChild(image2);
     liveStreamContainer.appendChild(container);
   }
+};
+
+export const hideStreamSearch = () => {
+  const searchContainer = document.querySelector(".maejok-search-container");
+  if (!searchContainer) {
+    return;
+  }
+  searchContainer.classList.add("maejok-hide");
+  const input = searchContainer.querySelector("input");
+  input.value = "";
+};
+
+export const displayStreamSearch = () => {
+  const fishtankLogo = document.querySelector(ELEMENTS.header.logo.selector);
+
+  if (!fishtankLogo) {
+    return;
+  }
+
+  let searchContainer;
+  searchContainer = document.querySelector(".maejok-search-container");
+  if (searchContainer) {
+    searchContainer?.classList.remove("maejok-hide");
+    return;
+  }
+
+  searchContainer = document.createElement("div");
+  searchContainer.classList.add("maejok-search-container");
+
+  const searchInput = document.createElement("input");
+  searchInput.type = "text";
+  searchInput.placeholder = "Search livestreams...";
+  searchInput.classList.add("maejok-search-input");
+  searchContainer.appendChild(searchInput);
+
+  fishtankLogo.insertAdjacentElement("afterend", searchContainer);
+
+  searchInput.addEventListener("input", () => {
+    const filter = searchInput.value.toLowerCase();
+    const streams = document.querySelectorAll(
+      ".live-streams_live-stream__4Q7MX"
+    );
+
+    streams.forEach((stream) => {
+      // Update the selector to target the title element within each stream
+      const titleElem = stream.querySelector(".live-stream_name__ngU04");
+      if (titleElem) {
+        const titleText = titleElem.textContent.toLowerCase();
+        stream.style.display = titleText.includes(filter) ? "" : "none";
+      }
+    });
+  });
 };
 
 export const toggleControlOverlay = (force) => {
@@ -302,12 +369,20 @@ export const toggleTimestampOverlay = (toggle) => {
   }
 };
 
-export const displayCurrentTankTime = () => {
-  const playerHeaderTarget = document.querySelector(
-    ".live-stream-player_right__YlQQh"
+export const displayCurrentTankTime = (playerHeader) => {
+  const playerHeaderElement =
+    playerHeader ||
+    document.querySelector(ELEMENTS.livestreams.player.header.selector);
+
+  if (!playerHeaderElement) {
+    return;
+  }
+
+  const navigationElement = playerHeaderElement.querySelector(
+    ELEMENTS.livestreams.player.header.navigation.selector
   );
 
-  if (!playerHeaderTarget) {
+  if (!navigationElement) {
     return;
   }
 
@@ -334,11 +409,13 @@ export const displayCurrentTankTime = () => {
     timestampTime.classList.add(timestampElement.time.class);
     targetElement.appendChild(timestampDate);
     targetElement.appendChild(timestampTime);
-    playerHeaderTarget.insertAdjacentElement("beforebegin", targetElement);
+    navigationElement.insertAdjacentElement("afterend", targetElement);
   }
 
   const d = new Date();
-  const showDay = document.querySelector(".status-bar_day__V8Zac")?.textContent;
+  const showDay = document.querySelector(
+    ELEMENTS.home.date.day.selector
+  )?.textContent;
   const formattedTime = d.toLocaleString("en-US", {
     timeZone: "America/New_York",
     hour: "numeric",
@@ -375,12 +452,20 @@ export const toggleUserOverlay = (toggle) => {
   }
 };
 
-export const displayUserNameOverlay = () => {
-  const playerHeaderTarget = document.querySelector(
-    ".live-stream-player_right__YlQQh"
+export const displayUserNameOverlay = (playerHeader) => {
+  const playerHeaderElement =
+    playerHeader ||
+    document.querySelector(ELEMENTS.livestreams.player.header.selector);
+
+  if (!playerHeaderElement) {
+    return;
+  }
+
+  const navigationElement = playerHeaderElement.querySelector(
+    ELEMENTS.livestreams.player.header.navigation.selector
   );
 
-  if (!playerHeaderTarget) {
+  if (!navigationElement) {
     return;
   }
 
@@ -388,7 +473,55 @@ export const displayUserNameOverlay = () => {
   const userOverlayContainer = document.createElement("div");
   userOverlayContainer.classList.add(ELEMENTS.livestreams.overlay.class);
   userOverlayContainer.innerHTML = userOverlayHTML;
-  playerHeaderTarget.insertAdjacentElement("beforebegin", userOverlayContainer);
+  navigationElement.insertAdjacentElement("afterend", userOverlayContainer);
+};
+
+/**
+ * Toggles the visibility of elements in the video player header
+ * Keeps navigation and close buttons visible, hides or shows all other elements
+ * @param {boolean} [toggle=true] - If true, hides all elements except navigation and close buttons
+ * @returns {HTMLElement|null} The header element or null if not found
+ */
+export const toggleCleanPlayerHeader = (toggle = true) => {
+  const playerHeader = document.querySelector(
+    ELEMENTS.livestreams.player.header.selector
+  );
+
+  if (!playerHeader) {
+    return null;
+  }
+
+  // Define selectors for elements we want to keep visible
+  const keepVisibleSelectors = [
+    ELEMENTS.livestreams.player.header.navigation.selector,
+    ELEMENTS.livestreams.player.header.close.selector,
+    ELEMENTS.livestreams.overlay.selector,
+    ELEMENTS.livestreams.timestamp.selector,
+    ELEMENTS.livestreams.player.header.name.selector,
+    ELEMENTS.livestreams.viewers.selector,
+  ];
+
+  // Find elements to keep visible
+  const elementsToKeepVisible = keepVisibleSelectors
+    .map((selector) => playerHeader.querySelector(selector))
+    .filter(Boolean); // Filter out any null elements
+
+  // Get all children of the header
+  const children = Array.from(playerHeader.children);
+
+  // Toggle the maejok-hide class on all elements except those in the keepVisible array
+  children.forEach((child) => {
+    if (!elementsToKeepVisible.includes(child)) {
+      child.classList.toggle("maejok-hide", toggle);
+    }
+  });
+
+  const viewers = playerHeader.querySelector(
+    ELEMENTS.livestreams.viewers.selector
+  );
+  viewers?.classList.toggle("maejok-viewers-fix", toggle);
+
+  return playerHeader;
 };
 
 export const toggleTokenConversion = (toggle) => {
@@ -1489,23 +1622,39 @@ export const increaseColorBrightness = (color) => {
   return newColor;
 };
 
-export const openProfile = async (userId) => {
-  const data = await fetchFromFishtank(
-    "get",
-    `https://www.fishtank.live/api/user/get?uid=${userId}`
-  );
+const openProfileModal = (data) => {
+  try {
+    const modal = new CustomEvent("modalopen", {
+      detail: JSON.stringify({
+        modal: "Profile",
+        data: data,
+      }),
+    });
+    document.dispatchEvent(modal);
+  } catch (error) {
+    console.error("Error opening profile modal:", error);
+  }
+};
 
-  const modal = new CustomEvent("modalopen", {
-    detail: JSON.stringify({
-      modal: "Profile",
-      data: data.profile,
-    }),
+export const openProfile = async (displayName) => {
+  GM_xmlhttpRequest({
+    method: "GET",
+    url: `https://api.fishtank.live/v1/search/users/?q=${displayName}`,
+    headers: {
+      Accept: "application/json",
+    },
+    onload: function (response) {
+      const data = JSON.parse(response.responseText);
+      openProfileModal(data.results[0]);
+    },
+    onerror: function (error) {
+      console.error("Request failed:", error);
+    },
   });
-  document.dispatchEvent(modal);
 };
 
 export const muteUser = async (user) => {
-  openProfile(user.id);
+  openProfile(user.displayName);
   let i = 0;
   const muteInterval = setInterval(() => {
     const muteButton = document.querySelector(
@@ -1586,6 +1735,16 @@ export const hideToastMessage = (toast) => {
       return;
     }
     toast.classList.add("maejok-hide");
+  }
+};
+
+export const hideInitialModal = () => {
+  const initialModal = document.querySelector(
+    ".live-streams-auditions_live-streams-auditions__sRcSq"
+  );
+
+  if (initialModal) {
+    initialModal.classList.add("maejok-hide");
   }
 };
 
@@ -1860,18 +2019,34 @@ export const startMaejokTools = async () => {
   disableSoundEffects(config.get("disableSoundEffects"));
   applySettingsToChat();
   toggleScanLines();
-  toggleTimestampOverlay(config.get("enableTimestampOverlay"));
-  toggleUserOverlay(config.get("enableUserOverlay"));
   toggleScreenTakeovers(config.get("hideScreenTakeovers"));
   togglePopoutChatButton(config.get("enablePopoutChatButton"));
   toggleHiddenItems(config.get("showHiddenItems"));
   toggleTokenConversion(config.get("convertTokenValues"));
   enableChatOverlay(config.get("enableFullScreenChatOverlay"));
   
-  observers.chat.start();
+  toggleCleanPlayerHeader(
+    config.get("enableTimestampOverlay") || config.get("enableUserOverlay")
+  );
+  toggleTimestampOverlay(config.get("enableTimestampOverlay"));
+  toggleUserOverlay(config.get("enableUserOverlay"));
+
+  refactoredObservers.chat.start();
   observers.home.start();
 
-  if (config.get("hideGlobalMissions")) {
+
+  if (config.get("enableStreamSearch")) {
+    displayStreamSearch();
+  }
+
+  if (config.get("enableHideInitialModal")) {
+    hideInitialModal();
+  }
+
+  if (
+    config.get("hideGlobalMissions") ||
+    config.get("enableHideInitialModal")
+  ) {
     observers.body.start();
     observers.modal.start();
   }
@@ -1908,7 +2083,7 @@ export const stopMaejokTools = () => {
   toggleBigScreen(false);
   toggleLogoHover(false);
 
-  observers.chat.stop();
+  refactoredObservers.chat.stop();
   observers.chatters.stop();
   observers.body.stop();
   observers.modal.stop();
