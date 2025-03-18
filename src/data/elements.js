@@ -740,7 +740,14 @@ const Elements = {
       selector: `[class^=pfp-modal_header__]`,
       classes: "pfp-modal_header__e1BJ0",
     },
-
+    wetmarketModalTokens: {
+      selector: `[class^=item-market-modal_tokens__]`,
+      classes: "item-market-modal_tokens__HzcX9",
+    },
+    wetmarketBuyModalTokens: {
+      selector: `[class^=item-market-modal_target-label__]`,
+      classes: "item-market-modal_target-label__UxWFP",
+    },
     
   },
 };

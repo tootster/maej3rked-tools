@@ -1,3 +1,5 @@
+import ELEMENTS from "../data/elements";
+
 export const VERSION = process.env.VERSION;
 
 export const REPO_RAW_ROOT = process.env.REPO.raw;
@@ -168,6 +170,10 @@ export const DARK_MODE_STYLES = `
   filter: brightness(0.75);
 }
 `;
+
+
+export const TOKEN_SELECTORS = `${ELEMENTS.token.wetmarketBuyModalTokens.selector},${ELEMENTS.token.wetmarketModalTokens.selector},${ELEMENTS.token.proflepicModalTokens.selector},${ELEMENTS.token.generateLootPrice.selector}, ${ELEMENTS.token.topBarUserTokens.selector}, ${ELEMENTS.token.ttsModalTokens.selector}, ${ELEMENTS.token.sfxModalTokens.selector}, ${ELEMENTS.token.toysFishtoysTokens.selector}, ${ELEMENTS.token.buyTokensModal.selector}, ${ELEMENTS.token.voteModalTokens.selector} span`;
+
 
 export const CHAT_OVERLAY_CONFIG = {
   overlayWrapper: {

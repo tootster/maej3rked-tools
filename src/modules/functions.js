@@ -11,6 +11,7 @@ import {
   BIGSCREEN_STRETCH_STYLES,
   DEFAULT_KEYBINDS,
   CHAT_OVERLAY_CONFIG,
+  TOKEN_SELECTORS,
   REPO_URL_ROOT,
   CHAT_OVERLAY_MESSAGE_QUEUE,
   VIDEOPLAYER_HOTKEYS,
@@ -504,27 +505,20 @@ export const toggleTokenConversion = (toggle) => {
   };
 
   const processElements = () => {
-    const selectors = [
-      ELEMENTS.token.proflepicModalTokens.selector,
-      ELEMENTS.token.topBarUserTokens.selector,
-      ELEMENTS.token.ttsModalTokens.selector,
-      ELEMENTS.token.sfxModalTokens.selector,
-      ELEMENTS.token.toysFishtoysTokens.selector,
-      ELEMENTS.token.buyTokensModal.selector,
-      ELEMENTS.token.generateLootPrice.selector,
-      ELEMENTS.token.voteModalTokens.selector + " span",
-    ];
-
-    selectors.forEach((selector) => {
-      document.querySelectorAll(selector).forEach((element) => {
+      document.querySelectorAll(TOKEN_SELECTORS).forEach((element) => {
         if (element.closest(ELEMENTS.token.toysBigToyPrice.selector)) return;
+        console.log("Contains class?",element.classList.contains(ELEMENTS.token.wetmarketBuyModalTokens.class));
+        console.log("Text:",element.innerHTML.toLowerCase());
+        console.log("Class has text?",element.innerHTML.toLowerCase().indexOf("are you sure you want to buy") === 1);
+        if ( element.classList.contains(ELEMENTS.token.wetmarketBuyModalTokens.class) && element.innerHTML.toLowerCase().indexOf("are you sure you want to buy") === -1 ){
+          return;
+        }
         if (toggle) {
           convertTokensToLocalCurrency(element);
         } else {
           revertToOriginalTokens(element);
         }
       });
-    });
   };
 
   // Initial processing
@@ -770,14 +764,14 @@ export const hookWebSocket = () => {
     }
 
   //Uncomment for debugging.
-   // if (data instanceof ArrayBuffer) {
-   //   try {
-   //     const decoded = decode(data);
-   //     console.log("[WebSocket Inspector] Sent data (Decoded):", decoded);
-   //   } catch (err) {
-   //     console.error("[WebSocket Inspector] Failed to decode outgoing message:", err);
-   //   }
-   // }
+    if (data instanceof ArrayBuffer) {
+      try {
+        const decoded = decode(data);
+        console.log("[WebSocket Inspector] Sent data (Decoded):", decoded);
+      } catch (err) {
+        console.error("[WebSocket Inspector] Failed to decode outgoing message:", err);
+      }
+    }
 
     return originalSend.call(this, data);
   };
@@ -787,14 +781,14 @@ export const hookWebSocket = () => {
     if (type === "message") {
       const wrappedListener = (event) => {
         //Un comment for debugging
-        //if (event.data instanceof ArrayBuffer) {
-        //  try {
-        //    const decoded = decode(event.data);
-        //     console.log("[WebSocket Inspector] Incoming message (Decoded):", decoded);
-        //  } catch (err) {
-        //    console.error("[WebSocket Inspector] Failed to decode incoming message:", err);
-        //  }
-        //}
+        if (event.data instanceof ArrayBuffer) {
+          try {
+            const decoded = decode(event.data);
+             console.log("[WebSocket Inspector] Incoming message (Decoded):", decoded);
+          } catch (err) {
+            console.error("[WebSocket Inspector] Failed to decode incoming message:", err);
+          }
+        }
         listener.call(this, event); // Call the original listener
       };
       return originalAddEventListener.call(this, type, wrappedListener, options);
@@ -811,14 +805,14 @@ export const hookWebSocket = () => {
         if (event.data instanceof ArrayBuffer) {
           interceptIncomingMessages(event);
           //Uncomment for debugging.
-          //try {
-          //  const decoded = decode(event.data);
-            //if (!decoded.type === 2) {
-          //    console.log("[WebSocket Inspector] Incoming message (Decoded):", decoded);
-            //}
-          //} catch (err) {
-         //   console.error("[WebSocket Inspector] Failed to decode incoming message:", err);
-         // }
+          try {
+            const decoded = decode(event.data);
+          if (!decoded.type === 2) {
+              console.log("[WebSocket Inspector] Incoming message (Decoded):", decoded);
+          }
+          } catch (err) {
+             console.error("[WebSocket Inspector] Failed to decode incoming message:", err);
+           }
         }
         callback(event); // Pass the event to the original onmessage handler
       };

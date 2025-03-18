@@ -9,10 +9,15 @@ import {
   toggleNavigationOverlay,
   toggleTokenConversion,
   toggleControlOverlay,
+  addMessageToChatOverlay,
+  enableChatOverlay,
   createEventLogEntry,
   hideToastMessage,
   hideGiftMessage,
 } from "./functions";
+import {
+  TOKEN_SELECTORS,
+} from "./constants";
 import ELEMENTS from "../data/elements";
 import { makeDraggable } from "./events";
 
@@ -34,6 +39,9 @@ const observers = {
 
           mutation.addedNodes.forEach((addedNode) => {
             processChatMessage(addedNode);
+            if(config.get("enableFullScreenChatOverlay") && state.get().isPlayerFullscreen){
+              addMessageToChatOverlay(addedNode);
+            }
           });
         });
       });
@@ -102,12 +110,7 @@ const observers = {
             mutation.addedNodes.forEach((childNode) => {
               if (childNode.nodeType === Node.ELEMENT_NODE) {
                 if (
-                  childNode.matches(
-                    `${ELEMENTS.token.generateLootPrice.selector}, ${ELEMENTS.token.topBarUserTokens.selector}, ${ELEMENTS.token.ttsModalTokens.selector}, ${ELEMENTS.token.sfxModalTokens.selector}, ${ELEMENTS.token.toysFishtoysTokens.selector}, ${ELEMENTS.token.buyTokensModal.selector}, ${ELEMENTS.token.voteModalTokens.selector} span`
-                  ) ||
-                  childNode.querySelector(
-                    `${ELEMENTS.token.generateLootPrice.selector}, ${ELEMENTS.token.topBarUserTokens.selector}, ${ELEMENTS.token.ttsModalTokens.selector}, ${ELEMENTS.token.sfxModalTokens.selector}, ${ELEMENTS.token.toysFishtoysTokens.selector}, ${ELEMENTS.token.buyTokensModal.selector}, ${ELEMENTS.token.voteModalTokens.selector} span`
-                  )
+                  childNode.matches(TOKEN_SELECTORS) || childNode.querySelector(TOKEN_SELECTORS)
                 ) {
                   toggleTokenConversion(config.get("convertTokenValues"));
                 }
@@ -147,9 +150,7 @@ const observers = {
               modalSubtreeObserver(addedNode); // Set up a fresh observer on modal content
 
               addedNode
-                .querySelectorAll(
-                  `${ELEMENTS.token.topBarUserTokens.selector}, ${ELEMENTS.token.ttsModalTokens.selector}, ${ELEMENTS.token.sfxModalTokens.selector}, ${ELEMENTS.token.toysFishtoysTokens.selector}, ${ELEMENTS.token.buyTokensModal.selector}, ${ELEMENTS.token.voteModalTokens.selector} span`
-                )
+                .querySelectorAll(TOKEN_SELECTORS)
                 .forEach((tokenElement) => {
                   if (
                     !tokenElement.closest(
@@ -253,7 +254,7 @@ const observers = {
           if (!livestreamAdded && !playerControlsAdded) {
             return;
           }
-
+          const enableFullScreenChatOverlay = config.get("enableFullScreenChatOverlay");
           const controlOverlayEnabled = config.get("enableControlOverlay");
           const timestampOverlayEnabled = config.get("enableTimestampOverlay");
           const userOverlayEnabled = config.get("enableUserOverlay");
@@ -265,6 +266,7 @@ const observers = {
             !controlOverlayEnabled &&
             !timestampOverlayEnabled &&
             !userOverlayEnabled &&
+            !enableFullScreenChatOverlay &&
             !hideNavigationOverlayEnabled
           ) {
             return;
@@ -282,6 +284,10 @@ const observers = {
 
               if (hideNavigationOverlayEnabled) {
                 toggleNavigationOverlay(true);
+              }
+              
+              if (enableFullScreenChatOverlay){
+                enableChatOverlay(true);
               }
             }
 
