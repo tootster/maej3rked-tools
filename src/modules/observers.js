@@ -30,7 +30,6 @@ const observers = {
       state.get("observers").chat?.disconnect();
 
       const chat = document.querySelector(ELEMENTS.chat.list.selector);
-
       const chatObserver = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
           if (
@@ -42,9 +41,7 @@ const observers = {
 
           mutation.addedNodes.forEach((addedNode) => {
             processChatMessage(addedNode);
-            if(config.get("enableFullScreenChatOverlay") && state.get().isPlayerFullscreen){
-              addMessageToChatOverlay(addedNode);
-            }
+       
           });
         });
       });
@@ -112,9 +109,7 @@ const observers = {
           mutations.forEach((mutation) => {
             mutation.addedNodes.forEach((childNode) => {
               if (childNode.nodeType === Node.ELEMENT_NODE) {
-                if (
-                  childNode.matches(TOKEN_SELECTORS) || childNode.querySelector(TOKEN_SELECTORS)
-                ) {
+                if (childNode.matches(TOKEN_SELECTORS) || childNode.querySelector(TOKEN_SELECTORS)) {
                   toggleTokenConversion(config.get("convertTokenValues"));
                 }
               }
@@ -151,15 +146,8 @@ const observers = {
               // Ensure any previous observer is disconnected before setting up a new one
               state.get("observers").modalNestedObserver?.disconnect();
               modalSubtreeObserver(addedNode); // Set up a fresh observer on modal content
-
-              addedNode
-                .querySelectorAll(TOKEN_SELECTORS)
-                .forEach((tokenElement) => {
-                  if (
-                    !tokenElement.closest(
-                      `.${ELEMENTS.token.toysBigToyPrice.classes[0]}.${ELEMENTS.token.toysBigToyPrice.classes[1]}`
-                    )
-                  ) {
+              addedNode.querySelectorAll(TOKEN_SELECTORS).forEach((tokenElement) => {
+                  if (!tokenElement.closest(`.${ELEMENTS.token.toysBigToyPrice.classes[0]}.${ELEMENTS.token.toysBigToyPrice.classes[1]}`)) {
                     toggleTokenConversion(config.get("convertTokenValues"));
                   }
                 });

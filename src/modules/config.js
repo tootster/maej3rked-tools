@@ -14,6 +14,7 @@ const Config = () => {
     usdExchangeRate: 1.0,
     tokenToUsdRate: 0.0828,
 
+    chatOverlayOpacity: 1,
     enableFullScreenChatOverlay: false,
 
     showHiddenItems: false,
@@ -786,8 +787,33 @@ const Config = () => {
               group: "chat-misc",
               help: {
                 label: "?",
-                text: `<p>Enabling this option will add a chat overlay in fullscreen mode.</p>`,
+                text: `<p>Enabling this option will add a chat overlay in fullscreen mode.</p>
+                <p>You can hide the video controls in full screen using the video control overlay shortcut.</p>
+                `,
               },
+              config: {
+                title: "Overlay Settings",
+                options: [
+                  {
+                    type: "number",
+                    valid: "number",
+                    label: "Overlay Opacity",
+                    name: "chatOverlayOpacity",
+                    help: {
+                      label: "?",
+                      title: "Chat Overlay Opacity",
+                      text: `<p>Set the opacity of the chat overlay</p>
+                        <p><i>Default: 1</i></p>`,
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              name: "chatOverlayOpacity",
+              type: "hidden",
+              value: cfg.chatOverlayOpacity,
+              group: "chat-misc",
             },
           ],
         },

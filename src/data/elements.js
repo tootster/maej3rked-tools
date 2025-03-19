@@ -780,6 +780,16 @@ const Elements = {
       selector: `[class^=item-market-modal_target-label__]`,
       classes: "item-market-modal_target-label__UxWFP",
     },
+    audtionToysModalTokens : {
+      selector: `[class^=audition-toys-modal_cost__]`,
+      classes: "audition-toys-modal_cost__AHNZ4",
+
+    },
+    inventorySlotsModalTokens : {
+      selector: `[class^=audition-toys-modal_cost__]`,
+      classes: "audition-toys-modal_cost__AHNZ4",
+
+    },
     
   },
 };

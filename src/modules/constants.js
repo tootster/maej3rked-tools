@@ -172,7 +172,7 @@ export const DARK_MODE_STYLES = `
 `;
 
 
-export const TOKEN_SELECTORS = `${ELEMENTS.token.wetmarketBuyModalTokens.selector},${ELEMENTS.token.wetmarketModalTokens.selector},${ELEMENTS.token.proflepicModalTokens.selector},${ELEMENTS.token.generateLootPrice.selector}, ${ELEMENTS.token.topBarUserTokens.selector}, ${ELEMENTS.token.ttsModalTokens.selector}, ${ELEMENTS.token.sfxModalTokens.selector}, ${ELEMENTS.token.toysFishtoysTokens.selector}, ${ELEMENTS.token.buyTokensModal.selector}, ${ELEMENTS.token.voteModalTokens.selector} span`;
+export const TOKEN_SELECTORS = `${ELEMENTS.token.voteModalTokens.selector},${ELEMENTS.token.audtionToysModalTokens.selector},${ELEMENTS.token.wetmarketBuyModalTokens.selector},${ELEMENTS.token.wetmarketModalTokens.selector},${ELEMENTS.token.proflepicModalTokens.selector},${ELEMENTS.token.generateLootPrice.selector}, ${ELEMENTS.token.topBarUserTokens.selector}, ${ELEMENTS.token.ttsModalTokens.selector}, ${ELEMENTS.token.sfxModalTokens.selector}, ${ELEMENTS.token.toysFishtoysTokens.selector}, ${ELEMENTS.token.buyTokensModal.selector}`;
 
 
 export const CHAT_OVERLAY_CONFIG = {
@@ -198,6 +198,19 @@ export const CHAT_OVERLAY_CONFIG = {
       <div class="icon_icon__bDzMA">
         <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
           <path d="M20 2H2v20h2V4h16v12H6v2H4v2h2v-2h16V2h-2z" fill="currentColor"></path>
+        </svg>
+      </div>
+    `
+  },
+  fullscreenButton: { 
+    type: 'button',
+    ariaLabel: 'Toggle Fullscreen',
+    title: 'Toggle Fullscreen',
+    class: 'fullscreen-toggle-button', // Add a class if needed for easier selection
+    innerHTML: `
+      <div class="icon_icon__bDzMA">
+        <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+          <path d="M21 3h-8v2h4v2h2v4h2V3zm-4 4h-2v2h-2v2h2V9h2V7zm-8 8h2v-2H9v2H7v2h2v-2zm-4-2v4h2v2H5h6v2H3v-8h2z" fill="currentColor"></path>
         </svg>
       </div>
     `

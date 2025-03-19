@@ -619,6 +619,7 @@ export const toggleTokenConversion = (toggle) => {
       element.classList.contains(ELEMENTS.token.ttsModalTokens.class) ||
       element.classList.contains(ELEMENTS.token.sfxModalTokens.class)
     ) {
+            //change element width slightly so it doesnt look weird
       element.style.width = "135px";
     }
   };
@@ -633,6 +634,7 @@ export const toggleTokenConversion = (toggle) => {
       element.classList.contains(ELEMENTS.token.ttsModalTokens.class) ||
       element.classList.contains(ELEMENTS.token.sfxModalTokens.class)
     ) {
+      //change element width back so it doesnt look weird
       element.style.width = "96px";
     }
   };
@@ -640,12 +642,8 @@ export const toggleTokenConversion = (toggle) => {
   const processElements = () => {
       document.querySelectorAll(TOKEN_SELECTORS).forEach((element) => {
         if (element.closest(ELEMENTS.token.toysBigToyPrice.selector)) return;
-        console.log("Contains class?",element.classList.contains(ELEMENTS.token.wetmarketBuyModalTokens.class));
-        console.log("Text:",element.innerHTML.toLowerCase());
-        console.log("Class has text?",element.innerHTML.toLowerCase().indexOf("are you sure you want to buy") === 1);
-        if ( element.classList.contains(ELEMENTS.token.wetmarketBuyModalTokens.class) && element.innerHTML.toLowerCase().indexOf("are you sure you want to buy") === -1 ){
-          return;
-        }
+        //This needs to be here as the bid modal will crash the site if its edited
+        if(element.innerHTML.indexOf("item-market-modal_bid__G5bls") !== -1){return;}
         if (toggle) {
           convertTokensToLocalCurrency(element);
         } else {
@@ -705,6 +703,7 @@ export const enableChatOverlay = (toggle) => {
   // If the toggle is enabled, initialize and display the chat overlay
   if (toggle) {
     if (!chatOverlayWrapper) {
+
       // Main container
       chatOverlayWrapper = createElementWithConfig('div', CHAT_OVERLAY_CONFIG.overlayWrapper);
 
@@ -804,12 +803,18 @@ export const enableChatOverlay = (toggle) => {
           }
         });
         
-        //hook into the existing fullscreen button to allow the overlay to work
-        const fullscreenButton = fullscreenButtonContainer.querySelector('button');
+        //replace the existing full screen button so we can open the overlay
+        const fullscreenButton = createElementWithConfig('button', CHAT_OVERLAY_CONFIG.fullscreenButton);
+        const oldFullscreenButton = fullscreenButtonContainer.querySelector('button');
         fullscreenButton.onclick = () => {
-          const element = document.querySelector(".hls-stream-player_hls-stream-player__BJiGl");
-          toggleFullscreen(element)
+          const element = document.querySelector(".live-stream-player_container__A4sNR");
+          toggleFullscreen(element);
         };
+        if (oldFullscreenButton) {
+          fullscreenButtonContainer.replaceChild(fullscreenButton, oldFullscreenButton);
+        } else {
+          fullscreenButtonContainer.appendChild(fullscreenButton);
+        }
         fullscreenButtonContainer.appendChild(toggleChatButton);
       } else {
         console.error('Hide Chat Overlay button already exists.');
@@ -819,6 +824,7 @@ export const enableChatOverlay = (toggle) => {
     }
     // Attach the chat overlay to the video player
     if (videoPlayerElement && fullscreenButtonContainer) {
+      chatOverlayWrapper.style.opacity = config.get("chatOverlayOpacity");
       videoPlayerElement.appendChild(chatOverlayWrapper);
     } else {
       console.error('Video player element not found. Unable to attach chat overlay.');
@@ -896,15 +902,15 @@ export const hookWebSocket = () => {
       targetWebSocket = this; // Store the reference
     }
 
-  //Uncomment for debugging.
-    if (data instanceof ArrayBuffer) {
-      try {
-        const decoded = decode(data);
-        console.log("[WebSocket Inspector] Sent data (Decoded):", decoded);
-      } catch (err) {
-        console.error("[WebSocket Inspector] Failed to decode outgoing message:", err);
-      }
-    }
+    //Uncomment for debugging.
+    // if (data instanceof ArrayBuffer) {
+    //   try {
+    //     const decoded = decode(data);
+    //     console.log("[WebSocket Inspector] Sent data (Decoded):", decoded);
+    //   } catch (err) {
+    //     console.error("[WebSocket Inspector] Failed to decode outgoing message:", err);
+    //   }
+    // }
 
     return originalSend.call(this, data);
   };
@@ -914,14 +920,14 @@ export const hookWebSocket = () => {
     if (type === "message") {
       const wrappedListener = (event) => {
         //Un comment for debugging
-        if (event.data instanceof ArrayBuffer) {
-          try {
-            const decoded = decode(event.data);
-             console.log("[WebSocket Inspector] Incoming message (Decoded):", decoded);
-          } catch (err) {
-            console.error("[WebSocket Inspector] Failed to decode incoming message:", err);
-          }
-        }
+        // if (event.data instanceof ArrayBuffer) {
+        //   try {
+        //     const decoded = decode(event.data);
+        //      console.log("[WebSocket Inspector] Incoming message (Decoded):", decoded);
+        //   } catch (err) {
+        //     console.error("[WebSocket Inspector] Failed to decode incoming message:", err);
+        //   }
+        // }
         listener.call(this, event); // Call the original listener
       };
       return originalAddEventListener.call(this, type, wrappedListener, options);
@@ -937,16 +943,16 @@ export const hookWebSocket = () => {
       const wrappedCallback = (event) => {
         if (event.data instanceof ArrayBuffer) {
           interceptIncomingMessages(event);
-          //Uncomment for debugging.
-          try {
-            const decoded = decode(event.data);
-          if (!decoded.type === 2) {
-              console.log("[WebSocket Inspector] Incoming message (Decoded):", decoded);
-          }
-          } catch (err) {
-             console.error("[WebSocket Inspector] Failed to decode incoming message:", err);
-           }
-        }
+        //Uncomment for debugging.
+        //   try {
+        //     const decoded = decode(event.data);
+        //   if (!decoded.type === 2) {
+        //       console.log("[WebSocket Inspector] Incoming message (Decoded):", decoded);
+        //   }
+        //   } catch (err) {
+        //      console.error("[WebSocket Inspector] Failed to decode incoming message:", err);
+        //    }
+         }
         callback(event); // Pass the event to the original onmessage handler
       };
 
@@ -1411,6 +1417,10 @@ export const processChatMessage = (node, logMentions = true) => {
 
   if (logMentions) {
     processMentions(message);
+  }
+
+  if(cfg.enableFullScreenChatOverlay && state.get().isPlayerFullscreen){
+    addMessageToChatOverlay(node);
   }
 
   if (cfg.enableTtsLog && message.type === "tts") {
